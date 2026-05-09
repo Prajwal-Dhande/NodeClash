@@ -246,9 +246,6 @@ export default function Lobby() {
   const [practiceStatus, setPracticeStatus] = useState('All')
   const [practiceSelected, setPracticeSelected] = useState(null)
 
-  const [showPremiumModal, setShowPremiumModal] = useState(false)
-  const [paymentProcessing, setPaymentProcessing] = useState(false)
-
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
 
@@ -285,14 +282,6 @@ export default function Lobby() {
           }
         }).catch(err => console.error(err));
     }
-  }, []);
-
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-    return () => { document.body.removeChild(script) };
   }, []);
 
   useEffect(() => {
@@ -351,59 +340,6 @@ export default function Lobby() {
       setSearchResults(data)
     } catch (err) { console.error(err) }
   }
-
-  const handlePayment = async (planDetails) => {
-    const token = localStorage.getItem('token');
-    if (!token) { navigate('/auth'); return; }
-
-    setPaymentProcessing(true);
-    try {
-      const res = await fetch(`${API_URL}/api/payment/create-order`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ plan: planDetails.id, amount: planDetails.amount * 100 })
-      });
-      const data = await res.json();
-
-      if (!data.success) throw new Error('Order creation failed');
-
-      const options = {
-        key: data.key,
-        amount: data.order.amount,
-        currency: 'INR',
-        name: 'CodeArena',
-        description: `${planDetails.name} Premium Subscription`,
-        order_id: data.order.id,
-        handler: async (response) => {
-          const verifyRes = await fetch(`${API_URL}/api/payment/verify`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify(response)
-          });
-          const verifyData = await verifyRes.json();
-          if (verifyData.success) {
-            localStorage.setItem('user', JSON.stringify(verifyData.user));
-            setUser(verifyData.user);
-            setShowPremiumModal(false);
-            alert('🎉 Premium Activated! Welcome to CodeArena Premium!');
-          }
-        },
-        prefill: {
-          name: user?.username || '',
-          email: user?.email || '',
-        },
-        theme: { color: '#ff6b35' },
-        modal: { ondismiss: () => setPaymentProcessing(false) }
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } catch (err) {
-      console.error('Payment error:', err);
-      alert('Payment initialization failed. Please try again.');
-    }
-    setPaymentProcessing(false);
-  };
 
   const handleRankedClick = () => {
     if (!user?.username) { navigate('/auth'); return }
@@ -491,76 +427,6 @@ export default function Lobby() {
       {showRankedList && <ProblemModal user={user} title="🎯 Ranked Arena" subtitle="Choose your battlefield wisely. Higher difficulty = more ELO." borderColor="var(--purple)" accentColor="#a855f7" selectedP={rankedSelected} onSelect={setRankedSelected} diff={rankedDiff} setDiff={setRankedDiff} topic={rankedTopic} setTopic={setRankedTopic} status={rankedStatus} setStatus={setRankedStatus} onPlay={handleRankedPlay} onClose={() => setShowRankedList(false)} btnLabel="⚔️ Enter Ranked Arena" problems={problems} isRanked={true} />}
 
       {showPracticeList && <ProblemModal user={user} title="🧠 Practice Mode" subtitle="Solo training against an AI bot. No ELO at stake." borderColor="var(--green)" accentColor="#22c55e" selectedP={practiceSelected} onSelect={setPracticeSelected} diff={practiceDiff} setDiff={setPracticeDiff} topic={practiceTopic} setTopic={setPracticeTopic} status={practiceStatus} setStatus={setPracticeStatus} onPlay={handlePracticePlay} onClose={() => setShowPracticeList(false)} btnLabel="🧠 Start Practice" problems={problems} isRanked={false} />}
-
-      {/* Premium Modal */}
-      {showPremiumModal && (
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          className="premium-overlay"
-        >
-          <motion.div
-            initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="premium-modal"
-          >
-            <button onClick={() => setShowPremiumModal(false)} className="close-btn">✕</button>
-            <div className="premium-glow-bg" />
-
-            <div className="premium-header">
-              <div className="premium-badge">💎 CODEARENA PREMIUM</div>
-              <h2 className="premium-title">The fastest way to crack <span>FAANG</span></h2>
-              <p className="premium-subtitle">Stop practicing blindly. Get AI-powered mock interviews, structured roadmaps, and global competitive tournaments.</p>
-            </div>
-
-            <div className="premium-cards-container">
-              {/* Free Tier */}
-              <div className="premium-card free-tier">
-                <div className="tier-name">Free</div>
-                <div className="tier-price">₹0<span>/mo</span></div>
-                <p className="tier-desc">Basic practice for casual coders.</p>
-                <ul className="tier-features">
-                  <li>✓ Unlimited Practice Problems</li>
-                  <li>✓ Basic IDE & Execution</li>
-                  <li>✓ Global Leaderboard Access</li>
-                  <li className="disabled">✕ AI Mock Interviews</li>
-                  <li className="disabled">✕ Ranked Tournaments</li>
-                </ul>
-                <button onClick={() => setShowPremiumModal(false)} className="tier-btn btn-free">Current Plan</button>
-              </div>
-
-              {/* Pro Tier */}
-              <div className="premium-card pro-tier">
-                <div className="tier-name">Pro</div>
-                <div className="tier-price">₹299<span>/mo</span></div>
-                <p className="tier-desc">For serious competitive programmers.</p>
-                <ul className="tier-features">
-                  <li>✓ Everything in Free</li>
-                  <li>✓ Ranked Tournaments Access</li>
-                  <li>✓ Company Specific Tags</li>
-                  <li>✓ Detailed Analytics</li>
-                  <li className="disabled">✕ AI Mock Interviews</li>
-                </ul>
-                <button onClick={() => handlePayment({ id: 'pro', name: 'Pro Plan', amount: 299 })} disabled={paymentProcessing} className="tier-btn btn-pro">{paymentProcessing ? 'Processing...' : 'Upgrade to Pro'}</button>
-              </div>
-
-              {/* Pro+ Tier */}
-              <div className="premium-card pro-plus-tier">
-                <div className="popular-tag">MOST POPULAR</div>
-                <div className="tier-name">Pro+ <span className="sparkle">✨</span></div>
-                <div className="tier-price">₹599<span>/mo</span></div>
-                <p className="tier-desc">The ultimate interview prep arsenal.</p>
-                <ul className="tier-features">
-                  <li>✓ Everything in Pro</li>
-                  <li><span className="highlight-feat">⚡ Live AI Mock Interviews</span></li>
-                  <li><span className="highlight-feat">🧠 Advanced AI Code Reviews</span></li>
-                  <li>✓ Priority Zero-Latency Servers</li>
-                  <li>✓ 1-on-1 Feedback Reports</li>
-                </ul>
-                <button onClick={() => handlePayment({ id: 'pro_plus', name: 'Pro+ Plan', amount: 599 })} disabled={paymentProcessing} className="tier-btn btn-pro-plus">{paymentProcessing ? 'Processing...' : 'Unlock Pro+'}</button>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
 
       {/* ROOM CODE MODAL */}
       {createdRoomCode && (
@@ -715,7 +581,7 @@ export default function Lobby() {
             {/* 🔥 Interview Pro Vault Card (INLINE POSTER - RELIABLE IMAGE) */}
             <motion.div
               whileHover={{ y: -4 }}
-              onClick={() => user?.isPremium ? navigate('/interview-dsa') : setShowPremiumModal(true)}
+              onClick={() => user?.isPremium ? navigate('/interview-dsa') : navigate('/premium')}
               className="game-mode-card"
               style={{ gridColumn: 'span 2', gridRow: 'span 2' }}
             >

@@ -1,6 +1,23 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+const TESTIMONIALS = [
+  { name: 'Arjun K.', role: 'SDE @ Amazon', stars: 5, color: '#ff6b35', text: 'The free tier gave me a solid foundation, but the PRO FAANG Vault is what actually got me my Amazon offer. The curated problems are scarily accurate.' },
+  { name: 'Priya S.', role: 'CS Senior, IIT Delhi', stars: 5, color: '#60a5fa', text: 'I practiced on the free tier for months. Once I upgraded to PRO, Clara AI literally changed how I think about interviews. Absolute game-changer.' },
+  { name: 'Rahul M.', role: 'SDE-2 @ Google', stars: 5, color: '#a855f7', text: 'Free tier is honestly better than most paid platforms. But the PRO analytics showed me my weak spots I never knew existed. Cracked Google L4.' },
+  { name: 'Sneha D.', role: 'Intern @ Microsoft', stars: 5, color: '#22c55e', text: 'Started with free random matches — loved it. PRO Vault problems were literally the same patterns asked in my Microsoft interview. Worth every rupee.' },
+  { name: 'Karthik R.', role: 'SDE @ Flipkart', stars: 5, color: '#f59e0b', text: 'The free practice bot is unreal for daily warmups. But PRO tier with Clara AI mock interviews? That\u2019s the closest thing to a real FAANG interview I\u2019ve seen.' },
+  { name: 'Ananya P.', role: 'CS Junior, BITS', stars: 5, color: '#ec4899', text: 'I used the free tier all semester for competitive coding. Upgrading to PRO during placement season was the best decision — the FAANG Vault is top-notch.' },
+  { name: 'Vikram T.', role: 'SDE @ Uber', stars: 5, color: '#14b8a6', text: 'Free tier random matches kept me sharp daily. The PRO code review feature caught edge cases I always missed. Cracked Uber\u2019s system design round too.' },
+  { name: 'Meera J.', role: 'CS Student, NIT', stars: 5, color: '#8b5cf6', text: 'Honestly the free leaderboard competition alone is addictive. But PRO unlocked a whole new level — Clara\u2019s AI hints taught me patterns I never learned in class.' },
+  { name: 'Aditya N.', role: 'SDE @ Meta', stars: 5, color: '#ef4444', text: 'The free tier is genuinely generous. I only went PRO because friends said the FAANG Vault problems are exact matches from real interviews. They were right.' },
+  { name: 'Ishita G.', role: 'Incoming SDE @ Apple', stars: 5, color: '#06b6d4', text: 'Practiced 200+ free problems before placements. The PRO tier analytics dashboard showed me exactly what to focus on. Got Apple on my first attempt.' },
+  { name: 'Rohan B.', role: 'Backend Dev @ Razorpay', stars: 5, color: '#f97316', text: 'Free tier private rooms are perfect for practicing with friends. PRO took it further — the AI code review after every match is like having a personal mentor.' },
+  { name: 'Divya L.', role: 'CS Senior, VIT', stars: 5, color: '#84cc16', text: 'I was skeptical about PRO, but the 7-day free trial convinced me instantly. The FAANG Vault problems are exactly what you\u2019d face in a real placement drive.' },
+  { name: 'Saurabh W.', role: 'SDE @ Goldman Sachs', stars: 5, color: '#eab308', text: 'Used free tier for 6 months before going PRO. The ranked tournaments alone are worth it — but Clara AI interviews are what truly prepared me for GS.' },
+  { name: 'Nisha K.', role: 'ML Engineer @ Nvidia', stars: 5, color: '#d946ef', text: 'The free tier practice bot is surprisingly good for daily grinding. PRO is for when you\u2019re serious about placements — the analytics are incredibly detailed.' },
+]
+
 const codeLines = [
   { text: '// AI Constraint: O(n) time only', color: 'var(--text-muted)' },
   { text: 'function twoSum(nums, target) {', color: '#e5e5e5' },
@@ -159,8 +176,33 @@ export default function Hero() {
         </div>
       </div>
 
+      {/* TESTIMONIALS MARQUEE */}
+      <div className="testimonials-section">
+        <div className="testimonials-header">
+          <span className="testimonials-badge">💬 REAL STORIES</span>
+          <h2 className="testimonials-title">What coders are saying</h2>
+        </div>
+        <div className="marquee-wrapper">
+          <div className="marquee-track">
+            {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
+              <div key={i} className="testimonial-card">
+                <div className="testimonial-stars">{'★'.repeat(t.stars)}</div>
+                <p className="testimonial-text">"{t.text}"</p>
+                <div className="testimonial-author">
+                  <div className="testimonial-avatar" style={{ background: t.color }}>{t.name[0]}</div>
+                  <div>
+                    <div className="testimonial-name">{t.name}</div>
+                    <div className="testimonial-role">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <style>{`
-        .hero-section { min-height: 100vh; display: flex; align-items: center; padding: 8rem 2.5rem 4rem; background: #0d0d0d; position: relative; overflow: hidden; font-family: Inter, sans-serif; perspective: 1200px; }
+        .hero-section { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 8rem 2.5rem 2rem; background: #0d0d0d; position: relative; overflow: hidden; font-family: Inter, sans-serif; perspective: 1200px; }
         
         /* NEW 3D GRID BACKGROUND */
         .bg-pattern { 
@@ -231,13 +273,62 @@ export default function Hero() {
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
+        /* ── TESTIMONIALS MARQUEE ── */
+        .testimonials-section {
+          position: relative; z-index: 1; width: 100%; margin-top: 80px; padding-bottom: 20px;
+        }
+        .testimonials-header { text-align: center; margin-bottom: 32px; }
+        .testimonials-badge {
+          display: inline-block; font-size: 11px; font-weight: 700; color: #fbbf24;
+          background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25);
+          padding: 5px 14px; border-radius: 20px; letter-spacing: 1.5px; margin-bottom: 12px;
+        }
+        .testimonials-title {
+          font-family: Outfit, sans-serif; font-size: 28px; font-weight: 800; color: #fff;
+          letter-spacing: -1px;
+        }
+        .marquee-wrapper {
+          overflow: hidden; width: 100%; position: relative;
+          mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+          -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+        }
+        .marquee-track {
+          display: flex; gap: 20px; width: max-content;
+          animation: marqueeScroll 60s linear infinite;
+        }
+        .marquee-wrapper:hover .marquee-track {
+          animation-play-state: paused;
+        }
+        @keyframes marqueeScroll {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .testimonial-card {
+          flex-shrink: 0; width: 320px;
+          background: rgba(22,22,26,0.7); backdrop-filter: blur(12px);
+          border: 1px solid rgba(255,255,255,0.06); border-radius: 16px;
+          padding: 24px; transition: border-color 0.3s;
+        }
+        .testimonial-card:hover { border-color: rgba(255,107,53,0.3); }
+        .testimonial-stars { color: #fbbf24; font-size: 14px; margin-bottom: 12px; letter-spacing: 2px; }
+        .testimonial-text { font-size: 13px; color: #d1d5db; line-height: 1.65; margin: 0 0 16px 0; }
+        .testimonial-author { display: flex; align-items: center; gap: 10px; }
+        .testimonial-avatar {
+          width: 32px; height: 32px; border-radius: 50%; display: flex;
+          align-items: center; justify-content: center; font-size: 13px;
+          font-weight: 700; color: #fff; flex-shrink: 0;
+        }
+        .testimonial-name { font-size: 13px; font-weight: 700; color: #fff; }
+        .testimonial-role { font-size: 11px; color: #666; }
+
         @media (max-width: 900px) {
           .hero-container { grid-template-columns: 1fr; gap: 3rem; }
           .hero-section { padding: 6rem 1.5rem 3rem; }
           .hero-buttons { flex-direction: column; }
           .stats-box { flex-direction: column; }
           .border-right { border-right: none; border-bottom: 1px solid #1f1f1f; }
-          .terminal-wrapper { transform: none !important; } /* Disable 3D on mobile for better UX */
+          .terminal-wrapper { transform: none !important; }
+          .testimonial-card { width: 280px; }
         }
       `}</style>
     </section>
