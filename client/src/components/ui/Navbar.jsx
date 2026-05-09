@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { ThemeToggle } from '../../context/ThemeContext'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -52,7 +51,6 @@ export default function Navbar() {
         </div>
 
         <div className="nav-actions desktop-only">
-          <ThemeToggle />
           {isLoggedIn ? (
             <>
               <span onClick={() => navigate('/profile')} className="profile-btn" title="View Profile">
@@ -65,8 +63,7 @@ export default function Navbar() {
               <button onClick={() => navigate('/auth')} className="btn-secondary">Log In</button>
               <button onClick={() => navigate('/lobby')} className="btn-primary">Enter Arena</button>
             </>
-          )
-        }
+          )}
         </div>
 
         {/* Mobile Hamburger Icon */}
@@ -78,7 +75,7 @@ export default function Navbar() {
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="mobile-menu">
-            {[
+          {[
             { label: 'Features', href: '#features' },
             { label: 'How It Works', href: '#how-it-works' },
             { label: 'Leaderboard', href: '/leaderboard' },
@@ -86,8 +83,14 @@ export default function Navbar() {
             <span key={label} onClick={() => handleNavClick(href)} className="nav-link">{label}</span>
           ))}
           <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <ThemeToggle />
+            {isLoggedIn ? (
               <button onClick={() => navigate('/lobby')} className="btn-primary">⚡ Enter Arena</button>
+            ) : (
+              <>
+                <button onClick={() => navigate('/auth')} className="btn-secondary" style={{ width: '100%' }}>Log In</button>
+                <button onClick={() => navigate('/lobby')} className="btn-primary">Enter Arena</button>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -95,40 +98,35 @@ export default function Navbar() {
       <style>{`
         .navbar {
           position: fixed; top: 0; width: 100%; z-index: 100;
-          /* Slightly lighter overlay on scrolled for separation */
           background: rgba(13,13,13,0.6); backdrop-filter: blur(20px);
           border-bottom: 1px solid transparent;
           display: flex; justify-content: space-between; align-items: center;
           padding: 0 32px; height: 60px; transition: all 0.3s;
           font-family: Inter, sans-serif;
-          /* ADDED BOX SHADOW BELOW NAV */
           box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .navbar.scrolled { 
           background: rgba(13,13,13,0.9); 
-          border-bottom: 1px solid rgba(255,107,53,0.15); /* Orange hint border */
+          border-bottom: 1px solid rgba(255,107,53,0.15);
         }
         .logo { font-family: Outfit, sans-serif; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; cursor: pointer; }
         .nav-links { display: flex; gap: 32px; align-items: center; }
         .nav-actions { display: flex; gap: 10px; align-items: center; }
         
-        /* IMPROVED: Much brighter default grey for inactive links */
         .nav-link { 
-          color: #A0A0A0; /* Was #666 (invisible in image_1) */
+          color: #A0A0A0; 
           font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease-in-out; 
           border-bottom: 2px solid transparent; padding-bottom: 2px;
         }
-        /* ADDED: Light Bloom Hover Effect */
         .nav-link:hover { 
           color: #ffffff; 
           text-shadow: 0 0 10px rgba(255,255,255,0.3);
-          border-color: rgba(255,107,53,0.5); /* Orange indicator */
+          border-color: rgba(255,107,53,0.5);
         }
         
         .btn-primary { font-family: Inter; font-size: 13px; font-weight: 700; color: #fff; background: linear-gradient(135deg, #ff6b35, #f7451d); border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; box-shadow: 0 5px 15px rgba(255,107,53,0.2); }
         .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(255,107,53,0.3); }
         
-        /* IMPROVED: Brightness and hover */
         .btn-secondary { font-family: Inter; font-size: 13px; font-weight: 600; color: #E5E5E5; background: transparent; border: 1px solid #3A3A3A; padding: 8px 18px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
         .btn-secondary:hover { border-color: #ff6b35; color: #ff6b35; background: rgba(255,107,53,0.05); }
         

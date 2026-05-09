@@ -144,9 +144,6 @@ export default function InterviewDSA() {
   };
 
   const handleProblemClick = (p) => {
-    // Pro+ users can access everything
-    // Pro users can access free-tier vault problems only
-    // Free users can't access anything (they shouldn't be here, but just in case)
     const isProPlus = premiumPlan === 'pro_plus';
     const isPro = premiumPlan === 'pro';
     
@@ -154,7 +151,6 @@ export default function InterviewDSA() {
       setLockedProblem(p);
       setShowPaywall(true);
     } else if (!isPremium && p.tier === 'free') {
-      // Even free-tier vault problems need at least Pro
       setLockedProblem(p);
       setShowPaywall(true);
     } else {
@@ -186,7 +182,7 @@ export default function InterviewDSA() {
   };
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#060608', flexDirection: 'column', position: 'relative', overflow: 'hidden', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', flexDirection: 'column', position: 'relative', overflow: 'hidden', fontFamily: 'Inter, sans-serif', transition: 'background-color 0.3s' }}>
       <div style={{ position: 'absolute', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(236,72,153,0.08) 0%, transparent 70%)', filter: 'blur(60px)', top: '10%', left: '20%' }} />
       <div style={{ position: 'absolute', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(255,107,53,0.08) 0%, transparent 70%)', filter: 'blur(60px)', bottom: '10%', right: '20%' }} />
       <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -220,7 +216,7 @@ export default function InterviewDSA() {
         </div>
         <div style={{ flex: 1 }} />
         <ThemeToggle />
-        <div className="user-chip" onClick={() => navigate('/profile')}>
+        <div className="user-chip" onClick={() => navigate('/profile')} style={{ marginLeft: 16 }}>
           <div className="rank-icon">🥇 PRO</div>
           <div className="avatar">{initials}</div>
           <span className="username">{user?.username || 'Player_01'}</span>
@@ -425,26 +421,65 @@ export default function InterviewDSA() {
         )}
       </AnimatePresence>
 
+      {/* Global CSS Variables for Day/Night Theme */}
       <style>{`
-        body { background-color: #060608; margin: 0; overflow-x: hidden; }
+        :root {
+          /* Dark Mode Defaults */
+          --bg: #060608;
+          --nav-bg: rgba(17, 17, 19, 0.85);
+          --card-bg: rgba(0,0,0,0.2);
+          --panel-bg: rgba(20, 20, 25, 0.3);
+          
+          --glass-border: rgba(255,255,255,0.06);
+          --glass-border-strong: rgba(255,255,255,0.1);
+          --glass-overlay: rgba(255,255,255,0.04);
+          --glass-overlay-hover: rgba(255,255,255,0.08);
+          
+          --modal-overlay: rgba(0,0,0,0.8);
+          --modal-bg: #111113;
+          
+          --text-main: #ffffff;
+          --text-muted: #a1a1aa;
+        }
+
+        /* 🔥 Light Mode Overrides */
+        :root[data-theme='light'], .light, body.light {
+          --bg: #f3f4f6;
+          --nav-bg: rgba(255, 255, 255, 0.85);
+          --card-bg: rgba(255, 255, 255, 0.5);
+          --panel-bg: rgba(255, 255, 255, 0.6);
+          
+          --glass-border: rgba(0, 0, 0, 0.08);
+          --glass-border-strong: rgba(0, 0, 0, 0.15);
+          --glass-overlay: rgba(0, 0, 0, 0.04);
+          --glass-overlay-hover: rgba(0, 0, 0, 0.08);
+          
+          --modal-overlay: rgba(255,255,255,0.85);
+          --modal-bg: #ffffff;
+          
+          --text-main: #111827;
+          --text-muted: #6b7280;
+        }
+
+        body { background-color: var(--bg); margin: 0; overflow-x: hidden; transition: background-color 0.3s ease; }
         
         /* NAVBAR */
-        .glass-nav { height: 60px; background: #111113; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; padding: 0 24px; position: fixed; top: 0; left: 0; right: 0; z-index: 50; flex-wrap: nowrap; }
+        .glass-nav { height: 60px; background: var(--nav-bg); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; padding: 0 24px; position: fixed; top: 0; left: 0; right: 0; z-index: 50; flex-wrap: nowrap; backdrop-filter: blur(12px); transition: background-color 0.3s ease; }
         .logo { font-size: 16px; cursor: pointer; display: flex; align-items: center; margin-right: 32px; }
         .nav-links { display: flex; gap: 24px; margin-right: 32px; }
-        .nav-links span { font-size: 13px; font-weight: 600; color: #a1a1aa; cursor: pointer; position: relative; padding: 20px 0; transition: color 0.2s; }
-        .nav-links span:hover { color: #fff; }
+        .nav-links span { font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; position: relative; padding: 20px 0; transition: color 0.2s; }
+        .nav-links span:hover { color: var(--text-main); }
         .nav-links span.active { color: #ff6b35; }
         .nav-links span.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: #ff6b35; }
         
-        .user-chip { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 4px 14px 4px 10px; cursor: pointer; transition: background 0.2s; }
-        .user-chip:hover { background: rgba(255,255,255,0.08); }
-        .rank-icon { font-size: 11px; color: #d97706; font-weight: 600; padding-right: 8px; border-right: 1px solid rgba(255,255,255,0.1); }
+        .user-chip { display: flex; align-items: center; gap: 8px; background: var(--glass-overlay); border: 1px solid var(--glass-border); border-radius: 20px; padding: 4px 14px 4px 10px; cursor: pointer; transition: background 0.2s; }
+        .user-chip:hover { background: var(--glass-overlay-hover); }
+        .rank-icon { font-size: 11px; color: #d97706; font-weight: 600; padding-right: 8px; border-right: 1px solid var(--glass-border); }
         .avatar { width: 22px; height: 22px; border-radius: 50%; background: #60a5fa; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; }
-        .username { font-size: 12px; font-weight: 600; }
+        .username { font-size: 12px; font-weight: 600; color: var(--text-main); }
 
         /* AMBIENT LIGHTS */
-        .ambient-light-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; background: #060608; overflow: hidden; }
+        .ambient-light-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; background: var(--bg); overflow: hidden; transition: background-color 0.3s ease; }
         .light-orb { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.6; }
         .light-orange { width: 800px; height: 800px; background: #ff6b35; top: -100px; left: calc(50% - 400px); animation: floatUp 8s infinite alternate ease-in-out; }
         .light-purple { width: 600px; height: 600px; background: #a855f7; bottom: -200px; left: -100px; animation: floatDown 7s infinite alternate ease-in-out; }
@@ -453,70 +488,70 @@ export default function InterviewDSA() {
         @keyframes floatDown { from { transform: translateY(0px) scale(1.1); } to { transform: translateY(-40px) scale(0.9); } }
 
         /* PAGE LAYOUT */
-        .vault-page-wrapper { min-height: 100vh; padding-top: 100px; padding-bottom: 80px; display: flex; justify-content: center; position: relative; font-family: Inter, sans-serif; color: #fff; }
+        .vault-page-wrapper { min-height: 100vh; padding-top: 100px; padding-bottom: 80px; display: flex; justify-content: center; position: relative; font-family: Inter, sans-serif; color: var(--text-main); }
         .vault-content-area { width: 100%; max-width: 1000px; display: flex; flex-direction: column; position: relative; z-index: 10; padding: 0 20px; gap: 32px; }
         
-        .premium-glass-panel { background: rgba(20, 20, 25, 0.3); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 20px 40px rgba(0,0,0,0.5); border-radius: 24px; }
+        .premium-glass-panel { background: var(--panel-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 20px 40px rgba(0,0,0,0.1); border-radius: 24px; transition: background-color 0.3s ease, border-color 0.3s ease; }
 
         /* HERO */
         .hero-section { display: flex; align-items: center; justify-content: space-between; gap: 40px; padding: 20px 10px; }
         .hero-text-content { flex: 1; }
-        .hero-title { font-size: 48px; font-weight: 900; margin: 0 0 16px 0; display: flex; align-items: center; gap: 16px; letter-spacing: -1px; font-family: Outfit, sans-serif; background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-title { font-size: 48px; font-weight: 900; margin: 0 0 16px 0; display: flex; align-items: center; gap: 16px; letter-spacing: -1px; font-family: Outfit, sans-serif; background: linear-gradient(180deg, var(--text-main) 0%, var(--text-muted) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .pro-badge-glow { background: linear-gradient(135deg, #d946ef, #8b5cf6); color: #fff; font-size: 14px; font-weight: 800; padding: 6px 14px; border-radius: 8px; letter-spacing: 1px; box-shadow: 0 0 20px rgba(217, 70, 239, 0.5), inset 0 1px 0 rgba(255,255,255,0.4); -webkit-text-fill-color: #fff; }
-        .hero-subtitle { font-size: 16px; color: #a1a1aa; line-height: 1.6; margin: 0 0 24px 0; max-width: 500px; }
+        .hero-subtitle { font-size: 16px; color: var(--text-muted); line-height: 1.6; margin: 0 0 24px 0; max-width: 500px; }
         .premium-upsell { display: inline-flex; background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.3); color: #ff6b35; padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
         .premium-upsell:hover { background: rgba(255,107,53,0.15); border-color: rgba(255,107,53,0.5); transform: translateY(-2px); }
         
         .hero-stats { display: flex; gap: 16px; }
-        .stat-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px 24px; min-width: 140px; }
-        .stat-val { font-size: 32px; font-weight: 900; font-family: Outfit; color: #fff; margin-bottom: 4px; }
-        .stat-lbl { font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-box { background: var(--glass-overlay); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px 24px; min-width: 140px; }
+        .stat-val { font-size: 32px; font-weight: 900; font-family: Outfit; color: var(--text-main); margin-bottom: 4px; }
+        .stat-lbl { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* VAULT UI */
         .vault-container { overflow: hidden; display: flex; flex-direction: column; min-height: 600px; }
-        .vault-header { padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
+        .vault-header { padding: 20px 24px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); }
         .filters-group { display: flex; gap: 12px; }
-        .vault-select { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: #e5e5e5; padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; outline: none; cursor: pointer; fontFamily: Inter; transition: all 0.2s; }
-        .vault-select:hover { border-color: rgba(255,255,255,0.2); }
-        .vault-select option { background: #1a1a1f; color: #fff; }
-        .problem-count { font-size: 13px; color: #888; font-weight: 500; }
+        .vault-select { background: var(--glass-overlay); border: 1px solid var(--glass-border); color: var(--text-main); padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; outline: none; cursor: pointer; fontFamily: Inter; transition: all 0.2s; }
+        .vault-select:hover { border-color: var(--glass-border-strong); }
+        .vault-select option { background: var(--bg); color: var(--text-main); }
+        .problem-count { font-size: 13px; color: var(--text-muted); font-weight: 500; }
 
         .vault-list { flex: 1; display: flex; flex-direction: column; }
-        .list-header { display: flex; padding: 16px 24px; font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .list-header { display: flex; padding: 16px 24px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border); }
         .list-body { flex: 1; overflow-y: auto; }
         
-        .problem-row { display: flex; padding: 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.04); align-items: center; transition: all 0.2s; cursor: pointer; }
-        .problem-row:hover { background: rgba(255,255,255,0.02); padding-left: 28px; }
+        .problem-row { display: flex; padding: 16px 24px; border-bottom: 1px solid var(--glass-border); align-items: center; transition: all 0.2s; cursor: pointer; }
+        .problem-row:hover { background: var(--glass-overlay); padding-left: 28px; }
         .locked-row { opacity: 0.7; }
         .locked-row:hover { opacity: 1; }
         
         .company-badge { width: 36px; height: 36px; border-radius: 10px; border: 1px solid; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; font-family: Outfit; }
-        .p-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+        .p-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
         .premium-tag { background: linear-gradient(135deg, #d946ef, #8b5cf6); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; color: #fff; letter-spacing: 0.5px; }
-        .p-category { font-size: 12px; color: #666; font-weight: 500; }
+        .p-category { font-size: 12px; color: var(--text-muted); font-weight: 500; }
         
         .freq-badge { display: inline-flex; background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.2); color: #ff6b35; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
         
         .action-btn { border: none; padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; font-family: Inter; }
-        .play-btn { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-        .play-btn:hover { background: #ff6b35; border-color: #ff6b35; transform: scale(1.05); }
+        .play-btn { background: var(--glass-overlay); color: var(--text-main); border: 1px solid var(--glass-border); }
+        .play-btn:hover { background: #ff6b35; border-color: #ff6b35; color: #fff; transform: scale(1.05); }
         .locked-btn { background: rgba(236,72,153,0.1); color: #ec4899; border: 1px solid rgba(236,72,153,0.3); }
         .locked-btn:hover { background: rgba(236,72,153,0.2); transform: scale(1.05); }
 
-        .empty-state { text-align: center; padding: 80px 20px; color: #666; }
-        .empty-state h3 { font-size: 18px; color: #fff; margin: 0 0 8px 0; }
+        .empty-state { text-align: center; padding: 80px 20px; color: var(--text-muted); }
+        .empty-state h3 { font-size: 18px; color: var(--text-main); margin: 0 0 8px 0; }
         .empty-state p { font-size: 14px; margin: 0; }
 
         /* PAYWALL MODAL */
-        .paywall-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .paywall-modal { width: 100%; max-width: 440px; padding: 40px; text-align: center; position: relative; }
-        .close-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; color: #666; font-size: 20px; cursor: pointer; transition: color 0.2s; }
-        .close-btn:hover { color: #fff; }
+        .paywall-overlay { position: fixed; inset: 0; background: var(--modal-overlay); backdrop-filter: blur(8px); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .paywall-modal { width: 100%; max-width: 440px; padding: 40px; text-align: center; position: relative; background: var(--modal-bg); }
+        .close-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; transition: color 0.2s; }
+        .close-btn:hover { color: var(--text-main); }
         .paywall-icon { width: 64px; height: 64px; background: rgba(236,72,153,0.1); border: 1px solid rgba(236,72,153,0.3); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; color: #ec4899; font-size: 24px; box-shadow: 0 0 20px rgba(236,72,153,0.2); }
-        .paywall-modal h2 { font-size: 28px; font-weight: 900; font-family: Outfit; margin: 0 0 16px 0; color: #fff; }
-        .paywall-modal p { font-size: 14px; color: #a1a1aa; line-height: 1.6; margin: 0 0 32px 0; }
-        .paywall-features { text-align: left; background: rgba(0,0,0,0.3); border-radius: 16px; padding: 20px; margin-bottom: 32px; border: 1px solid rgba(255,255,255,0.05); }
-        .pf-item { font-size: 14px; font-weight: 600; color: #e5e5e5; margin-bottom: 12px; }
+        .paywall-modal h2 { font-size: 28px; font-weight: 900; font-family: Outfit; margin: 0 0 16px 0; color: var(--text-main); }
+        .paywall-modal p { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin: 0 0 32px 0; }
+        .paywall-features { text-align: left; background: var(--glass-overlay); border-radius: 16px; padding: 20px; margin-bottom: 32px; border: 1px solid var(--glass-border); }
+        .pf-item { font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 12px; }
         .pf-item:last-child { margin-bottom: 0; }
         
         .unlock-btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; color: #fff; cursor: pointer; transition: all 0.2s; background: linear-gradient(135deg, #d946ef, #ec4899); box-shadow: 0 8px 25px rgba(217, 70, 239, 0.3); font-family: Inter; }

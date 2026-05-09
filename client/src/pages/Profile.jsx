@@ -59,9 +59,9 @@ const CircleChart = ({ wins, losses, total, easyWins, medWins, hardWins }) => {
 
   return (
     <svg width={140} height={140} style={{ transform: 'rotate(-90deg)' }}>
-      <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth={10} />
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--glass-border)" strokeWidth={10} />
       {total === 0 ? (
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={10} strokeDasharray={`${circ * 0.98} ${circ * 0.02}`} />
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--glass-border-strong)" strokeWidth={10} strokeDasharray={`${circ * 0.98} ${circ * 0.02}`} />
       ) : (
         segments.map((s, i) => s.pct > 0 && (
           <circle key={i} cx={cx} cy={cy} r={r} fill="none"
@@ -94,12 +94,12 @@ const TopicRadarChart = ({ data }) => {
           <polygon
             key={scale}
             points={angles.map(a => `${center + maxRadius * scale * Math.cos(a)},${center + maxRadius * scale * Math.sin(a)}`).join(' ')}
-            fill={scale === 1 ? 'rgba(255,255,255,0.02)' : 'none'}
-            stroke="rgba(255,255,255,0.08)" strokeWidth="1"
+            fill={scale === 1 ? 'var(--glass-overlay)' : 'none'}
+            stroke="var(--glass-border)" strokeWidth="1"
           />
         ))}
         {angles.map((a, i) => (
-          <line key={i} x1={center} y1={center} x2={center + maxRadius * Math.cos(a)} y2={center + maxRadius * Math.sin(a)} stroke="rgba(255,255,255,0.06)" />
+          <line key={i} x1={center} y1={center} x2={center + maxRadius * Math.cos(a)} y2={center + maxRadius * Math.sin(a)} stroke="var(--glass-border)" />
         ))}
         <polygon points={points} fill="rgba(255,107,53,0.25)" stroke="#ff6b35" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 10px rgba(255,107,53,0.4))' }} />
         {data.map((d, i) => {
@@ -110,7 +110,7 @@ const TopicRadarChart = ({ data }) => {
           const r = maxRadius + 25;
           const x = center + r * Math.cos(angles[i]);
           const y = center + r * Math.sin(angles[i]);
-          return <text key={i} x={x} y={y} fill="#a1a1aa" fontSize="11" textAnchor="middle" dominantBaseline="middle" fontWeight="600" fontFamily="JetBrains Mono">{d.label}</text>
+          return <text key={i} x={x} y={y} fill="var(--text-muted)" fontSize="11" textAnchor="middle" dominantBaseline="middle" fontWeight="600" fontFamily="JetBrains Mono">{d.label}</text>
         })}
       </svg>
     </div>
@@ -123,7 +123,6 @@ export default function Profile() {
   
   const [activeTab, setActiveTab] = useState('battles')
   const [showEditProfile, setShowEditProfile] = useState(false)
-  const [showAppPrefs, setShowAppPrefs] = useState(false) 
   const [profileData, setProfileData] = useState(null)
   const [battles, setBattles] = useState([])
   const [visibleCount, setVisibleCount] = useState(10)
@@ -184,7 +183,6 @@ export default function Profile() {
             localStorage.setItem('user', JSON.stringify(pData.user))
           }
 
-          // 🔥 FIXED: Extract Battles from the Target User's Profile Data directly!
           if (pData.user.matchHistory) {
             setBattles([...pData.user.matchHistory].reverse())
           } else {
@@ -242,8 +240,6 @@ export default function Profile() {
     }
   }
 
-  const handleLogout = () => { localStorage.removeItem('token'); localStorage.removeItem('user'); navigate('/auth') }
-
   const handleShare = () => {
     const tier = getTier(elo)
     navigator.clipboard.writeText(`🏆 ${username} on CodeArena | ${tier.icon} ${tier.name} | Rank #${globalRank} | ELO: ${elo} | ${wins}W-${losses}L`)
@@ -274,7 +270,6 @@ export default function Profile() {
   const followersCount = user?.followers?.length || 0
   const followingCount = user?.following?.length || 0
 
-  // Calculation for individual problem difficulties (Easy/Medium/Hard)
   const diffWins = battles.reduce((acc, b) => {
     if (b.result === 'win') acc[b.difficulty] = (acc[b.difficulty] || 0) + 1
     return acc
@@ -331,7 +326,7 @@ export default function Profile() {
     dynamicMonths.push(monthNames[(todayDate.getMonth() - i + 12) % 12])
   }
 
-  const heatColor = (v) => ['rgba(255,255,255,0.04)', 'rgba(34,197,94,0.3)', 'rgba(34,197,94,0.6)', 'rgba(34,197,94,0.85)', '#22c55e'][v]
+  const heatColor = (v) => ['var(--glass-overlay)', 'rgba(34,197,94,0.3)', 'rgba(34,197,94,0.6)', 'rgba(34,197,94,0.85)', '#22c55e'][v]
 
   const ACHIEVEMENTS = [
     { icon: '🔥', title: 'Hot Streak', desc: '5 wins in a row', unlocked: (user?.stats?.streak||0) >= 5 },
@@ -355,7 +350,7 @@ export default function Profile() {
   ];
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#030305', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 20, fontFamily: 'Inter' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 20, fontFamily: 'Inter' }}>
       <div style={{ width: 48, height: 48, border: '3px solid rgba(255,107,53,0.15)', borderTopColor: '#ff6b35', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
       <div style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Loading profile...</div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -363,7 +358,7 @@ export default function Profile() {
   )
 
   return (
-    <div className="profile-container" style={{ minHeight: '100vh', background: '#0a0a0c', fontFamily: 'Inter, sans-serif', color: '#e5e5e5', position: 'relative' }}>
+    <div className="profile-container" style={{ minHeight: '100vh', background: 'var(--bg)', fontFamily: 'Inter, sans-serif', color: 'var(--text-main)', position: 'relative' }}>
 
       <Helmet>
         <title>{username ? `${username} | CodeArena Profile` : 'Player Profile | CodeArena'}</title>
@@ -375,10 +370,11 @@ export default function Profile() {
         <div className="ambient-glow-2" style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '60vw', height: '60vw', minWidth: '700px', minHeight: '700px', background: 'radial-gradient(circle, rgba(247,69,29,0.15) 0%, transparent 70%)', filter: 'blur(100px)', borderRadius: '50%' }} />
       </div>
 
+      {/* Edit Profile Modal */}
       {showEditProfile && isOwnProfile && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(16px)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: '#13131a', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 20, width: '90%', maxWidth: 540, maxHeight: '90vh', overflowY: 'auto' }}>
-            <div style={{ padding: '22px 28px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'var(--modal-overlay)', backdropFilter: 'blur(16px)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: 'var(--modal-bg)', border: '1px solid var(--glass-border)', borderRadius: 20, width: '90%', maxWidth: 540, maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ padding: '22px 28px', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: 18, color: 'var(--text-main)' }}>Edit Profile</span>
               <button onClick={() => setShowEditProfile(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 20, cursor: 'pointer' }}>✕</button>
             </div>
@@ -386,12 +382,12 @@ export default function Profile() {
               <div>
                 <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 1, display: 'block', marginBottom: 8 }}>USERNAME</label>
                 <input value={username} onChange={e => setUsername(e.target.value)}
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px', fontSize: 14, color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter', boxSizing: 'border-box' }} />
+                  style={{ width: '100%', background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 10, padding: '10px 14px', fontSize: 14, color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter', boxSizing: 'border-box' }} />
               </div>
               <div>
                 <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 1, display: 'block', marginBottom: 8 }}>BIO</label>
                 <textarea value={bio} onChange={e => setBio(e.target.value)} placeholder="Tell the arena about yourself..." rows={3}
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-main)', outline: 'none', resize: 'none', fontFamily: 'Inter', boxSizing: 'border-box' }} />
+                  style={{ width: '100%', background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-main)', outline: 'none', resize: 'none', fontFamily: 'Inter', boxSizing: 'border-box' }} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 {[
@@ -401,7 +397,7 @@ export default function Profile() {
                   <div key={label}>
                     <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 1, display: 'block', marginBottom: 8 }}>{label}</label>
                     <input value={val} onChange={e => set(e.target.value)} placeholder={ph}
-                      style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter', boxSizing: 'border-box' }} />
+                      style={{ width: '100%', background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter', boxSizing: 'border-box' }} />
                   </div>
                 ))}
               </div>
@@ -415,7 +411,7 @@ export default function Profile() {
                   <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
                     <span style={{ fontSize: 14, width: 80, color: 'var(--text-muted)', flexShrink: 0 }}>{emoji} {label}</span>
                     <input value={val} onChange={e => set(e.target.value)} placeholder={ph}
-                      style={{ flex: 1, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter' }} />
+                      style={{ flex: 1, background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter' }} />
                   </div>
                 ))}
               </div>
@@ -426,16 +422,16 @@ export default function Profile() {
                     <button key={l.id} onClick={() => setSelectedLangs(prev => prev.includes(l.id) ? prev.filter(x => x !== l.id) : [...prev, l.id])}
                       style={{
                         padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter',
-                        background: selectedLangs.includes(l.id) ? `${l.color}20` : 'rgba(255,255,255,0.03)',
-                        color: selectedLangs.includes(l.id) ? l.color : '#555',
-                        border: `1px solid ${selectedLangs.includes(l.id) ? l.color + '50' : 'rgba(255,255,255,0.08)'}`,
+                        background: selectedLangs.includes(l.id) ? `${l.color}20` : 'var(--glass-overlay)',
+                        color: selectedLangs.includes(l.id) ? l.color : 'var(--text-muted)',
+                        border: `1px solid ${selectedLangs.includes(l.id) ? l.color + '50' : 'var(--glass-border)'}`,
                         transition: 'all 0.2s'
                       }}>{l.label}</button>
                   ))}
                 </div>
               </div>
               <button onClick={saveProfile} disabled={saving} style={{
-                background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: 'var(--text-main)', border: 'none',
+                background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none',
                 borderRadius: 12, padding: '14px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter', marginTop: 4
               }}>{saving ? '⟳ Saving...' : '✓ Save Changes'}</button>
             </div>
@@ -443,23 +439,21 @@ export default function Profile() {
         </div>
       )}
 
-
-
       {/* NAV */}
-      <nav style={{ height: 64, background: 'rgba(10,10,12,0.75)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', padding: '0 32px', gap: 16, position: 'sticky', top: 0, zIndex: 50 }}>
+      <nav style={{ height: 64, background: 'var(--nav-bg)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', padding: '0 32px', gap: 16, position: 'sticky', top: 0, zIndex: 50, transition: 'background-color 0.3s' }}>
         <span onClick={() => navigate('/')} style={{ fontWeight: 700, fontSize: 18, cursor: 'pointer', letterSpacing: '-0.5px' }}>
           <span style={{ color: '#ff6b35' }}>Code</span><span style={{ color: 'var(--text-main)' }}>Arena</span>
         </span>
         <div style={{ flex: 1 }} />
         <ThemeToggle />
         {[{ label: 'Lobby', path: '/lobby' }, { label: 'Leaderboard', path: '/leaderboard' }].map(({ label, path }) => (
-          <span key={label} onClick={() => navigate(path)} style={{ fontSize: 13, color: '#888', cursor: 'pointer', fontWeight: 500 }}>{label}</span>
+          <span key={label} onClick={() => navigate(path)} style={{ fontSize: 13, color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500 }}>{label}</span>
         ))}
-        <button onClick={handleShare} style={{ background: copied ? 'rgba(34,197,94,0.1)' : 'transparent', border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.08)'}`, color: copied ? '#22c55e' : '#a1a1aa', borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter', transition: 'all 0.2s' }}>
+        <button onClick={handleShare} style={{ background: copied ? 'rgba(34,197,94,0.1)' : 'transparent', border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : 'var(--glass-border)'}`, color: copied ? '#22c55e' : 'var(--text-muted)', borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter', transition: 'all 0.2s' }}>
           {copied ? '✓ Copied!' : '↗ Share'}
         </button>
-        {isOwnProfile && <button onClick={() => navigate('/settings')} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.08)', color: 'var(--text-muted)', borderRadius: 8, padding: '6px 12px', fontSize: 15, cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e=>e.currentTarget.style.color='#fff'} onMouseLeave={e=>e.currentTarget.style.color='#a1a1aa'}>⚙️</button>}
-        <button onClick={() => navigate('/lobby')} style={{ background: '#ff6b35', color: 'var(--text-main)', border: 'none', padding: '6px 18px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter' }}>⚡ Battle</button>
+        {isOwnProfile && <button onClick={() => navigate('/settings')} style={{ background: 'transparent', border: '1px solid var(--glass-border)', color: 'var(--text-muted)', borderRadius: 8, padding: '6px 12px', fontSize: 15, cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e=>e.currentTarget.style.color='var(--text-main)'} onMouseLeave={e=>e.currentTarget.style.color='var(--text-muted)'}>⚙️</button>}
+        <button onClick={() => navigate('/lobby')} style={{ background: '#ff6b35', color: '#fff', border: 'none', padding: '6px 18px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter' }}>⚡ Battle</button>
       </nav>
 
       <div className="profile-main-grid" style={{ width: '100%', maxWidth: '1280px', margin: '0 auto', padding: '40px 24px 80px', display: 'grid', gridTemplateColumns: '280px 1fr', gap: 32, alignItems: 'start', position: 'relative', zIndex: 1 }}>
@@ -467,7 +461,7 @@ export default function Profile() {
         {/* ✅ LEFT SIDEBAR */}
         <div className="profile-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-          <div style={{ background: 'rgba(18, 18, 22, 0.65)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '36px 28px', textAlign: 'center', position: 'relative' }}>
+          <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '36px 28px', textAlign: 'center', position: 'relative' }}>
             <div style={{ position: 'relative', width: 88, height: 88, margin: '0 auto 20px' }}>
               <div style={{
                 width: 88, height: 88, borderRadius: '50%',
@@ -484,7 +478,7 @@ export default function Profile() {
               <span style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: 20, color: 'var(--text-main)' }}>{username}</span>
               {(() => {
                 const plan = profileData?.premiumPlan || storedUser?.premiumPlan || (profileData?.isPremium ? 'pro' : 'free')
-                if (plan === 'pro_plus') return <span style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: 'var(--text-main)', fontSize: 10, fontWeight: 800, padding: '3px 10px', borderRadius: 6, letterSpacing: 0.5 }}>PRO+</span>
+                if (plan === 'pro_plus') return <span style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', fontSize: 10, fontWeight: 800, padding: '3px 10px', borderRadius: 6, letterSpacing: 0.5 }}>PRO+</span>
                 if (plan === 'pro') return <span style={{ background: 'rgba(96,165,250,0.15)', border: '1px solid rgba(96,165,250,0.3)', color: '#60a5fa', fontSize: 10, fontWeight: 800, padding: '3px 10px', borderRadius: 6, letterSpacing: 0.5 }}>PRO</span>
                 return null
               })()}
@@ -496,12 +490,12 @@ export default function Profile() {
             </div>
 
             {/* ✅ REAL Social Stats */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid var(--glass-border)' }}>
                <div style={{ cursor: 'pointer' }}>
                  <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-main)', fontFamily: 'JetBrains Mono' }}>{followersCount}</div>
                  <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600 }}>Followers</div>
                </div>
-               <div style={{ width: 1, background: 'rgba(255,255,255,0.05)' }} />
+               <div style={{ width: 1, background: 'var(--glass-border)' }} />
                <div style={{ cursor: 'pointer' }}>
                  <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-main)', fontFamily: 'JetBrains Mono' }}>{followingCount}</div>
                  <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600 }}>Following</div>
@@ -509,14 +503,14 @@ export default function Profile() {
             </div>
 
             {!editingBio ? (
-              <p onClick={() => isOwnProfile && setEditingBio(true)} style={{ fontSize: 13, color: bio ? '#aaa' : '#555', cursor: isOwnProfile ? 'pointer' : 'default', marginBottom: 16, lineHeight: 1.5 }}>
+              <p onClick={() => isOwnProfile && setEditingBio(true)} style={{ fontSize: 13, color: bio ? 'var(--text-muted)' : 'var(--text-muted)', cursor: isOwnProfile ? 'pointer' : 'default', marginBottom: 16, lineHeight: 1.5 }}>
                 {bio || (isOwnProfile ? '+ Add a bio...' : 'No bio yet.')}
               </p>
             ) : (
               <textarea value={bio} onChange={e => setBio(e.target.value)}
                 onBlur={() => { setEditingBio(false); saveProfile() }}
                 autoFocus rows={2}
-                style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,107,53,0.4)', borderRadius: 8, padding: '8px', fontSize: 13, color: 'var(--text-main)', outline: 'none', resize: 'none', fontFamily: 'Inter', boxSizing: 'border-box', marginBottom: 12 }} />
+                style={{ width: '100%', background: 'var(--glass-overlay)', border: '1px solid rgba(255,107,53,0.4)', borderRadius: 8, padding: '8px', fontSize: 13, color: 'var(--text-main)', outline: 'none', resize: 'none', fontFamily: 'Inter', boxSizing: 'border-box', marginBottom: 12 }} />
             )}
 
             {/* 🔥 DYNAMIC BUTTON (EDIT VS FOLLOW) */}
@@ -525,21 +519,21 @@ export default function Profile() {
                 ✏️ Edit Profile
               </button>
             ) : (
-              <button onClick={handleFollowToggle} style={{ width: '100%', background: isFollowing ? 'transparent' : 'rgba(255,107,53,0.15)', border: `1px solid ${isFollowing ? 'rgba(255,255,255,0.2)' : 'rgba(255,107,53,0.4)'}`, color: isFollowing ? '#aaa' : '#ff6b35', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter', transition: 'all 0.2s' }}>
+              <button onClick={handleFollowToggle} style={{ width: '100%', background: isFollowing ? 'transparent' : 'rgba(255,107,53,0.15)', border: `1px solid ${isFollowing ? 'var(--glass-border)' : 'rgba(255,107,53,0.4)'}`, color: isFollowing ? 'var(--text-muted)' : '#ff6b35', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter', transition: 'all 0.2s' }}>
                 {isFollowing ? 'Unfollow' : 'Follow +'}
               </button>
             )}
           </div>
 
           {/* Info Card */}
-          <div style={{ background: 'rgba(18, 18, 22, 0.65)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '22px 24px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '22px 24px', display: 'flex', flexDirection: 'column', gap: 10 }}>
             {[
               { icon: '🇮🇳', text: 'India' },
               education && { icon: '🎓', text: education },
               company && { icon: '💼', text: company },
               { icon: '📅', text: `Joined ${new Date(user?.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}` },
             ].filter(Boolean).map(({ icon, text }, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#888' }}>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)' }}>
                 <span>{icon}</span><span>{text}</span>
               </div>
             ))}
@@ -551,16 +545,16 @@ export default function Profile() {
                 {website && <a href={`https://${website}`} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}>🌐 <span style={{ color: '#60a5fa' }}>{website}</span></a>}
               </div>
             ) : isOwnProfile && (
-              <button onClick={() => setShowEditProfile(true)} style={{ marginTop: 8, fontSize: 12, color: 'var(--text-muted)', background: 'none', border: '1px dashed rgba(255,255,255,0.08)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontFamily: 'Inter' }}>+ Add social links</button>
+              <button onClick={() => setShowEditProfile(true)} style={{ marginTop: 8, fontSize: 12, color: 'var(--text-muted)', background: 'none', border: '1px dashed var(--glass-border)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontFamily: 'Inter' }}>+ Add social links</button>
             )}
           </div>
 
           {/* Languages Card */}
-          <div style={{ background: 'rgba(18, 18, 22, 0.65)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '22px 24px' }}>
+          <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '22px 24px' }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-main)', marginBottom: 14 }}>Languages</div>
             
             {primaryWeapon && (
-               <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 12, marginBottom: 16 }}>
+               <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 12, marginBottom: 16 }}>
                  <div style={{ fontSize: 20 }}>⚔️</div>
                  <div>
                    <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>Primary Weapon</div>
@@ -589,7 +583,7 @@ export default function Profile() {
                 })}
               </div>
             ) : isOwnProfile && (
-              <button onClick={() => setShowEditProfile(true)} style={{ fontSize: 12, color: 'var(--text-muted)', background: 'none', border: '1px dashed rgba(255,255,255,0.08)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontFamily: 'Inter' }}>+ Add languages</button>
+              <button onClick={() => setShowEditProfile(true)} style={{ fontSize: 12, color: 'var(--text-muted)', background: 'none', border: '1px dashed var(--glass-border)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontFamily: 'Inter' }}>+ Add languages</button>
             )}
           </div>
 
@@ -598,7 +592,7 @@ export default function Profile() {
         {/* ✅ RIGHT MAIN CONTENT */}
         <div className="profile-content" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-          <div style={{ background: 'rgba(18, 18, 22, 0.65)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '28px', display: 'grid', gridTemplateColumns: 'min-content 1fr', gap: 32, alignItems: 'center' }}>
+          <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '28px', display: 'grid', gridTemplateColumns: 'min-content 1fr', gap: 32, alignItems: 'center' }}>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
               <div style={{ position: 'relative', width: 140, height: 140, flexShrink: 0 }}>
@@ -625,7 +619,7 @@ export default function Profile() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {/* ✅ REAL Global Rank */}
-              <div style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${tier.color}40`, borderRadius: 16, padding: '20px 24px', position: 'relative' }}>
+              <div style={{ background: 'var(--glass-overlay)', border: `1px solid ${tier.color}40`, borderRadius: 16, padding: '20px 24px', position: 'relative' }}>
                 
                 <div style={{ position: 'absolute', top: 20, right: 24, textAlign: 'right' }}>
                    <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>Global Rank</div>
@@ -643,7 +637,7 @@ export default function Profile() {
                 {tier.nextElo && (
                   <>
                     <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>{elo} / {tier.nextElo} to next tier</div>
-                    <div style={{ background: 'rgba(255,255,255,0.06)', height: 6, borderRadius: 3, overflow: 'hidden', maxWidth: '60%' }}>
+                    <div style={{ background: 'var(--glass-border)', height: 6, borderRadius: 3, overflow: 'hidden', maxWidth: '60%' }}>
                       <div style={{ height: '100%', background: `linear-gradient(90deg, ${tier.color}, ${tier.color}99)`, width: `${tierProgress}%`, borderRadius: 3, transition: 'width 1s' }} />
                     </div>
                   </>
@@ -657,7 +651,7 @@ export default function Profile() {
                   { label: 'Peak ELO', val: Math.max(peakElo, elo), color: 'var(--text-muted)' },
                   { label: 'Battles', val: total, color: 'var(--text-muted)' },
                 ].map(({ label, val, color }) => (
-                  <div key={label} className="stat-card" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '16px 12px', textAlign: 'center' }}>
+                  <div key={label} className="stat-card" style={{ background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 12, padding: '16px 12px', textAlign: 'center' }}>
                     <div style={{ fontWeight: 600, fontSize: 18, color, marginBottom: 4 }}>{val}</div>
                     <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 500 }}>{label}</div>
                   </div>
@@ -666,7 +660,7 @@ export default function Profile() {
             </div>
           </div>
 
-          <div style={{ background: 'rgba(18, 18, 22, 0.65)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '24px 28px' }}>
+          <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '24px 28px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <span style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: 14 }}>Badges</span>
               <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{ACHIEVEMENTS.filter(a => a.unlocked).length} / {ACHIEVEMENTS.length} unlocked</span>
@@ -676,8 +670,8 @@ export default function Profile() {
                 <div key={title} title={title} style={{
                   width: 52, height: 52, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 24, transition: 'all 0.2s', cursor: 'default',
-                  background: unlocked ? 'rgba(255,107,53,0.1)' : 'rgba(255,255,255,0.03)',
-                  border: `1px solid ${unlocked ? 'rgba(255,107,53,0.3)' : 'rgba(255,255,255,0.06)'}`,
+                  background: unlocked ? 'rgba(255,107,53,0.1)' : 'var(--glass-overlay)',
+                  border: `1px solid ${unlocked ? 'rgba(255,107,53,0.3)' : 'var(--glass-border)'}`,
                   filter: unlocked ? 'none' : 'grayscale(1) opacity(0.3)',
                   boxShadow: unlocked ? '0 0 12px rgba(255,107,53,0.15)' : 'none'
                 }}>
@@ -687,7 +681,7 @@ export default function Profile() {
             </div>
           </div>
 
-          <div style={{ background: 'rgba(18, 18, 22, 0.65)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '28px', overflow: 'hidden' }}>
+          <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '28px', overflow: 'hidden' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 20 }}>🟩</span>
@@ -751,13 +745,13 @@ export default function Profile() {
           </div>
 
           {/* Tabs Navigation */}
-          <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.06)', gap: 16, background: 'transparent', padding: '0 8px' }}>
+          <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)', gap: 16, background: 'transparent', padding: '0 8px' }}>
             {['battles', 'achievements', 'stats'].map(t => (
               <button key={t} onClick={() => { setActiveTab(t); if (t === 'battles') setVisibleCount(10); }} style={{
                 padding: '10px 22px', fontSize: 13, fontWeight: 600, background: 'none', border: 'none',
                 borderBottom: `2px solid ${activeTab === t ? '#ff6b35' : 'transparent'}`,
                 borderRadius: '10px 10px 0 0',
-                color: activeTab === t ? '#ff6b35' : '#555', cursor: 'pointer', textTransform: 'capitalize',
+                color: activeTab === t ? '#ff6b35' : 'var(--text-muted)', cursor: 'pointer', textTransform: 'capitalize',
                 transition: 'all 0.2s', fontFamily: 'Inter',
                 background: activeTab === t ? 'rgba(255,107,53,0.06)' : 'transparent'
               }}>{t}</button>
@@ -766,31 +760,31 @@ export default function Profile() {
 
           {/* BATTLES TAB */}
           {activeTab === 'battles' && (
-            <div style={{ background: 'rgba(18, 18, 22, 0.65)', backdropFilter: 'blur(24px) saturate(150%)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: '0 0 24px 24px', overflow: 'hidden', boxShadow: '0 20px 48px rgba(0,0,0,0.5)' }}>
+            <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px) saturate(150%)', border: '1px solid var(--glass-border)', borderRadius: '0 0 24px 24px', overflow: 'hidden', boxShadow: '0 20px 48px rgba(0,0,0,0.5)' }}>
               {/* Count bar */}
               {battles.length > 0 && (
-                <div style={{ padding: '10px 24px', background: 'rgba(255,107,53,0.04)', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ padding: '10px 24px', background: 'rgba(255,107,53,0.04)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                     Showing <span style={{ color: '#ff6b35', fontWeight: 700 }}>{Math.min(visibleCount, battles.length)}</span> of <span style={{ color: 'var(--text-muted)', fontWeight: 700 }}>{battles.length}</span> battles
                   </span>
                   {battles.length > 10 && visibleCount >= battles.length && (
-                    <span style={{ fontSize: 11, color: '#333' }}>All loaded ✓</span>
+                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>All loaded ✓</span>
                   )}
                 </div>
               )}
-              <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 90px 70px 90px', padding: '14px 24px', background: 'rgba(0,0,0,0.4)', fontSize: 10, fontWeight: 800, color: 'rgba(100,116,139,0.8)', letterSpacing: 2 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 90px 70px 90px', padding: '14px 24px', background: 'var(--glass-overlay-heavy)', fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', letterSpacing: 2 }}>
                 {['RESULT', 'PROBLEM', 'OPPONENT', 'DIFF', 'TIME', 'DATE'].map(h => <div key={h}>{h}</div>)}
               </div>
               {battles.length === 0 ? (
                 <div style={{ padding: '80px', textAlign: 'center', color: 'var(--text-muted)' }}>
                   <div style={{ fontSize: 48, marginBottom: 16 }}>⚔️</div>
-                  <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8, color: '#888' }}>No battles yet!</div>
+                  <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8, color: 'var(--text-muted)' }}>No battles yet!</div>
                   <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>Enter the arena and start your coding combat journey</div>
-                  {isOwnProfile && <button onClick={() => navigate('/lobby')} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: 'var(--text-main)', border: 'none', borderRadius: 12, padding: '12px 28px', cursor: 'pointer', fontWeight: 700, fontFamily: 'Inter', fontSize: 14, boxShadow: '0 8px 24px rgba(255,107,53,0.3)', transition: 'all 0.3s' }}>⚡ Enter Arena</button>}
+                  {isOwnProfile && <button onClick={() => navigate('/lobby')} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 28px', cursor: 'pointer', fontWeight: 700, fontFamily: 'Inter', fontSize: 14, boxShadow: '0 8px 24px rgba(255,107,53,0.3)', transition: 'all 0.3s' }}>⚡ Enter Arena</button>}
                 </div>
               ) : battles.slice(0, visibleCount).map((b, i) => (
-                <div key={i} style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 90px 70px 90px', padding: '16px 24px', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.03)', transition: 'all 0.2s' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.025)'; e.currentTarget.style.paddingLeft = '28px'; }}
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 90px 70px 90px', padding: '16px 24px', alignItems: 'center', borderTop: '1px solid var(--glass-border)', transition: 'all 0.2s' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--glass-overlay)'; e.currentTarget.style.paddingLeft = '28px'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.paddingLeft = '24px'; }}>
                   <div>
                     <span style={{ fontSize: 10, fontWeight: 800, padding: '4px 10px', borderRadius: 20, background: b.result === 'win' ? 'rgba(34,197,94,0.1)' : b.result === 'draw' ? 'rgba(251,191,36,0.1)' : 'rgba(239,68,68,0.1)', color: b.result === 'win' ? '#22c55e' : b.result === 'draw' ? '#fbbf24' : '#ef4444', border: `1px solid ${b.result === 'win' ? 'rgba(34,197,94,0.25)' : b.result === 'draw' ? 'rgba(251,191,36,0.25)' : 'rgba(239,68,68,0.25)'}`, letterSpacing: 0.5 }}>
@@ -805,7 +799,7 @@ export default function Profile() {
                       }}
                       style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-main)', marginBottom: 3, cursor: 'pointer', transition: 'color 0.2s' }}
                       onMouseEnter={e => { e.currentTarget.style.color = '#ff6b35'; e.currentTarget.style.textDecoration = 'underline'; }}
-                      onMouseLeave={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.textDecoration = 'none'; }}
+                      onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-main)'; e.currentTarget.style.textDecoration = 'none'; }}
                       title="View this problem in Practice Mode"
                     >
                       {b.problem || 'Unknown'} ↗
@@ -815,10 +809,10 @@ export default function Profile() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 26, height: 26, borderRadius: '50%', background: 'linear-gradient(135deg, #334155, #0f172a)', border: '1px solid rgba(71,85,105,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 800, color: 'var(--text-main)' }}>
+                    <div style={{ width: 26, height: 26, borderRadius: '50%', background: 'var(--avatar-bg)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 800, color: 'var(--text-main)' }}>
                       {(b.opponent || 'OP').slice(0, 2).toUpperCase()}
                     </div>
-                    <span onClick={() => navigate(`/profile/${b.opponent}`)} style={{ fontSize: 12, color: '#888', cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.color='#fff'} onMouseLeave={e => e.currentTarget.style.color='#888'}>{b.opponent || 'Unknown'}</span>
+                    <span onClick={() => navigate(`/profile/${b.opponent}`)} style={{ fontSize: 12, color: 'var(--text-muted)', cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.color='var(--text-main)'} onMouseLeave={e => e.currentTarget.style.color='var(--text-muted)'}>{b.opponent || 'Unknown'}</span>
                   </div>
                   <div>
                     <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20, background: diffColor[b.difficulty]?.bg, color: diffColor[b.difficulty]?.color, border: `1px solid ${diffColor[b.difficulty]?.color}30` }}>
@@ -832,7 +826,7 @@ export default function Profile() {
 
               {/* Load More button */}
               {battles.length > visibleCount && (
-                <div style={{ padding: '20px 24px', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+                <div style={{ padding: '20px 24px', borderTop: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
                   <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Showing {Math.min(visibleCount, battles.length)} of {battles.length} battles</span>
                   <button
                     onClick={() => setVisibleCount(c => c + 10)}
@@ -845,7 +839,7 @@ export default function Profile() {
                 </div>
               )}
               {battles.length > 0 && battles.length <= visibleCount && battles.length > 10 && (
-                <div style={{ padding: '16px 24px', borderTop: '1px solid rgba(255,255,255,0.04)', textAlign: 'center', fontSize: 12, color: '#333' }}>
+                <div style={{ padding: '16px 24px', borderTop: '1px solid var(--glass-border)', textAlign: 'center', fontSize: 12, color: 'var(--text-muted)' }}>
                   All {battles.length} battles loaded ✓
                 </div>
               )}
@@ -857,18 +851,18 @@ export default function Profile() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
               {ACHIEVEMENTS.map(({ icon, title, desc, unlocked }) => (
                 <div key={title} style={{
-                  background: unlocked ? 'rgba(255,107,53,0.06)' : 'rgba(18, 18, 22, 0.65)',
+                  background: unlocked ? 'rgba(255,107,53,0.06)' : 'var(--panel-bg)',
                   backdropFilter: 'blur(20px)',
-                  border: `1px solid ${unlocked ? 'rgba(255,107,53,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                  border: `1px solid ${unlocked ? 'rgba(255,107,53,0.3)' : 'var(--glass-border)'}`,
                   borderRadius: 20, padding: '24px', transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                   opacity: unlocked ? 1 : 0.45, filter: unlocked ? 'none' : 'grayscale(0.8)',
-                  boxShadow: unlocked ? '0 0 30px rgba(255,107,53,0.08), 0 12px 32px rgba(0,0,0,0.4)' : '0 8px 24px rgba(0,0,0,0.3)',
+                  boxShadow: unlocked ? '0 0 30px rgba(255,107,53,0.08), 0 12px 32px rgba(0,0,0,0.2)' : '0 8px 24px rgba(0,0,0,0.1)',
                   position: 'relative', overflow: 'hidden', cursor: 'default'
                 }}
-                onMouseEnter={e => unlocked && (e.currentTarget.style.transform = 'translateY(-4px)', e.currentTarget.style.boxShadow = '0 0 40px rgba(255,107,53,0.15), 0 20px 40px rgba(0,0,0,0.5)')}
-                onMouseLeave={e => (e.currentTarget.style.transform = '', e.currentTarget.style.boxShadow = unlocked ? '0 0 30px rgba(255,107,53,0.08), 0 12px 32px rgba(0,0,0,0.4)' : '0 8px 24px rgba(0,0,0,0.3)')}>
+                onMouseEnter={e => unlocked && (e.currentTarget.style.transform = 'translateY(-4px)', e.currentTarget.style.boxShadow = '0 0 40px rgba(255,107,53,0.15), 0 20px 40px rgba(0,0,0,0.3)')}
+                onMouseLeave={e => (e.currentTarget.style.transform = '', e.currentTarget.style.boxShadow = unlocked ? '0 0 30px rgba(255,107,53,0.08), 0 12px 32px rgba(0,0,0,0.2)' : '0 8px 24px rgba(0,0,0,0.1)')}>
                   {unlocked && <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '50%', height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,107,53,0.6), transparent)' }} />}
-                  <div style={{ width: 52, height: 52, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, marginBottom: 14, background: unlocked ? 'rgba(255,107,53,0.12)' : 'rgba(255,255,255,0.03)', border: `1px solid ${unlocked ? 'rgba(255,107,53,0.25)' : 'rgba(255,255,255,0.05)'}`, boxShadow: unlocked ? '0 8px 20px rgba(0,0,0,0.3)' : 'none' }}>
+                  <div style={{ width: 52, height: 52, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, marginBottom: 14, background: unlocked ? 'rgba(255,107,53,0.12)' : 'var(--glass-overlay)', border: `1px solid ${unlocked ? 'rgba(255,107,53,0.25)' : 'var(--glass-border)'}`, boxShadow: unlocked ? '0 8px 20px rgba(0,0,0,0.2)' : 'none' }}>
                     {unlocked ? icon : '🔒'}
                   </div>
                   <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-main)', marginBottom: 4 }}>{title}</div>
@@ -883,14 +877,14 @@ export default function Profile() {
           {activeTab === 'stats' && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               
-              <div style={{ background: 'rgba(18, 18, 22, 0.65)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 24, padding: '24px 28px', gridColumn: '1 / -1', boxShadow: '0 20px 48px rgba(0,0,0,0.5)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '24px 28px', gridColumn: '1 / -1', boxShadow: '0 20px 48px rgba(0,0,0,0.2)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '30%', height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,107,53,0.4), transparent)' }} />
                 <div style={{ fontWeight: 800, color: 'var(--text-main)', marginBottom: 10, fontSize: 13, letterSpacing: 1, textTransform: 'uppercase' }}>Topic Mastery</div>
                 <TopicRadarChart data={masteryData} />
               </div>
 
-              <div style={{ background: 'rgba(18, 18, 22, 0.65)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 24, padding: '24px 28px', boxShadow: '0 20px 48px rgba(0,0,0,0.5)', position: 'relative', overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '40%', height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)' }} />
+              <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '24px 28px', boxShadow: '0 20px 48px rgba(0,0,0,0.2)', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '40%', height: 1, background: 'linear-gradient(90deg, transparent, var(--glass-border-strong), transparent)' }} />
                 <div style={{ fontWeight: 800, color: 'var(--text-main)', marginBottom: 20, fontSize: 13, letterSpacing: 1, textTransform: 'uppercase' }}>Performance</div>
                 {[
                   { label: 'Wins', val: wins, total: total || 1, color: '#22c55e' },
@@ -904,15 +898,15 @@ export default function Profile() {
                       <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>{label}</span>
                       <span style={{ color, fontWeight: 800, fontFamily: 'JetBrains Mono' }}>{val}</span>
                     </div>
-                    <div style={{ background: 'rgba(255,255,255,0.04)', height: 5, borderRadius: 10, overflow: 'hidden' }}>
+                    <div style={{ background: 'var(--glass-overlay)', height: 5, borderRadius: 10, overflow: 'hidden' }}>
                       <div style={{ height: '100%', background: `linear-gradient(90deg, ${color}80, ${color})`, width: `${(val/total)*100}%`, borderRadius: 10, transition: 'width 1.2s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: `0 0 8px ${color}40` }} />
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div style={{ background: 'rgba(18, 18, 22, 0.65)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 24, padding: '24px 28px', boxShadow: '0 20px 48px rgba(0,0,0,0.5)', position: 'relative', overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '40%', height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)' }} />
+              <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '24px 28px', boxShadow: '0 20px 48px rgba(0,0,0,0.2)', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '40%', height: 1, background: 'linear-gradient(90deg, transparent, var(--glass-border-strong), transparent)' }} />
                 <div style={{ fontWeight: 800, color: 'var(--text-main)', marginBottom: 20, fontSize: 13, letterSpacing: 1, textTransform: 'uppercase' }}>Account</div>
                 {[
                   { label: 'Username', val: username },
@@ -924,14 +918,14 @@ export default function Profile() {
                   { label: 'Win Rate', val: `${winRate}%` },
                   { label: 'Joined', val: new Date(user?.createdAt || Date.now()).toLocaleDateString() },
                 ].map(({ label, val }) => (
-                  <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '11px 0', borderBottom: '1px solid rgba(255,255,255,0.035)', fontSize: 13 }}>
+                  <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '11px 0', borderBottom: '1px solid var(--glass-border)', fontSize: 13 }}>
                     <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>{label}</span>
-                    <span style={{ color: '#e5e5e5', fontWeight: 600, fontFamily: label === 'Current ELO' || label === 'Peak ELO' || label === 'Win Rate' ? 'JetBrains Mono, monospace' : 'inherit' }}>{val}</span>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 600, fontFamily: label === 'Current ELO' || label === 'Peak ELO' || label === 'Win Rate' ? 'JetBrains Mono, monospace' : 'inherit' }}>{val}</span>
                   </div>
                 ))}
               </div>
 
-              <div style={{ background: 'rgba(18, 18, 22, 0.65)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 24, padding: '24px 28px', gridColumn: '1 / -1', boxShadow: '0 20px 48px rgba(0,0,0,0.5)', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '24px 28px', gridColumn: '1 / -1', boxShadow: '0 20px 48px rgba(0,0,0,0.2)', position: 'relative', overflow: 'hidden' }}>
                 <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '30%', height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,107,53,0.4), transparent)' }} />
                 <div style={{ fontWeight: 800, color: 'var(--text-main)', marginBottom: 20, fontSize: 13, letterSpacing: 1, textTransform: 'uppercase' }}>ELO History</div>
                 {battles.length > 0 ? (
@@ -943,7 +937,7 @@ export default function Profile() {
                         const isLast = i === Math.min(battles.length, 20) - 1
                         return (
                           <div key={i} title={`${eloVal} ELO`} style={{ flex: 1, display: 'flex', alignItems: 'flex-end', height: '100%' }}>
-                            <div style={{ width: '100%', height: `${pct}%`, minHeight: 4, borderRadius: '4px 4px 0 0', background: isLast ? 'linear-gradient(to top, #ff6b35, #fbbf24)' : 'rgba(255,255,255,0.08)', transition: 'all 0.3s', boxShadow: isLast ? '0 0 12px rgba(255,107,53,0.4)' : 'none' }} />
+                            <div style={{ width: '100%', height: `${pct}%`, minHeight: 4, borderRadius: '4px 4px 0 0', background: isLast ? 'linear-gradient(to top, #ff6b35, #fbbf24)' : 'var(--glass-border-strong)', transition: 'all 0.3s', boxShadow: isLast ? '0 0 12px rgba(255,107,53,0.4)' : 'none' }} />
                           </div>
                         )
                       })}
@@ -965,6 +959,44 @@ export default function Profile() {
       </div>
       
       <style>{`
+        :root {
+          /* Dark Mode Defaults */
+          --bg: #0a0a0c;
+          --nav-bg: rgba(10,10,12,0.75);
+          --panel-bg: rgba(18, 18, 22, 0.65);
+          --card-bg: rgba(255, 255, 255, 0.02);
+          --modal-overlay: rgba(0,0,0,0.9);
+          --modal-bg: #13131a;
+          
+          --glass-border: rgba(255,255,255,0.06);
+          --glass-border-strong: rgba(255,255,255,0.1);
+          --glass-overlay: rgba(255,255,255,0.03);
+          --glass-overlay-heavy: rgba(0,0,0,0.4);
+          --avatar-bg: linear-gradient(135deg, #334155, #0f172a);
+          
+          --text-main: #e5e5e5;
+          --text-muted: #888;
+        }
+
+        /* 🔥 Light Mode Overrides */
+        :root[data-theme='light'], .light, body.light {
+          --bg: #f3f4f6;
+          --nav-bg: rgba(255,255,255,0.8);
+          --panel-bg: rgba(255, 255, 255, 0.85);
+          --card-bg: rgba(0, 0, 0, 0.02);
+          --modal-overlay: rgba(255,255,255,0.85);
+          --modal-bg: #f8fafc;
+
+          --glass-border: rgba(0,0,0,0.08);
+          --glass-border-strong: rgba(0,0,0,0.15);
+          --glass-overlay: rgba(0,0,0,0.03);
+          --glass-overlay-heavy: rgba(0,0,0,0.04);
+          --avatar-bg: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+
+          --text-main: #111827;
+          --text-muted: #6b7280;
+        }
+
         @keyframes pulseGlow {
           0% { transform: scale(1) translate(0, 0); opacity: 0.6; }
           50% { transform: scale(1.1) translate(-20px, 20px); opacity: 0.9; }
@@ -981,26 +1013,25 @@ export default function Profile() {
           transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
         .profile-sidebar > div:hover {
-          border-color: rgba(255, 255, 255, 0.1) !important;
-          background: rgba(22, 22, 26, 0.75) !important;
+          border-color: var(--glass-border-strong) !important;
         }
 
         .profile-content > div {
           transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
         .profile-content > div:hover {
-          border-color: rgba(255, 255, 255, 0.1) !important;
+          border-color: var(--glass-border-strong) !important;
         }
 
         .stat-card {
           transition: all 0.2s !important;
         }
         .stat-card:hover {
-          background: rgba(255,255,255,0.04) !important;
-          border-color: rgba(255,255,255,0.1) !important;
+          background: var(--glass-overlay) !important;
+          border-color: var(--glass-border-strong) !important;
         }
 
-        .profile-container [style*="borderBottom: '1px solid rgba(255,255,255"] {
+        .profile-container [style*="borderBottom: '1px solid var(--glass-border)"] {
           transition: background 0.2s ease;
         }
 

@@ -19,10 +19,11 @@ const RANK_META = {
 
 const StatCard = ({ label, value, sub, color = '#a855f7', icon }) => (
   <div style={{
-    background: 'var(--card-bg)', border: `1px solid ${color}22`,
+    background: 'var(--card-bg)', border: `1px solid ${color}33`,
     borderRadius: 16, padding: '20px 22px',
     display: 'flex', flexDirection: 'column', gap: 6,
-    boxShadow: `0 4px 24px ${color}11`
+    boxShadow: `0 4px 24px ${color}11`,
+    transition: 'background-color 0.3s'
   }}>
     <div style={{ fontSize: 22, marginBottom: 2 }}>{icon}</div>
     <div style={{ fontSize: 28, fontWeight: 900, color, fontFamily: 'Outfit', lineHeight: 1 }}>{value}</div>
@@ -40,7 +41,7 @@ const SectionTitle = ({ children }) => (
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
-    <div style={{ background: '#1a1a24', border: '1px solid rgba(168,85,247,0.3)', borderRadius: 10, padding: '10px 14px', fontSize: 12 }}>
+    <div style={{ background: 'var(--card-bg)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: 10, padding: '10px 14px', fontSize: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
       <div style={{ color: 'var(--text-muted)', marginBottom: 6 }}>{label}</div>
       {payload.map((p, i) => (
         <div key={i} style={{ color: p.color, fontWeight: 700 }}>{p.name}: {p.value}</div>
@@ -68,7 +69,7 @@ export default function PremiumDashboard() {
   }, [])
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
       <div style={{ width: 44, height: 44, border: '3px solid rgba(168,85,247,0.2)', borderTopColor: '#a855f7', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
       <div style={{ color: 'var(--text-muted)', fontSize: 14, fontFamily: 'Inter' }}>Loading your dashboard...</div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -76,26 +77,26 @@ export default function PremiumDashboard() {
   )
 
   if (error) return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444', fontFamily: 'Inter' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444', fontFamily: 'Inter' }}>
       {error}
     </div>
   )
 
   const { stats, weeklyData, difficultyMap, eloHistory, recentMatches } = data
-  const rank       = RANK_META[stats.rank] || RANK_META['Bronze']
-  const diffData   = [
+  const rank      = RANK_META[stats.rank] || RANK_META['Bronze']
+  const diffData  = [
     { name: 'Easy',   value: difficultyMap.Easy,   color: '#22c55e' },
     { name: 'Medium', value: difficultyMap.Medium, color: '#fbbf24' },
     { name: 'Hard',   value: difficultyMap.Hard,   color: '#ef4444' },
   ]
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-dark)', fontFamily: 'Inter, sans-serif', color: 'var(--text-main)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', fontFamily: 'Inter, sans-serif', color: 'var(--text-main)', transition: 'background-color 0.3s ease' }}>
 
       {/* Header */}
-      <div style={{ background: 'linear-gradient(135deg, rgba(168,85,247,0.08), rgba(15,15,20,0.98))', borderBottom: '1px solid rgba(168,85,247,0.12)', padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ background: 'var(--nav-bg)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--glass-border)', padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 50, transition: 'background-color 0.3s ease' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <button onClick={() => navigate('/lobby')} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: 'var(--text-muted)', borderRadius: 8, padding: '6px 12px', fontSize: 12, cursor: 'pointer' }}>← Back</button>
+          <button onClick={() => navigate('/lobby')} style={{ background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', color: 'var(--text-muted)', borderRadius: 8, padding: '6px 12px', fontSize: 12, cursor: 'pointer', transition: 'all 0.2s' }}>← Back</button>
           <div>
             <div style={{ fontSize: 20, fontWeight: 900, fontFamily: 'Outfit' }}>
               <span style={{ color: '#a855f7' }}>Premium</span> Dashboard
@@ -109,7 +110,7 @@ export default function PremiumDashboard() {
           <span style={{ fontSize: 20 }}>{rank.icon}</span>
           <div>
             <div style={{ fontSize: 15, fontWeight: 900, color: rank.color, fontFamily: 'Outfit' }}>{stats.rank}</div>
-            <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{stats.elo} ELO</div>
+            <div style={{ fontSize: 10, color: 'var(--text-main)' }}>{stats.elo} ELO</div>
           </div>
           </div>
         </div>
@@ -120,7 +121,7 @@ export default function PremiumDashboard() {
 
         {/* ── Row 1: Stat Cards ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, marginBottom: 32 }}>
-          <StatCard icon="⚡" label="Current ELO"    value={stats.elo}          sub={`Peak: ${stats.peakElo}`}        color="#a855f7" />
+          <StatCard icon="⚡" label="Current ELO"    value={stats.elo}         sub={`Peak: ${stats.peakElo}`}        color="#a855f7" />
           <StatCard icon="🏆" label="Total Wins"     value={stats.wins}         sub={`${stats.winRate}% win rate`}    color="#22c55e" />
           <StatCard icon="💀" label="Losses"         value={stats.losses}       sub={`${stats.totalBattles} battles`} color="#ef4444" />
           <StatCard icon="🔥" label="Win Streak"     value={stats.streak}       sub={`Best: ${stats.maxStreak}`}      color="#f97316" />
@@ -131,16 +132,16 @@ export default function PremiumDashboard() {
         {/* ── Row 2: Weekly Bar + ELO Line ── */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 24 }}>
           {/* Weekly Performance */}
-          <div style={{ background: 'var(--card-bg)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 20, padding: '24px' }}>
+          <div style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 20, padding: '24px', transition: 'all 0.3s' }}>
             <SectionTitle>📅 Weekly Performance</SectionTitle>
             {weeklyData.every(d => d.wins === 0 && d.losses === 0) ? (
-              <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', fontSize: 13 }}>No battles this week — go fight! ⚔️</div>
+              <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 13 }}>No battles this week — go fight! ⚔️</div>
             ) : (
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={weeklyData} barGap={4}>
-                  <XAxis dataKey="day" tick={{ fill: '#555', fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <XAxis dataKey="day" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
                   <YAxis hide />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip content={<CustomTooltip />} cursor={{fill: 'var(--glass-overlay)'}} />
                   <Bar dataKey="wins"   name="Wins"   fill="#22c55e" radius={[4,4,0,0]} />
                   <Bar dataKey="losses" name="Losses" fill="#ef4444" radius={[4,4,0,0]} />
                 </BarChart>
@@ -149,10 +150,10 @@ export default function PremiumDashboard() {
           </div>
 
           {/* ELO History */}
-          <div style={{ background: 'var(--card-bg)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 20, padding: '24px' }}>
+          <div style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 20, padding: '24px', transition: 'all 0.3s' }}>
             <SectionTitle>📈 ELO History (30 days)</SectionTitle>
             {eloHistory.length < 2 ? (
-              <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', fontSize: 13 }}>Play more battles to see your ELO trend!</div>
+              <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 13 }}>Play more battles to see your ELO trend!</div>
             ) : (
               <ResponsiveContainer width="100%" height={200}>
                 <AreaChart data={eloHistory}>
@@ -162,7 +163,7 @@ export default function PremiumDashboard() {
                       <stop offset="95%" stopColor="#a855f7" stopOpacity={0}   />
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="date" tick={{ fill: '#555', fontSize: 10 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+                  <XAxis dataKey="date" tick={{ fill: 'var(--text-muted)', fontSize: 10 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
                   <YAxis hide domain={['auto', 'auto']} />
                   <Tooltip content={<CustomTooltip />} />
                   <Area type="monotone" dataKey="elo" name="ELO" stroke="#a855f7" strokeWidth={2} fill="url(#eloGrad)" dot={false} />
@@ -172,20 +173,20 @@ export default function PremiumDashboard() {
           </div>
         </div>
 
-        {/* ── Row 3: Difficulty Pie + Streak Card + Recent Matches ── */}
+        {/* ── Row 3: Difficulty Pie + Recent Matches ── */}
         <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 20, marginBottom: 24 }}>
           {/* Difficulty Pie */}
-          <div style={{ background: 'var(--card-bg)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 20, padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 20, padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s' }}>
             <SectionTitle>🎯 Difficulty Mix</SectionTitle>
             {diffData.every(d => d.value === 0) ? (
-              <div style={{ height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', fontSize: 12 }}>No data yet</div>
+              <div style={{ height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 12 }}>No data yet</div>
             ) : (
               <ResponsiveContainer width="100%" height={140}>
                 <PieChart>
-                  <Pie data={diffData} cx="50%" cy="50%" innerRadius={40} outerRadius={60} dataKey="value" paddingAngle={3}>
+                  <Pie data={diffData} cx="50%" cy="50%" innerRadius={40} outerRadius={60} dataKey="value" paddingAngle={3} stroke="none">
                     {diffData.map((d, i) => <Cell key={i} fill={d.color} />)}
                   </Pie>
-                  <Tooltip contentStyle={{ background: '#1a1a24', border: '1px solid #333', borderRadius: 8, fontSize: 12 }} />
+                  <Tooltip contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 8, fontSize: 12, color: 'var(--text-main)' }} itemStyle={{color: 'var(--text-main)'}} />
                 </PieChart>
               </ResponsiveContainer>
             )}
@@ -194,7 +195,7 @@ export default function PremiumDashboard() {
                 <div key={d.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <div style={{ width: 8, height: 8, borderRadius: '50%', background: d.color }} />
-                    <span style={{ color: '#888' }}>{d.name}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>{d.name}</span>
                   </div>
                   <span style={{ color: d.color, fontWeight: 700 }}>{d.value}</span>
                 </div>
@@ -203,10 +204,10 @@ export default function PremiumDashboard() {
           </div>
 
           {/* Recent Matches */}
-          <div style={{ background: 'var(--card-bg)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 20, padding: '24px' }}>
+          <div style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 20, padding: '24px', transition: 'all 0.3s' }}>
             <SectionTitle>⚔️ Recent Battles</SectionTitle>
             {recentMatches.length === 0 ? (
-              <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', fontSize: 13 }}>No battles yet — start fighting!</div>
+              <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 13 }}>No battles yet — start fighting!</div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {recentMatches.map((m, i) => (
@@ -218,7 +219,7 @@ export default function PremiumDashboard() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       <span style={{ fontSize: 18 }}>{m.result === 'win' ? '🏆' : '💀'}</span>
                       <div>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: '#ddd' }}>{m.problem || 'Unknown Problem'}</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-main)' }}>{m.problem || 'Unknown Problem'}</div>
                         <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>vs {m.opponent} • {m.date}</div>
                       </div>
                     </div>
@@ -240,13 +241,13 @@ export default function PremiumDashboard() {
         </div>
 
         {/* ── Row 4: Streak Heatmap ── */}
-        <div style={{ background: 'var(--card-bg)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 20, padding: '24px', marginBottom: 24 }}>
+        <div style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 20, padding: '24px', marginBottom: 24, transition: 'all 0.3s' }}>
           <SectionTitle>🔥 Activity Heatmap (Last 28 days)</SectionTitle>
           <ActivityHeatmap matchHistory={data.recentMatches} />
         </div>
 
         {/* ── Row 5: MAANG Readiness ── */}
-        <div style={{ background: 'linear-gradient(135deg, rgba(168,85,247,0.06), rgba(10,10,15,0.98))', border: '1px solid rgba(168,85,247,0.2)', borderRadius: 20, padding: '28px' }}>
+        <div style={{ background: 'var(--card-bg)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: 20, padding: '28px', transition: 'all 0.3s' }}>
           <SectionTitle>🏢 MAANG Readiness Score</SectionTitle>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16 }}>
             {[
@@ -256,12 +257,12 @@ export default function PremiumDashboard() {
               { company: 'Meta',      score: Math.min(100, Math.round(stats.winRate * 0.65 + stats.maxStreak * 3)),    color: '#0866ff', emoji: '🔹' },
               { company: 'Apple',     score: Math.min(100, Math.round(stats.winRate * 0.55 + stats.solvedCount * 0.9)), color: '#888', emoji: '🍎' },
             ].map(({ company, score, color, emoji }) => (
-              <div key={company} style={{ background: 'rgba(0,0,0,0.3)', borderRadius: 14, padding: '16px' }}>
+              <div key={company} style={{ background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 14, padding: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                   <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 600 }}>{emoji} {company}</span>
                   <span style={{ fontSize: 16, fontWeight: 900, color, fontFamily: 'Outfit' }}>{score}%</span>
                 </div>
-                <div style={{ height: 6, background: 'rgba(255,255,255,0.05)', borderRadius: 3, overflow: 'hidden' }}>
+                <div style={{ height: 6, background: 'var(--glass-overlay)', borderRadius: 3, overflow: 'hidden' }}>
                   <div style={{ height: '100%', width: `${score}%`, background: `linear-gradient(90deg, ${color}88, ${color})`, borderRadius: 3, transition: 'width 1s ease' }} />
                 </div>
               </div>
@@ -271,9 +272,29 @@ export default function PremiumDashboard() {
 
       </div>
 
+      {/* Global CSS Variables for Day/Night Theme */}
       <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        :root {
+          /* Dark Mode Defaults */
+          --bg: #0a0a0c;
+          --nav-bg: rgba(10,10,12,0.75);
+          --card-bg: rgba(18, 18, 22, 0.65);
+          --glass-border: rgba(255,255,255,0.06);
+          --glass-overlay: rgba(255,255,255,0.03);
+          --text-main: #e5e5e5;
+          --text-muted: #888;
+        }
+
+        /* 🔥 Light Mode Overrides */
+        :root[data-theme='light'], .light, body.light {
+          --bg: #f3f4f6;
+          --nav-bg: rgba(255, 255, 255, 0.85);
+          --card-bg: #ffffff;
+          --glass-border: rgba(0, 0, 0, 0.08);
+          --glass-overlay: rgba(0, 0, 0, 0.04);
+          --text-main: #111827;
+          --text-muted: #6b7280;
+        }
       `}</style>
     </div>
   )
@@ -281,15 +302,12 @@ export default function PremiumDashboard() {
 
 // Simple Activity Heatmap (last 28 days grid)
 function ActivityHeatmap({ matchHistory }) {
-  // Build a map of date → battle count (use all match history from stats)
-  const user = JSON.parse(localStorage.getItem('user') || '{}')
   const days = []
   for (let d = 27; d >= 0; d--) {
     const date = new Date()
     date.setDate(date.getDate() - d)
     days.push(date.toDateString())
   }
-  // We don't have full history here, use recentMatches as approximation
   const actMap = {}
   ;(matchHistory || []).forEach(m => {
     const k = new Date(m.date || Date.now()).toDateString()
@@ -303,8 +321,8 @@ function ActivityHeatmap({ matchHistory }) {
         return (
           <div key={i} title={`${day}: ${count} battle${count !== 1 ? 's' : ''}`} style={{
             width: 24, height: 24, borderRadius: 5,
-            background: count === 0 ? 'rgba(255,255,255,0.04)' : `rgba(168,85,247,${intensity})`,
-            border: '1px solid rgba(255,255,255,0.04)', cursor: 'default', transition: 'transform 0.1s'
+            background: count === 0 ? 'var(--glass-overlay)' : `rgba(168,85,247,${intensity})`,
+            border: '1px solid var(--glass-border)', cursor: 'default', transition: 'transform 0.1s'
           }} />
         )
       })}

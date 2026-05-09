@@ -246,7 +246,7 @@ export default function Leaderboard() {
                 <div className="callout-left">
                   <div className="callout-avatar pulse-anim">{currentUser.username.slice(0,1).toUpperCase()}</div>
                   <div>
-                    <div className="callout-title">Your current rank: <span className="text-white">#{myRank}</span></div>
+                    <div className="callout-title">Your current rank: <span className="text-main font-bold">#{myRank}</span></div>
                     <div className="callout-desc">Keep battling to climb the Global Leaderboard and reach #1!</div>
                   </div>
                 </div>
@@ -261,29 +261,52 @@ export default function Leaderboard() {
 
       <style>{`
         :root {
-          --bg-dark: #030305; 
-          --panel-bg: rgba(12, 12, 18, 0.7); 
+          /* Dark Mode Defaults */
+          --bg: #030305; 
+          --nav-bg: rgba(3, 3, 5, 0.6); 
+          --card-bg: #111113;
+          --panel-bg: rgba(10, 10, 15, 0.6); 
           --glass-border: rgba(255, 255, 255, 0.06);
+          --glass-overlay: rgba(255, 255, 255, 0.04);
+          --grid-line: rgba(255, 107, 53, 0.03);
+          
+          --text-main: #f8fafc; 
+          --text-muted: #64748b;
+
+          /* Colors */
           --orange: #ff6b35; --purple: #a855f7; --green: #10b981; --red: #ef4444;
           --gold: #fbbf24; --silver: #9ca3af; --bronze: #d97706;
-          --text-main: #f8fafc; --text-muted: #64748b;
+        }
+
+        /* 🔥 Light Mode Overrides */
+        :root[data-theme='light'], .light, body.light {
+          --bg: #f3f4f6;
+          --nav-bg: rgba(255, 255, 255, 0.8);
+          --card-bg: #ffffff;
+          --panel-bg: rgba(255, 255, 255, 0.9);
+          --glass-border: rgba(0, 0, 0, 0.1);
+          --glass-overlay: rgba(0, 0, 0, 0.04);
+          --grid-line: rgba(0, 0, 0, 0.05);
+          --text-main: #111827;
+          --text-muted: #6b7280;
         }
 
         /* ===== CINEMATIC BACKGROUND ===== */
         .ambient-grid {
           position: fixed; inset: 0; z-index: 0; pointer-events: none;
           background-image: 
-            linear-gradient(rgba(255, 107, 53, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 107, 53, 0.03) 1px, transparent 1px);
+            linear-gradient(var(--grid-line) 1px, transparent 1px),
+            linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
           background-size: 60px 60px;
           mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent);
         }
 
         .lb-wrapper { 
           min-height: 100vh; 
-          background: var(--bg-dark); 
+          background: var(--bg); 
           background-image: radial-gradient(ellipse 100% 80% at 50% -20%, rgba(255,107,53,0.08) 0%, transparent 50%);
           color: var(--text-main); font-family: Inter, sans-serif; position: relative; overflow: hidden; 
+          transition: background-color 0.3s ease;
         }
         .bg-glow { position: fixed; width: 50vw; height: 50vw; border-radius: 50%; filter: blur(160px); z-index: 0; pointer-events: none; opacity: 0.12; animation: pulseGlow 10s infinite alternate; }
         .orange-glow { top: -30%; right: -15%; background: radial-gradient(circle, var(--orange) 0%, transparent 55%); }
@@ -292,14 +315,15 @@ export default function Leaderboard() {
         /* ===== NAV — Frosted Premium ===== */
         .glass-nav { 
           height: 64px; 
-          background: rgba(3, 3, 5, 0.6); 
+          background: var(--nav-bg); 
           backdrop-filter: blur(30px) saturate(180%); 
-          border-bottom: 1px solid rgba(255,255,255,0.04); 
+          border-bottom: 1px solid var(--glass-border); 
           display: flex; align-items: center; padding: 0 32px; gap: 16px; 
           position: sticky; top: 0; z-index: 50; 
+          transition: background-color 0.3s ease;
         }
         .logo { font-family: Outfit, sans-serif; font-weight: 900; font-size: 20px; cursor: pointer; letter-spacing: -0.5px; }
-        .nav-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.08); }
+        .nav-divider { width: 1px; height: 24px; background: var(--glass-border); }
         .nav-subtitle { font-size: 13px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; }
         
         .btn-battle-now { 
@@ -326,7 +350,7 @@ export default function Leaderboard() {
           letter-spacing: -2px; line-height: 1.05; 
         }
         .text-gradient { 
-          background: linear-gradient(135deg, #fff 0%, #fff 40%, var(--orange) 100%); 
+          background: linear-gradient(135deg, var(--text-main) 0%, var(--text-muted) 40%, var(--orange) 100%); 
           -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
         }
         .page-subtitle { font-size: 16px; color: var(--text-muted); margin: 0; font-weight: 400; line-height: 1.6; }
@@ -337,7 +361,7 @@ export default function Leaderboard() {
           margin-bottom: 64px; align-items: end; perspective: 800px;
         }
         .podium-card { 
-          background: rgba(10, 10, 15, 0.6); 
+          background: var(--panel-bg); 
           border: 1px solid var(--glass-border); border-radius: 24px; 
           padding: 28px 20px; text-align: center; 
           backdrop-filter: blur(24px) saturate(150%); 
@@ -346,16 +370,16 @@ export default function Leaderboard() {
         }
         .podium-card::before {
           content: ''; position: absolute; inset: 0; border-radius: 24px;
-          background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 40%);
+          background: linear-gradient(180deg, var(--glass-overlay) 0%, transparent 40%);
           pointer-events: none;
         }
-        .podium-card:hover { transform: translateY(-12px) scale(1.03) !important; z-index: 10; border-color: rgba(255,255,255,0.2); }
+        .podium-card:hover { transform: translateY(-12px) scale(1.03) !important; z-index: 10; border-color: var(--orange); }
         
         .place-1 { 
           padding: 48px 24px; 
-          background: linear-gradient(180deg, rgba(251,191,36,0.12) 0%, rgba(10,10,15,0.85) 100%); 
+          background: linear-gradient(180deg, rgba(251,191,36,0.12) 0%, var(--card-bg) 100%); 
           border: 1px solid rgba(251, 191, 36, 0.5); 
-          box-shadow: 0 0 80px rgba(251, 191, 36, 0.12), 0 20px 60px rgba(0,0,0,0.5), inset 0 0 40px rgba(251, 191, 36, 0.05); 
+          box-shadow: 0 0 80px rgba(251, 191, 36, 0.12), 0 20px 60px rgba(0,0,0,0.2), inset 0 0 40px rgba(251, 191, 36, 0.05); 
           z-index: 2; margin-bottom: 20px; 
         }
         .place-1::after {
@@ -365,12 +389,12 @@ export default function Leaderboard() {
         }
         .place-1:hover { 
           border-color: rgba(251, 191, 36, 0.9); 
-          box-shadow: 0 0 100px rgba(251, 191, 36, 0.2), 0 30px 80px rgba(0,0,0,0.6), inset 0 0 60px rgba(251, 191, 36, 0.08); 
+          box-shadow: 0 0 100px rgba(251, 191, 36, 0.2), 0 30px 80px rgba(0,0,0,0.3), inset 0 0 60px rgba(251, 191, 36, 0.08); 
         }
         .place-2 { 
           border-color: rgba(156, 163, 175, 0.25); 
-          background: linear-gradient(180deg, rgba(156,163,175,0.06) 0%, rgba(10,10,15,0.85) 100%); 
-          box-shadow: 0 0 40px rgba(156,163,175,0.05), 0 15px 40px rgba(0,0,0,0.4);
+          background: linear-gradient(180deg, rgba(156,163,175,0.06) 0%, var(--card-bg) 100%); 
+          box-shadow: 0 0 40px rgba(156,163,175,0.05), 0 15px 40px rgba(0,0,0,0.1);
         }
         .place-2::after {
           content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
@@ -379,8 +403,8 @@ export default function Leaderboard() {
         }
         .place-3 { 
           border-color: rgba(217, 119, 6, 0.25); 
-          background: linear-gradient(180deg, rgba(217,119,6,0.06) 0%, rgba(10,10,15,0.85) 100%); 
-          box-shadow: 0 0 40px rgba(217,119,6,0.05), 0 15px 40px rgba(0,0,0,0.4);
+          background: linear-gradient(180deg, rgba(217,119,6,0.06) 0%, var(--card-bg) 100%); 
+          box-shadow: 0 0 40px rgba(217,119,6,0.05), 0 15px 40px rgba(0,0,0,0.1);
         }
         .place-3::after {
           content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
@@ -396,13 +420,13 @@ export default function Leaderboard() {
           display: flex; align-items: center; gap: 6px; white-space: nowrap;
         }
         .crown-icon { font-size: 13px; }
-        .medal { font-size: 36px; margin-bottom: 16px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6)); }
+        .medal { font-size: 36px; margin-bottom: 16px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2)); }
         
         .podium-avatar { 
           position: relative; width: 60px; height: 60px; border-radius: 50%; 
           display: flex; align-items: center; justify-content: center; 
           margin: 0 auto 16px; font-family: Outfit, sans-serif; font-weight: 800; 
-          font-size: 20px; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.7); z-index: 1; 
+          font-size: 20px; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 1; 
         }
         .podium-avatar.lg-avatar { width: 84px; height: 84px; font-size: 28px; }
         .avatar-ring { 
@@ -419,7 +443,7 @@ export default function Leaderboard() {
         .silver-bg { background: linear-gradient(135deg, #9ca3af, #374151); border: 2px solid rgba(243,244,246,0.4); }
         .bronze-bg { background: linear-gradient(135deg, #d97706, #78350f); border: 2px solid rgba(253,230,138,0.4); }
         
-        .podium-name { font-family: Outfit, sans-serif; font-weight: 700; font-size: 17px; color: #fff; margin-bottom: 6px; }
+        .podium-name { font-family: Outfit, sans-serif; font-weight: 700; font-size: 17px; color: var(--text-main); margin-bottom: 6px; }
         .podium-name.lg-name { font-size: 22px; font-weight: 900; }
         .podium-elo { font-family: 'JetBrains Mono', Outfit, sans-serif; font-weight: 900; font-size: 28px; margin-bottom: 6px; letter-spacing: -0.5px; }
         .podium-elo.lg-elo { font-size: 42px; }
@@ -433,7 +457,7 @@ export default function Leaderboard() {
         .stat-pill { padding: 5px 12px; border-radius: 8px; font-weight: 700; font-size: 11px; }
         
         /* ===== UTILITY COLORS ===== */
-        .text-green { color: var(--green); } .text-red { color: var(--red); } .text-orange { color: var(--orange); } .text-white { color: #fff; } .text-main { color: var(--text-main); } .text-muted { color: var(--text-muted); }
+        .text-green { color: var(--green); } .text-red { color: var(--red); } .text-orange { color: var(--orange); } .text-white { color: var(--text-main); } .text-main { color: var(--text-main); } .text-muted { color: var(--text-muted); }
         .bg-green { background: var(--green); } .bg-orange { background: var(--orange); } .bg-red { background: var(--red); }
         .bg-green-dim { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); }
         .bg-red-dim { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); }
@@ -445,18 +469,18 @@ export default function Leaderboard() {
         .lb-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
         .tab-container { 
           display: flex; 
-          background: rgba(8,8,12,0.8); 
-          border: 1px solid rgba(255,255,255,0.06); 
+          background: var(--nav-bg); 
+          border: 1px solid var(--glass-border); 
           border-radius: 14px; padding: 5px; 
           backdrop-filter: blur(16px); 
-          box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+          box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
         .tab-btn { 
           padding: 10px 26px; font-size: 13px; font-weight: 600; color: var(--text-muted); 
           background: transparent; border: none; border-radius: 10px; cursor: pointer; 
           transition: all 0.3s ease; font-family: Inter, sans-serif;
         }
-        .tab-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.04); }
+        .tab-btn:hover { color: var(--text-main); background: var(--glass-overlay); }
         .tab-btn.active { 
           background: rgba(255,107,53,0.12); color: var(--orange); 
           box-shadow: 0 2px 12px rgba(255,107,53,0.15); 
@@ -466,42 +490,42 @@ export default function Leaderboard() {
         .search-wrapper { position: relative; }
         .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; pointer-events: none; }
         .search-input { 
-          background: rgba(8,8,12,0.8); 
-          border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; 
-          padding: 12px 18px 12px 42px; font-size: 13px; color: #fff; outline: none; 
+          background: var(--nav-bg); 
+          border: 1px solid var(--glass-border); border-radius: 14px; 
+          padding: 12px 18px 12px 42px; font-size: 13px; color: var(--text-main); outline: none; 
           width: 280px; font-family: Inter, sans-serif; transition: all 0.4s ease; 
           backdrop-filter: blur(16px); 
-          box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+          box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
         .search-input:focus { 
           border-color: rgba(255,107,53,0.4); 
-          box-shadow: 0 0 0 4px rgba(255,107,53,0.1), 0 4px 20px rgba(0,0,0,0.4); 
+          box-shadow: 0 0 0 4px rgba(255,107,53,0.1), 0 4px 20px rgba(0,0,0,0.2); 
           width: 320px; 
         }
 
         /* ===== TABLE — Premium Frosted Glass ===== */
         .glass-panel { 
-          background: #111113;
-          border: 1px solid rgba(255, 255, 255, 0.06); 
+          background: var(--card-bg) !important;
+          border: 1px solid var(--glass-border); 
           border-radius: 16px; overflow: hidden; 
         }
         .table-header { 
           display: grid; grid-template-columns: 70px 1fr 110px 110px 110px 130px 90px; 
           padding: 20px 28px; 
-          background: rgba(0,0,0,0.4); 
-          border-bottom: 1px solid rgba(255,255,255,0.04); 
-          font-size: 10px; font-weight: 800; color: rgba(100,116,139,0.8); letter-spacing: 2px; 
+          background: var(--glass-overlay); 
+          border-bottom: 1px solid var(--glass-border); 
+          font-size: 10px; font-weight: 800; color: var(--text-muted); letter-spacing: 2px; 
         }
         
         .table-row { 
           display: grid; grid-template-columns: 70px 1fr 110px 110px 110px 130px 90px; 
           padding: 18px 28px; align-items: center; 
-          border-bottom: 1px solid rgba(255,255,255,0.025); 
+          border-bottom: 1px solid var(--glass-border); 
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; 
           background: transparent; position: relative;
         }
         .table-row:hover { 
-          background: rgba(255,255,255,0.05); 
+          background: var(--glass-overlay); 
           z-index: 2; border-bottom-color: transparent; 
         }
         .table-row:last-child { border-bottom: none; }
@@ -511,19 +535,19 @@ export default function Leaderboard() {
           border-left: 3px solid var(--orange); 
         }
         .table-row.is-me:hover { 
-          background: linear-gradient(90deg, rgba(255,107,53,0.12) 0%, rgba(255,255,255,0.02) 60%); 
+          background: linear-gradient(90deg, rgba(255,107,53,0.12) 0%, var(--glass-overlay) 60%); 
         }
         
         .col-rank { display: flex; align-items: center; justify-content: center; width: 40px; }
-        .rank-badge-icon { font-size: 22px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6)); }
-        .rank-num { font-family: 'JetBrains Mono', Outfit, sans-serif; font-weight: 800; font-size: 15px; color: rgba(100,116,139,0.6); }
+        .rank-badge-icon { font-size: 22px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3)); }
+        .rank-num { font-family: 'JetBrains Mono', Outfit, sans-serif; font-weight: 800; font-size: 15px; color: var(--text-muted); }
         
         .col-player { display: flex; align-items: center; gap: 14px; }
         .row-avatar { 
           width: 42px; height: 42px; border-radius: 50%; 
           display: flex; align-items: center; justify-content: center; 
           font-size: 13px; font-weight: 800; color: #fff; flex-shrink: 0; 
-          box-shadow: 0 4px 14px rgba(0,0,0,0.4); 
+          box-shadow: 0 4px 14px rgba(0,0,0,0.2); 
         }
         .normal-bg { background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(71,85,105,0.5); }
         .me-bg { 
@@ -547,15 +571,14 @@ export default function Leaderboard() {
         .total-games { color: var(--text-muted); font-size: 12px; font-weight: 600; }
         .col-winrate { padding-right: 20px; }
         .wr-text { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-        .wr-bar-bg { background: rgba(255,255,255,0.06); height: 5px; border-radius: 10px; overflow: hidden; }
+        .wr-bar-bg { background: var(--glass-overlay); height: 5px; border-radius: 10px; overflow: hidden; }
         .wr-bar-fill { height: 100%; border-radius: 10px; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
         
         /* ===== RANK CALLOUT ===== */
         .my-rank-callout { 
           margin-top: 32px; padding: 28px 32px; 
           display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; 
-          border: 1px solid rgba(255,107,53,0.2) !important;
-          background: #111113 !important; 
+          border: 1px solid var(--orange) !important;
         }
         .callout-left { display: flex; align-items: center; gap: 20px; }
         .callout-avatar { 
