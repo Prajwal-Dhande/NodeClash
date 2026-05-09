@@ -4,65 +4,6 @@ import { motion } from 'framer-motion'
 import API_URL from '../config/api'
 import { ThemeToggle } from '../context/ThemeContext'
 
-function getPlans(isYearly) {
-  const period = isYearly ? '/yr' : '/mo'
-  return [
-    {
-      id: 'free', name: 'Free', price: 0, priceLabel: '₹0', period,
-      desc: 'For coders who are just starting out.',
-      color: '#71717a', glow: 'rgba(113,113,122,0.1)', border: 'rgba(113,113,122,0.2)',
-      features: [
-        { label: 'Unlimited Practice Problems', included: true },
-        { label: 'Basic IDE & Code Execution', included: true },
-        { label: 'Global Leaderboard Access', included: true },
-        { label: 'ELO Rating System', included: true },
-        { label: 'AI Mock Interviews (Clara)', included: false },
-        { label: 'Ranked Tournaments', included: false },
-        { label: 'Company-Specific Problem Tags', included: false },
-        { label: 'AI Code Review on Submission', included: false },
-      ],
-      btnStyle: 'free',
-    },
-    {
-      id: 'pro', name: 'Pro',
-      price: isYearly ? 2499 : 299,
-      priceLabel: isYearly ? '₹2,499' : '₹299', period,
-      desc: 'For serious competitive programmers.',
-      color: '#60a5fa', glow: 'rgba(96,165,250,0.12)', border: 'rgba(96,165,250,0.35)',
-      features: [
-        { label: 'Everything in Free', included: true },
-        { label: 'Ranked Tournaments Access', included: true },
-        { label: 'Company-Specific Problem Tags', included: true },
-        { label: 'Advanced Performance Analytics', included: true },
-        { label: 'Priority Matchmaking Servers', included: true },
-        { label: 'AI Mock Interviews (Clara)', included: false },
-        { label: 'AI Code Review on Submission', included: false },
-        { label: '1-on-1 Feedback Reports', included: false },
-      ],
-      btnStyle: 'pro',
-    },
-    {
-      id: 'pro_plus', name: 'Pro+',
-      price: isYearly ? 4999 : 599,
-      priceLabel: isYearly ? '₹4,999' : '₹599', period,
-      desc: 'The complete FAANG interview arsenal.',
-      color: '#ff6b35', glow: 'rgba(255,107,53,0.15)', border: 'rgba(255,107,53,0.5)',
-      popular: true,
-      features: [
-        { label: 'Everything in Pro', included: true },
-        { label: '⚡ Live AI Mock Interviews (Clara)', included: true, highlight: true },
-        { label: '🧠 AI Code Review on Submission', included: true, highlight: true },
-        { label: '1-on-1 Detailed Feedback Reports', included: true, highlight: true },
-        { label: 'Zero-Latency Priority Servers', included: true },
-        { label: 'Exclusive FAANG Vault Problems', included: true },
-        { label: 'Early Access to New Features', included: true },
-        { label: 'Premium Discord Community', included: true },
-      ],
-      btnStyle: 'pro_plus',
-    },
-  ]
-}
-
 const CHECK = (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12" />
@@ -74,11 +15,85 @@ const CROSS = (
   </svg>
 )
 
+const PLANS = [
+  {
+    id: 'free',
+    name: 'Free',
+    price: 0,
+    priceLabel: '₹0',
+    period: '/mo',
+    desc: 'Jump in and start battling — no commitment needed.',
+    color: '#71717a',
+    glow: 'rgba(113,113,122,0.08)',
+    border: 'rgba(113,113,122,0.2)',
+    features: [
+      { label: 'Unlimited Random Matches', included: true },
+      { label: 'Practice AI Bot', included: true },
+      { label: 'Global Leaderboard', included: true },
+      { label: 'Create Private Rooms', included: true },
+      { label: 'Exclusive FAANG Vault', included: false },
+      { label: 'Live AI Interviews (Clara)', included: false },
+      { label: 'AI Code Review & Analytics', included: false },
+    ],
+    btnStyle: 'free',
+  },
+  {
+    id: 'pro_1m',
+    name: 'Pro — 1 Month',
+    price: 249,
+    originalPrice: 399,
+    priceLabel: '₹249',
+    period: '/mo',
+    saveBadge: 'Save 37%',
+    desc: 'Full access to every premium feature for 1 month.',
+    color: '#60a5fa',
+    glow: 'rgba(96,165,250,0.1)',
+    border: 'rgba(96,165,250,0.35)',
+    features: [
+      { label: 'Everything in Free', included: true },
+      { label: 'Exclusive FAANG Vault Problems', included: true },
+      { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
+      { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
+      { label: 'Ranked Tournaments Access', included: true },
+      { label: 'Priority Matchmaking Servers', included: true },
+      { label: 'Premium Discord Community', included: true },
+    ],
+    btnLabel: 'Get Pro (1 Month)',
+    btnStyle: 'pro',
+  },
+  {
+    id: 'pro_6m',
+    name: 'Pro — 6 Months',
+    price: 1199,
+    originalPrice: 2394,
+    priceLabel: '₹1,199',
+    period: '/6mo',
+    perMonth: '~₹199/mo',
+    saveBadge: 'Save 50%',
+    popular: true,
+    desc: 'Best value — lock in 6 months of uninterrupted Pro access.',
+    color: '#ff6b35',
+    glow: 'rgba(255,107,53,0.12)',
+    border: 'rgba(255,107,53,0.5)',
+    features: [
+      { label: 'Everything in Free', included: true },
+      { label: 'Exclusive FAANG Vault Problems', included: true },
+      { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
+      { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
+      { label: 'Ranked Tournaments Access', included: true },
+      { label: 'Priority Matchmaking Servers', included: true },
+      { label: 'Premium Discord Community', included: true },
+      { label: 'Early Access to New Features', included: true },
+    ],
+    btnLabel: 'Unlock Pro (6 Months)',
+    btnStyle: 'pro_plus',
+  },
+]
+
 export default function Premium() {
   const navigate = useNavigate()
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || '{}'))
   const [processing, setProcessing] = useState(null)
-  const [isYearly, setIsYearly] = useState(false)
   const [premiumStatus, setPremiumStatus] = useState(null)
   const initials = (user?.username || 'PL').slice(0, 2).toUpperCase()
 
@@ -108,8 +123,11 @@ export default function Premium() {
       .catch(() => {})
   }, [])
 
+  const isPremiumUser = user?.isPremium || premiumStatus?.isPremium
+
   const handlePayment = async (plan) => {
     if (plan.id === 'free') return
+    if (isPremiumUser) return
     const token = localStorage.getItem('token')
     if (!token) { navigate('/auth'); return }
 
@@ -118,7 +136,7 @@ export default function Premium() {
       const res = await fetch(`${API_URL}/api/payment/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ plan: isYearly ? `${plan.id}_yearly` : `${plan.id}_monthly`, amount: plan.price * 100 })
+        body: JSON.stringify({ planId: plan.id, amount: plan.price * 100, durationMonths: plan.id === 'pro_6m' ? 6 : 1 })
       })
       const data = await res.json()
       if (!data.success) throw new Error(data.message || 'Order creation failed')
@@ -128,7 +146,7 @@ export default function Premium() {
         amount: data.order.amount,
         currency: 'INR',
         name: 'CodeArena',
-        description: `${plan.name} Premium Subscription`,
+        description: `${plan.name} Subscription`,
         order_id: data.order.id,
         handler: async (response) => {
           const verifyRes = await fetch(`${API_URL}/api/payment/verify`, {
@@ -159,25 +177,10 @@ export default function Premium() {
     }
   }
 
-  const isPremiumUser = user?.isPremium || premiumStatus?.isPremium
-  const currentPlan = user?.premiumPlan || premiumStatus?.premiumPlan || 'free'
-  const isProUser = currentPlan === 'pro'
-  const isProPlusUser = currentPlan === 'pro_plus'
-  const PLANS = getPlans(isYearly)
-
-  // Derive button label & disabled state per plan
   const getBtnProps = (plan) => {
     if (plan.id === 'free') return { label: 'Current Plan', disabled: true }
-    if (plan.id === 'pro') {
-      if (isProUser || isProPlusUser) return { label: '✓ Active', disabled: true }
-      return { label: 'Upgrade to Pro', disabled: false }
-    }
-    if (plan.id === 'pro_plus') {
-      if (isProPlusUser) return { label: '✓ Active', disabled: true }
-      if (isProUser) return { label: '⬆ Upgrade to Pro+', disabled: false }
-      return { label: 'Unlock Pro+', disabled: false }
-    }
-    return { label: plan.name, disabled: false }
+    if (isPremiumUser) return { label: '✓ PRO Active', disabled: true }
+    return { label: plan.btnLabel, disabled: false }
   }
 
   return (
@@ -226,9 +229,9 @@ export default function Premium() {
             style={{ background: 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05))', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 16, padding: '20px 28px', marginBottom: 48, display: 'flex', alignItems: 'center', gap: 16 }}>
             <div style={{ fontSize: 36 }}>🎉</div>
             <div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: '#22c55e', fontFamily: 'Outfit, sans-serif', marginBottom: 4 }}>You're a Premium Member!</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: '#22c55e', fontFamily: 'Outfit, sans-serif', marginBottom: 4 }}>You're a PRO Member!</div>
               <div style={{ fontSize: 13, color: '#22c55e', opacity: 0.9 }}>
-                {premiumStatus?.daysLeft ? `${premiumStatus.daysLeft} days remaining in your subscription.` : 'Your premium access is active.'}
+                {premiumStatus?.daysLeft ? `${premiumStatus.daysLeft} days remaining in your subscription.` : 'Your PRO access is active.'}
                 {' '}<span style={{ color: '#22c55e', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => navigate('/interview-dsa')}>Go to AI Interview →</span>
               </div>
             </div>
@@ -238,51 +241,16 @@ export default function Premium() {
         {/* HERO */}
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ textAlign: 'center', marginBottom: 72 }}>
           <div style={{ display: 'inline-block', background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.25)', color: '#fbbf24', fontSize: 11, fontWeight: 800, letterSpacing: 2, padding: '6px 18px', borderRadius: 20, marginBottom: 24 }}>
-            💎 CODEARENA PREMIUM
+            💎 CODEARENA PRO
           </div>
           <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 56, fontWeight: 900, color: 'var(--text-main)', margin: '0 0 20px 0', letterSpacing: '-2px', lineHeight: 1.1 }}>
             The fastest path to<br />
             <span style={{ background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>crack FAANG</span>
           </h1>
           <p style={{ fontSize: 18, color: 'var(--text-muted)', maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
-            Stop practicing blindly. Get AI-powered mock interviews with Clara, structured analytics, and MAANG-level feedback — all in one platform.
+            AI-powered mock interviews, structured analytics, and MAANG-level feedback — one plan, full access.
           </p>
         </motion.div>
-
-        {/* BILLING TOGGLE */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 48 }}>
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 16,
-            background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)',
-            borderRadius: 16, padding: '6px 8px'
-          }}>
-            <span style={{ fontSize: 14, fontWeight: isYearly ? 500 : 700, color: isYearly ? 'var(--text-muted)' : 'var(--text-main)', padding: '8px 16px', cursor: 'pointer', transition: 'all 0.3s' }}
-              onClick={() => setIsYearly(false)}>Monthly</span>
-            {/* Toggle pill */}
-            <button onClick={() => setIsYearly(p => !p)} style={{
-              position: 'relative', width: 52, height: 28, borderRadius: 14,
-              background: isYearly ? 'var(--orange, #ff6b35)' : 'var(--glass-border)',
-              border: 'none', cursor: 'pointer', transition: 'background 0.3s', padding: 0, flexShrink: 0
-            }}>
-              <div style={{
-                position: 'absolute', top: 3, left: isYearly ? 27 : 3,
-                width: 22, height: 22, borderRadius: '50%', background: '#fff',
-                boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
-                transition: 'left 0.3s cubic-bezier(0.68,-0.55,0.265,1.55)'
-              }} />
-            </button>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 14, fontWeight: isYearly ? 700 : 500, color: isYearly ? 'var(--text-main)' : 'var(--text-muted)', padding: '8px 16px', cursor: 'pointer', transition: 'all 0.3s' }}
-                onClick={() => setIsYearly(true)}>Yearly</span>
-              <span style={{
-                fontSize: 10, fontWeight: 800, letterSpacing: 0.5,
-                background: 'rgba(34,197,94,0.12)', color: '#22c55e',
-                border: '1px solid rgba(34,197,94,0.25)',
-                padding: '4px 10px', borderRadius: 20, whiteSpace: 'nowrap'
-              }}>Save ~30%</span>
-            </div>
-          </div>
-        </div>
 
         {/* PRICING CARDS */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, alignItems: 'stretch' }}>
@@ -290,96 +258,118 @@ export default function Premium() {
             const btn = getBtnProps(plan)
             const isDisabled = btn.disabled || processing === plan.id
             return (
-            <motion.div
-              key={plan.id}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: idx * 0.1 }}
-              style={{
-                position: 'relative',
-                background: plan.popular
-                  ? `linear-gradient(180deg, ${plan.glow} 0%, var(--card-bg) 50%)`
-                  : `linear-gradient(180deg, ${plan.glow} 0%, var(--card-bg) 40%)`,
-                border: `1px solid ${plan.border}`,
-                borderRadius: 24,
-                padding: '36px 28px 32px',
-                display: 'flex',
-                flexDirection: 'column',
-                transform: plan.popular ? 'scale(1.03)' : 'scale(1)',
-                boxShadow: plan.popular ? `0 24px 60px ${plan.glow}, 0 0 0 1px ${plan.border}` : 'none',
-                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                cursor: 'default',
-              }}
-              whileHover={!btn.disabled ? { scale: plan.popular ? 1.05 : 1.02, transition: { duration: 0.2 } } : {}}
-            >
-              {plan.popular && (
-                <div style={{
-                  position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)',
-                  background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff',
-                  fontSize: 10, fontWeight: 800, padding: '6px 18px', borderRadius: 20,
-                  letterSpacing: 1.5, boxShadow: '0 4px 16px rgba(255,107,53,0.5)', whiteSpace: 'nowrap'
-                }}>MOST POPULAR</div>
-              )}
-
-              {/* Plan Name */}
-              <div style={{ fontSize: 13, fontWeight: 700, color: plan.color, letterSpacing: 1, marginBottom: 8 }}>{plan.name.toUpperCase()}</div>
-
-              {/* Price */}
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 8 }}>
-                <span style={{ fontSize: 48, fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit, sans-serif', letterSpacing: '-2px' }}>{plan.priceLabel}</span>
-                <span style={{ fontSize: 14, color: 'var(--text-muted)', fontWeight: 600 }}>{plan.period}</span>
-              </div>
-
-              <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 28, lineHeight: 1.5 }}>{plan.desc}</p>
-
-              {/* Divider */}
-              <div style={{ height: 1, background: 'var(--glass-border)', marginBottom: 24 }} />
-
-              {/* Features */}
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {plan.features.map((f, i) => (
-                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, opacity: f.included ? 1 : 0.6 }}>
-                    <span style={{ flexShrink: 0, marginTop: 1 }}>{f.included ? CHECK : CROSS}</span>
-                    <span style={{
-                      fontSize: 13, color: f.included ? (f.highlight ? plan.color : 'var(--text-main)') : 'var(--text-muted)',
-                      fontWeight: f.highlight ? 700 : 500, lineHeight: 1.4
-                    }}>{f.label}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA Button */}
-              <button
-                onClick={() => handlePayment(plan)}
-                disabled={isDisabled}
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
                 style={{
-                  width: '100%',
-                  padding: '14px 0',
-                  borderRadius: 12,
-                  fontSize: 14,
-                  fontWeight: 700,
-                  fontFamily: 'Inter, sans-serif',
-                  cursor: isDisabled ? 'not-allowed' : 'pointer',
-                  border: 'none',
-                  transition: 'all 0.25s',
-                  ...(plan.btnStyle === 'free'
-                    ? { background: 'var(--glass-overlay)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)' }
-                    : plan.btnStyle === 'pro'
-                      ? { background: 'rgba(96,165,250,0.12)', color: '#60a5fa', border: '1px solid rgba(96,165,250,0.3)' }
-                      : { background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', boxShadow: '0 8px 24px rgba(255,107,53,0.35)' }
-                  ),
-                  opacity: isDisabled ? 0.5 : 1,
+                  position: 'relative',
+                  background: plan.popular
+                    ? `linear-gradient(180deg, ${plan.glow} 0%, var(--card-bg) 50%)`
+                    : `linear-gradient(180deg, ${plan.glow} 0%, var(--card-bg) 40%)`,
+                  border: `1px solid ${plan.border}`,
+                  borderRadius: 24,
+                  padding: '36px 28px 32px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transform: plan.popular ? 'scale(1.03)' : 'scale(1)',
+                  boxShadow: plan.popular ? `0 24px 60px ${plan.glow}, 0 0 0 1px ${plan.border}` : 'none',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                  cursor: 'default',
                 }}
+                whileHover={!isDisabled ? { scale: plan.popular ? 1.05 : 1.02, transition: { duration: 0.2 } } : {}}
               >
-                {processing === plan.id ? '⏳ Processing...' : btn.label}
-              </button>
-            </motion.div>
-          )})}
+                {plan.popular && (
+                  <div style={{
+                    position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)',
+                    background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff',
+                    fontSize: 10, fontWeight: 800, padding: '6px 18px', borderRadius: 20,
+                    letterSpacing: 1.5, boxShadow: '0 4px 16px rgba(255,107,53,0.5)', whiteSpace: 'nowrap'
+                  }}>MOST POPULAR</div>
+                )}
+
+                {/* Plan Name + Save Badge */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: plan.color, letterSpacing: 1 }}>{plan.name.toUpperCase()}</div>
+                  {plan.saveBadge && (
+                    <span style={{
+                      fontSize: 10, fontWeight: 800,
+                      background: 'rgba(34,197,94,0.12)', color: '#22c55e',
+                      border: '1px solid rgba(34,197,94,0.25)',
+                      padding: '3px 8px', borderRadius: 20, letterSpacing: 0.3
+                    }}>{plan.saveBadge}</span>
+                  )}
+                </div>
+
+                {/* Price */}
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 4 }}>
+                  {plan.originalPrice && (
+                    <span style={{ fontSize: 22, fontWeight: 600, color: 'var(--text-muted)', textDecoration: 'line-through', opacity: 0.6, fontFamily: 'Outfit, sans-serif' }}>
+                      ₹{plan.originalPrice.toLocaleString('en-IN')}
+                    </span>
+                  )}
+                  <span style={{ fontSize: 48, fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit, sans-serif', letterSpacing: '-2px' }}>{plan.priceLabel}</span>
+                  <span style={{ fontSize: 14, color: 'var(--text-muted)', fontWeight: 600 }}>{plan.period}</span>
+                </div>
+
+                {/* Per-month breakdown */}
+                {plan.perMonth && (
+                  <div style={{ fontSize: 13, color: '#22c55e', fontWeight: 700, marginBottom: 8 }}>{plan.perMonth}</div>
+                )}
+
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 28, lineHeight: 1.5 }}>{plan.desc}</p>
+
+                {/* Divider */}
+                <div style={{ height: 1, background: 'var(--glass-border)', marginBottom: 24 }} />
+
+                {/* Features */}
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {plan.features.map((f, i) => (
+                    <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, opacity: f.included ? 1 : 0.6 }}>
+                      <span style={{ flexShrink: 0, marginTop: 1 }}>{f.included ? CHECK : CROSS}</span>
+                      <span style={{
+                        fontSize: 13, color: f.included ? (f.highlight ? plan.color : 'var(--text-main)') : 'var(--text-muted)',
+                        fontWeight: f.highlight ? 700 : 500, lineHeight: 1.4,
+                        textDecoration: f.included ? 'none' : 'line-through'
+                      }}>{f.label}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA Button */}
+                <button
+                  onClick={() => handlePayment(plan)}
+                  disabled={isDisabled}
+                  style={{
+                    width: '100%',
+                    padding: '14px 0',
+                    borderRadius: 12,
+                    fontSize: 14,
+                    fontWeight: 700,
+                    fontFamily: 'Inter, sans-serif',
+                    cursor: isDisabled ? 'not-allowed' : 'pointer',
+                    border: 'none',
+                    transition: 'all 0.25s',
+                    ...(plan.btnStyle === 'free'
+                      ? { background: 'var(--glass-overlay)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)' }
+                      : plan.btnStyle === 'pro'
+                        ? { background: 'rgba(96,165,250,0.12)', color: '#60a5fa', border: '1px solid rgba(96,165,250,0.3)' }
+                        : { background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', boxShadow: '0 8px 24px rgba(255,107,53,0.35)' }
+                    ),
+                    opacity: isDisabled ? 0.5 : 1,
+                  }}
+                >
+                  {processing === plan.id ? '⏳ Processing...' : btn.label}
+                </button>
+              </motion.div>
+            )
+          })}
         </div>
 
-        {/* WHY PREMIUM SECTION */}
+        {/* WHY PRO SECTION */}
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} style={{ marginTop: 80 }}>
-          <h2 style={{ textAlign: 'center', fontSize: 32, fontWeight: 800, color: 'var(--text-main)', marginBottom: 8, fontFamily: 'Outfit, sans-serif' }}>Why go Premium?</h2>
+          <h2 style={{ textAlign: 'center', fontSize: 32, fontWeight: 800, color: 'var(--text-main)', marginBottom: 8, fontFamily: 'Outfit, sans-serif' }}>Why go PRO?</h2>
           <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: 48, fontSize: 15 }}>Real features. Real results. Real offers.</p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
@@ -402,26 +392,27 @@ export default function Premium() {
           </div>
         </motion.div>
 
-        {/* FOOTER CTA */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
-          style={{ textAlign: 'center', marginTop: 80, padding: '48px', background: 'linear-gradient(135deg, rgba(255,107,53,0.08), rgba(96,165,250,0.05))', border: '1px solid rgba(255,107,53,0.2)', borderRadius: 24 }}>
-          <div style={{ fontSize: 40, marginBottom: 16 }}>🚀</div>
-          <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 28, fontWeight: 900, color: 'var(--text-main)', margin: '0 0 12px 0' }}>Start your FAANG journey today</h2>
-          <p style={{ color: 'var(--text-muted)', marginBottom: 28, fontSize: 15 }}>Join hundreds of coders who cracked their dream companies using CodeArena Premium.</p>
-          <button onClick={() => handlePayment(PLANS[2])} disabled={isProPlusUser} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none', borderRadius: 12, padding: '16px 40px', fontSize: 15, fontWeight: 700, cursor: isProPlusUser ? 'not-allowed' : 'pointer', boxShadow: '0 8px 30px rgba(255,107,53,0.35)', fontFamily: 'Inter, sans-serif', transition: 'all 0.2s', opacity: isProPlusUser ? 0.5 : 1 }}
-            onMouseEnter={e => { if (!isProPlusUser) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 14px 40px rgba(255,107,53,0.5)' } }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(255,107,53,0.35)' }}>
-            {isProPlusUser ? '✓ Pro+ Active' : `✨ Unlock Pro+ — ${PLANS[2].priceLabel}${PLANS[2].period}`}
-          </button>
-          <div style={{ marginTop: 16, fontSize: 12, color: 'var(--text-muted)' }}>Cancel anytime. Secure payments via Razorpay.</div>
-        </motion.div>
+        {/* FOOTER CTA — hidden if already PRO */}
+        {!isPremiumUser && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
+            style={{ textAlign: 'center', marginTop: 80, padding: '48px', background: 'linear-gradient(135deg, rgba(255,107,53,0.08), rgba(96,165,250,0.05))', border: '1px solid rgba(255,107,53,0.2)', borderRadius: 24 }}>
+            <div style={{ fontSize: 40, marginBottom: 16 }}>🚀</div>
+            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 28, fontWeight: 900, color: 'var(--text-main)', margin: '0 0 12px 0' }}>Start your FAANG journey today</h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: 28, fontSize: 15 }}>Join hundreds of coders who cracked their dream companies using CodeArena Pro.</p>
+            <button onClick={() => handlePayment(PLANS[2])} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none', borderRadius: 12, padding: '16px 40px', fontSize: 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 8px 30px rgba(255,107,53,0.35)', fontFamily: 'Inter, sans-serif', transition: 'all 0.2s' }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 14px 40px rgba(255,107,53,0.5)' }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(255,107,53,0.35)' }}>
+              ✨ Unlock Pro — ₹1,199 for 6 months
+            </button>
+            <div style={{ marginTop: 16, fontSize: 12, color: 'var(--text-muted)' }}>Cancel anytime. Secure payments via Razorpay.</div>
+          </motion.div>
+        )}
 
       </div>
 
       {/* Global CSS Variables for Day/Night Theme */}
       <style>{`
         :root {
-          /* Dark Mode Defaults */
           --bg: #060608;
           --nav-bg: rgba(10,10,12,0.9);
           --card-bg: rgba(18, 18, 22, 0.65);
@@ -430,8 +421,6 @@ export default function Premium() {
           --text-main: #f8fafc;
           --text-muted: #a1a1aa;
         }
-
-        /* 🔥 Light Mode Overrides */
         :root[data-theme='light'], .light, body.light {
           --bg: #f3f4f6;
           --nav-bg: rgba(255, 255, 255, 0.85);
@@ -440,6 +429,9 @@ export default function Premium() {
           --glass-overlay: rgba(0, 0, 0, 0.04);
           --text-main: #111827;
           --text-muted: #6b7280;
+        }
+        @media (max-width: 900px) {
+          /* Stack cards on mobile */
         }
       `}</style>
     </div>
