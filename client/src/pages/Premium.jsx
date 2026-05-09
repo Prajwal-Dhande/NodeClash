@@ -50,7 +50,7 @@ const PLANS = [
     glow: 'rgba(96,165,250,0.1)',
     border: 'rgba(96,165,250,0.35)',
     features: [
-      { label: 'Everything in Free', included: true },
+      { label: 'Cancel Anytime', included: true },
       { label: 'Exclusive FAANG Vault Problems', included: true },
       { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
       { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
@@ -76,7 +76,7 @@ const PLANS = [
     glow: 'rgba(255,107,53,0.12)',
     border: 'rgba(255,107,53,0.5)',
     features: [
-      { label: 'Everything in Free', included: true },
+      { label: 'Cancel Anytime', included: true },
       { label: 'Exclusive FAANG Vault Problems', included: true },
       { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
       { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
@@ -85,7 +85,7 @@ const PLANS = [
       { label: 'Premium Discord Community', included: true },
       { label: 'Early Access to New Features', included: true },
     ],
-    btnLabel: 'Unlock Pro (6 Months)',
+    btnLabel: 'Start 7-Day Free Trial',
     btnStyle: 'pro_plus',
   },
 ]
@@ -95,7 +95,26 @@ export default function Premium() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || '{}'))
   const [processing, setProcessing] = useState(null)
   const [premiumStatus, setPremiumStatus] = useState(null)
+  const [countdown, setCountdown] = useState('')
   const initials = (user?.username || 'PL').slice(0, 2).toUpperCase()
+
+  // FOMO Countdown — resets at midnight each day
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date()
+      const midnight = new Date(now)
+      midnight.setHours(24, 0, 0, 0)
+      const diff = midnight - now
+      if (diff <= 0) { setCountdown('00:00:00'); return }
+      const h = String(Math.floor(diff / 3600000)).padStart(2, '0')
+      const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0')
+      const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0')
+      setCountdown(`${h}:${m}:${s}`)
+    }
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [])
 
   useEffect(() => {
     const script = document.createElement('script')
@@ -136,7 +155,7 @@ export default function Premium() {
       const res = await fetch(`${API_URL}/api/payment/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ planId: plan.id, amount: plan.price * 100, durationMonths: plan.id === 'pro_6m' ? 6 : 1 })
+        body: JSON.stringify({ planId: plan.id, amount: plan.price * 100, durationMonths: plan.id === 'pro_6m' ? 6 : 1, trialDays: plan.id === 'pro_6m' ? 7 : 0 })
       })
       const data = await res.json()
       if (!data.success) throw new Error(data.message || 'Order creation failed')
@@ -223,20 +242,33 @@ export default function Premium() {
 
       <div style={{ position: 'relative', zIndex: 10, maxWidth: 1200, margin: '0 auto', padding: '80px 24px 60px' }}>
 
-        {/* SUCCESS BANNER */}
-        {isPremiumUser && (
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-            style={{ background: 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05))', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 16, padding: '20px 28px', marginBottom: 48, display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div style={{ fontSize: 36 }}>🎉</div>
-            <div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: '#22c55e', fontFamily: 'Outfit, sans-serif', marginBottom: 4 }}>You're a PRO Member!</div>
-              <div style={{ fontSize: 13, color: '#22c55e', opacity: 0.9 }}>
-                {premiumStatus?.daysLeft ? `${premiumStatus.daysLeft} days remaining in your subscription.` : 'Your PRO access is active.'}
-                {' '}<span style={{ color: '#22c55e', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => navigate('/interview-dsa')}>Go to AI Interview →</span>
+        {/* SUCCESS / EXPIRY WARNING BANNER */}
+        {isPremiumUser && (() => {
+          const daysLeft = premiumStatus?.daysLeft
+          const isExpiring = daysLeft != null && daysLeft <= 5
+          const bannerBg = isExpiring
+            ? 'linear-gradient(135deg, rgba(245,158,11,0.18), rgba(239,68,68,0.08))'
+            : 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05))'
+          const bannerBorder = isExpiring ? '1px solid rgba(245,158,11,0.4)' : '1px solid rgba(34,197,94,0.3)'
+          const accentColor = isExpiring ? '#f59e0b' : '#22c55e'
+          return (
+            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
+              style={{ background: bannerBg, border: bannerBorder, borderRadius: 16, padding: '20px 28px', marginBottom: 48, display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{ fontSize: 36 }}>{isExpiring ? '⚠️' : '🎉'}</div>
+              <div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: accentColor, fontFamily: 'Outfit, sans-serif', marginBottom: 4 }}>
+                  {isExpiring ? `Your PRO plan expires in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}!` : "You're a PRO Member!"}
+                </div>
+                <div style={{ fontSize: 13, color: accentColor, opacity: 0.9 }}>
+                  {isExpiring
+                    ? <>Renew now to avoid losing access to FAANG Vault. <span style={{ fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.scrollTo({ top: document.querySelector('[data-pricing]')?.offsetTop - 80 || 600, behavior: 'smooth' })}>Renew →</span></>
+                    : <>{daysLeft ? `${daysLeft} days remaining.` : 'Your PRO access is active.'} <span style={{ fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => navigate('/interview-dsa')}>Go to AI Interview →</span></>
+                  }
+                </div>
               </div>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          )
+        })()}
 
         {/* HERO */}
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ textAlign: 'center', marginBottom: 72 }}>
@@ -253,7 +285,7 @@ export default function Premium() {
         </motion.div>
 
         {/* PRICING CARDS */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, alignItems: 'stretch' }}>
+        <div data-pricing style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, alignItems: 'stretch' }}>
           {PLANS.map((plan, idx) => {
             const btn = getBtnProps(plan)
             const isDisabled = btn.disabled || processing === plan.id
@@ -287,6 +319,33 @@ export default function Premium() {
                     fontSize: 10, fontWeight: 800, padding: '6px 18px', borderRadius: 20,
                     letterSpacing: 1.5, boxShadow: '0 4px 16px rgba(255,107,53,0.5)', whiteSpace: 'nowrap'
                   }}>MOST POPULAR</div>
+                )}
+
+                {/* FOMO Timer Badge */}
+                {plan.id !== 'free' && countdown && (
+                  <div style={{
+                    background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)',
+                    borderRadius: 10, padding: '6px 14px', marginBottom: 12,
+                    display: 'flex', alignItems: 'center', gap: 8, width: 'fit-content'
+                  }}>
+                    <span style={{ fontSize: 12 }}>⏳</span>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: '#ef4444', fontFamily: 'JetBrains Mono, monospace', letterSpacing: 0.5 }}>
+                      Offer Expires In: {countdown}
+                    </span>
+                  </div>
+                )}
+
+                {/* 7-Day Free Trial Badge (6mo only) */}
+                {plan.id === 'pro_6m' && !isPremiumUser && (
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(251,191,36,0.12), rgba(255,107,53,0.08))',
+                    border: '1px solid rgba(251,191,36,0.3)',
+                    borderRadius: 10, padding: '8px 14px', marginBottom: 12,
+                    display: 'flex', alignItems: 'center', gap: 8, width: 'fit-content'
+                  }}>
+                    <span style={{ fontSize: 15 }}>🎁</span>
+                    <span style={{ fontSize: 12, fontWeight: 800, color: '#fbbf24', letterSpacing: 0.3 }}>Includes 7-Day Free Trial</span>
+                  </div>
                 )}
 
                 {/* Plan Name + Save Badge */}
