@@ -33,14 +33,12 @@ const PlayIcon = () => (
 
 export default function InterviewDSA() {
   const [isPremium, setIsPremium] = useState(false);
-  const [premiumPlan, setPremiumPlan] = useState('free');
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
   
   // Filters
   const [diffFilter, setDiffFilter] = useState('All');
   const [topicFilter, setTopicFilter] = useState('All');
-  const [tierFilter, setTierFilter] = useState('All');
   
   // Modal states
   const [showPaywall, setShowPaywall] = useState(false);
@@ -58,7 +56,6 @@ export default function InterviewDSA() {
       setUser(userObj);
       if (userObj.isPremium) {
         setIsPremium(true);
-        setPremiumPlan(userObj.premiumPlan || 'pro');
       }
     }
     fetchVaultProblems();
@@ -144,13 +141,7 @@ export default function InterviewDSA() {
   };
 
   const handleProblemClick = (p) => {
-    const isProPlus = premiumPlan === 'pro_plus';
-    const isPro = premiumPlan === 'pro';
-    
-    if (p.tier === 'premium' && !isProPlus) {
-      setLockedProblem(p);
-      setShowPaywall(true);
-    } else if (!isPremium && p.tier === 'free') {
+    if (!isPremium) {
       setLockedProblem(p);
       setShowPaywall(true);
     } else {
@@ -165,8 +156,7 @@ export default function InterviewDSA() {
   const filteredProblems = problems.filter(p => {
     const diffMatch = diffFilter === 'All' || p.difficulty === diffFilter;
     const topicMatch = topicFilter === 'All' || p.category === topicFilter;
-    const tierMatch = tierFilter === 'All' || p.tier === tierFilter;
-    return diffMatch && topicMatch && tierMatch;
+    return diffMatch && topicMatch;
   });
 
   const getCompanyColor = (company) => {
@@ -243,7 +233,7 @@ export default function InterviewDSA() {
             <div className="hero-text-content">
               <h1 className="hero-title">
                 The FAANG Vault
-                <span className="pro-badge-glow">PRO+</span>
+                <span className="pro-badge-glow">PRO</span>
               </h1>
               <p className="hero-subtitle">
                 Master the most frequently asked interview questions from top tech companies. 
@@ -251,7 +241,7 @@ export default function InterviewDSA() {
               </p>
               {!isPremium && (
                 <div className="premium-upsell" onClick={() => setShowPaywall(true)}>
-                  🔒 Unlock all {problems.filter(p => p.tier === 'premium').length} PRO+ questions
+                   🔒 Unlock all {problems.length} PRO questions
                 </div>
               )}
             </div>
@@ -282,11 +272,7 @@ export default function InterviewDSA() {
                 <select value={topicFilter} onChange={e => setTopicFilter(e.target.value)} className="vault-select">
                   {TOPICS.map(t => <option key={t} value={t}>{t === 'All' ? 'All Topics' : t}</option>)}
                 </select>
-                <select value={tierFilter} onChange={e => setTierFilter(e.target.value)} className="vault-select">
-                  <option value="All">All Tiers</option>
-                  <option value="free">PRO</option>
-                  <option value="premium">PRO+ 🔒</option>
-                </select>
+
               </div>
               <div className="problem-count">
                 {filteredProblems.length} Problems Match
@@ -305,7 +291,7 @@ export default function InterviewDSA() {
               <div className="list-body">
                 <AnimatePresence>
                   {filteredProblems.map((p, idx) => {
-                    const isLocked = p.tier === 'premium' && premiumPlan !== 'pro_plus';
+                    const isLocked = !isPremium;
                     const diffColors = {
                       Easy: { bg: 'rgba(34,197,94,0.1)', color: '#22c55e', border: 'rgba(34,197,94,0.2)' },
                       Medium: { bg: 'rgba(251,146,60,0.1)', color: '#fb923c', border: 'rgba(251,146,60,0.2)' },
@@ -329,7 +315,7 @@ export default function InterviewDSA() {
                           <div>
                             <div className="p-title">
                               {p.title} 
-                              {p.tier === 'premium' && <span className="premium-tag">PRO+</span>}
+                              {p.tier === 'premium' && <span className="premium-tag">PRO</span>}
                             </div>
                             <div className="p-category">{p.category}</div>
                           </div>

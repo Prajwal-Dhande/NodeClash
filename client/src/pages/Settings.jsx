@@ -92,13 +92,11 @@ export default function Settings() {
     handleLogout()
   }
 
-  const getPlanLabel = () => {
-    const plan = user?.premiumPlan || (user?.isPremium ? 'pro' : 'free')
-    if (plan === 'pro_plus') return { name: 'Pro+', color: '#ff6b35', bg: 'rgba(255,107,53,0.1)', border: 'rgba(255,107,53,0.3)' }
-    if (plan === 'pro') return { name: 'Pro', color: '#60a5fa', bg: 'rgba(96,165,250,0.1)', border: 'rgba(96,165,250,0.3)' }
-    return { name: 'Free', color: '#71717a', bg: 'rgba(113,113,122,0.1)', border: 'rgba(113,113,122,0.3)' }
-  }
-  const planInfo = getPlanLabel()
+  const isPro = user?.isPremium || premiumStatus?.isPremium
+  const planColor = isPro
+    ? { color: '#60a5fa', bg: 'rgba(96,165,250,0.1)', border: 'rgba(96,165,250,0.3)' }
+    : { color: '#71717a', bg: 'rgba(113,113,122,0.1)', border: 'rgba(113,113,122,0.3)' }
+  const daysLeft = premiumStatus?.daysLeft || 0
 
   return (
     <div style={{ minHeight: '100vh', background: '#060608', fontFamily: 'Inter, sans-serif', color: 'var(--text-main)' }}>
@@ -118,25 +116,27 @@ export default function Settings() {
         <p style={{ color: 'var(--text-muted)', fontSize: 14, margin: '0 0 40px 0' }}>Manage your account, preferences, and subscription.</p>
 
         {/* ── SUBSCRIPTION ── */}
-        <div style={{ background: 'var(--card-bg)', border: `1px solid ${planInfo.border}`, borderRadius: 16, padding: '24px', marginBottom: 32 }}>
+        <div style={{ background: 'var(--card-bg)', border: `1px solid ${planColor.border}`, borderRadius: 16, padding: '24px', marginBottom: 32 }}>
           <SectionTitle>Subscription</SectionTitle>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-              <div style={{ background: planInfo.bg, border: `1px solid ${planInfo.border}`, padding: '8px 18px', borderRadius: 10 }}>
-                <span style={{ fontSize: 18, fontWeight: 900, color: planInfo.color, fontFamily: 'Outfit' }}>{planInfo.name}</span>
+              <div style={{ background: planColor.bg, border: `1px solid ${planColor.border}`, padding: '8px 18px', borderRadius: 10 }}>
+                <span style={{ fontSize: 18, fontWeight: 900, color: planColor.color, fontFamily: 'Outfit' }}>{isPro ? 'Pro' : 'Free'}</span>
               </div>
               <div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: '#e5e5e5' }}>
-                  {planInfo.name === 'Free' ? 'Free Plan' : `${planInfo.name} Plan Active`}
+                  {isPro ? 'Pro Plan Active' : 'Free Plan Active'}
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                  {premiumStatus?.daysLeft ? `${premiumStatus.daysLeft} days remaining` : planInfo.name === 'Free' ? 'Upgrade to unlock premium features' : 'Active subscription'}
+                  {isPro
+                    ? (daysLeft > 0 ? `${daysLeft} days remaining` : 'Active subscription')
+                    : 'Upgrade to unlock FAANG Vault, Clara AI & more'}
                 </div>
               </div>
             </div>
-            {planInfo.name !== 'Pro+' && (
-              <button onClick={() => navigate('/premium')} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: 'var(--text-main)', border: 'none', borderRadius: 10, padding: '10px 20px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter' }}>
-                {planInfo.name === 'Free' ? 'Upgrade' : 'Upgrade to Pro+'}
+            {!isPro && (
+              <button onClick={() => navigate('/premium')} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter' }}>
+                Upgrade to Pro
               </button>
             )}
           </div>

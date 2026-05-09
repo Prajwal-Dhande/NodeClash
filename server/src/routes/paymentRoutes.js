@@ -68,35 +68,91 @@ router.post('/verify', authMiddleware, async (req, res) => {
 
     if (razorpay_signature === expectedSign) {
       
-      // Order fetch karke pata lagayenge konsa plan tha
+      // Fetch order to read plan metadata
       const orderDetails = await razorpay.orders.fetch(razorpay_order_id);
-      const plan = orderDetails.notes ? orderDetails.notes.plan : 'monthly';
+      const notes = orderDetails.notes || {};
+      const planId = notes.plan || 'pro_1m';
 
-      // Plan ke hisaab se expiry calculate karo
+      // Calculate expiry from plan
       const expiry = new Date();
-      if (plan === 'yearly') {
-        expiry.setFullYear(expiry.getFullYear() + 1);
-      } else if (plan === 'six_months') {
+      if (planId.includes('6m') || planId === 'six_months' || planId === 'yearly') {
         expiry.setMonth(expiry.getMonth() + 6);
+        expiry.setDate(expiry.getDate() + 7); // 7-day trial for 6-month plan
       } else {
-        expiry.setMonth(expiry.getMonth() + 1); // default 1 month
+        expiry.setMonth(expiry.getMonth() + 1);
       }
 
-      // Update user status
-      const premiumPlan = (plan === 'pro_plus' || plan === 'pro+') ? 'pro_plus' : 'pro';
+      // Always set to 'pro' — no more pro_plus
       await User.findByIdAndUpdate(req.userId, { 
         isPremium: true,
-        premiumPlan: premiumPlan,
+        premiumPlan: 'pro',
         premiumExpiry: expiry,
         premiumOrderId: razorpay_order_id
       });
 
-      // Updated user ko frontend bhejo taaki localStorage update ho jaye
       const user = await User.findById(req.userId).select('-password -otp -otpExpiry');
+
+      // ── Send Welcome Email ──
+      try {
+        const nodemailer = require('nodemailer');
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        });
+
+        if (user.email && process.env.EMAIL_USER) {
+          const planLabel = planId.includes('6m') ? 'Pro — 6 Months' : 'Pro — 1 Month';
+          const amountPaid = orderDetails.amount ? `₹${(orderDetails.amount / 100).toLocaleString('en-IN')}` : 'N/A';
+          const expiryStr = expiry.toLocaleDateString('en-IN', { dateStyle: 'long' });
+
+          await transporter.sendMail({
+            from: `"CodeArena" <${process.env.EMAIL_USER}>`,
+            to: user.email,
+            subject: '🎉 Welcome to CodeArena Pro!',
+            html: `
+              <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto; background: #0f0f14; border-radius: 16px; overflow: hidden;">
+                <div style="background: linear-gradient(135deg, #ff6b35, #f7451d); padding: 28px 32px;">
+                  <h1 style="color: #fff; margin: 0; font-size: 24px;">{C} CodeArena Pro</h1>
+                  <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px;">Thank you for subscribing!</p>
+                </div>
+                <div style="padding: 32px;">
+                  <p style="color: #d1d5db; font-size: 15px; line-height: 1.7;">
+                    Hey <strong style="color: #fff;">${user.username || 'Champion'}</strong>,
+                  </p>
+                  <p style="color: #d1d5db; font-size: 14px; line-height: 1.7;">
+                    You now have full access to the <strong style="color: #ff6b35;">FAANG Vault</strong>, 
+                    <strong style="color: #60a5fa;">Clara AI Interviews</strong>, ranked tournaments, and all Pro features.
+                  </p>
+                  <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; margin: 24px 0;">
+                    <table style="width: 100%; color: #d1d5db; font-size: 13px; border-collapse: collapse;">
+                      <tr><td style="padding: 8px 0; color: #888;">Plan</td><td style="text-align: right; font-weight: 700; color: #fff;">${planLabel}</td></tr>
+                      <tr><td style="padding: 8px 0; color: #888;">Amount Paid</td><td style="text-align: right; font-weight: 700; color: #ff6b35;">${amountPaid}</td></tr>
+                      <tr><td style="padding: 8px 0; color: #888;">Valid Until</td><td style="text-align: right; font-weight: 700; color: #22c55e;">${expiryStr}</td></tr>
+                      <tr><td style="padding: 8px 0; color: #888;">Order ID</td><td style="text-align: right; font-size: 11px; color: #888;">${razorpay_order_id}</td></tr>
+                    </table>
+                  </div>
+                  <a href="https://codearena.dev/interview-dsa" style="display: inline-block; background: linear-gradient(135deg, #ff6b35, #f7451d); color: #fff; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-weight: 700; font-size: 14px; margin-top: 8px;">
+                    🚀 Start Practicing Now
+                  </a>
+                  <p style="color: #666; font-size: 12px; margin-top: 28px;">
+                    If you have questions, reply to this email or reach out at support@codearena.dev.
+                  </p>
+                </div>
+              </div>
+            `,
+          });
+          console.log(`Welcome email sent to ${user.email}`);
+        }
+      } catch (emailErr) {
+        console.error('Email send failed (non-blocking):', emailErr.message);
+      }
 
       return res.status(200).json({ 
         success: true, 
-        message: "Payment verified successfully. Welcome to Premium!", 
+        message: "Payment verified successfully. Welcome to Pro!", 
         user 
       });
     } else {
