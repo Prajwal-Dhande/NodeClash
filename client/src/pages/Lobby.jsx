@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import Matchmaking from '../components/battle/Matchmaking'
 import ActivityCalendar from '../components/ActivityCalendar'
@@ -711,25 +711,36 @@ export default function Lobby() {
           >
             {/* LEFT: Main content grid */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
-            {/* Interview Pro Vault Card */}
+            
+            {/* 🔥 Interview Pro Vault Card (INLINE POSTER - RELIABLE IMAGE) */}
             <motion.div
-              whileHover={{ y: -2 }}
+              whileHover={{ y: -4 }}
               onClick={() => user?.isPremium ? navigate('/interview-dsa') : setShowPremiumModal(true)}
-              style={{
-                gridColumn: 'span 2', gridRow: 'span 2',
-                background: 'var(--card-bg)',
-                border: '1px solid var(--glass-border)',
-                position: 'relative', overflow: 'hidden', padding: 32, borderRadius: 20, cursor: 'pointer', display: 'flex', flexDirection: 'column'
-              }}
+              className="game-mode-card"
+              style={{ gridColumn: 'span 2', gridRow: 'span 2' }}
             >
-              <div style={{ position: 'relative', zIndex: 2 }}>
-                <div style={{ padding: '6px 12px', background: 'rgba(236,72,153,0.1)', color: '#fbcfe8', border: '1px solid rgba(236,72,153,0.2)', borderRadius: 6, fontSize: 11, fontWeight: 700, width: 'fit-content', marginBottom: 16 }}>MAANG EXCLUSIVE</div>
-                <h3 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)', marginBottom: 12 }}>Interview Pro Vault {user?.isPremium && <span style={{ fontSize: 16, color: '#22c55e' }}>✓ Unlocked</span>}</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>Master the exact algorithms asked by top tech companies. Train with precision, zero distractions, and our integrated AI interviewer.</p>
+              <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <div style={{ padding: '6px 12px', background: 'rgba(236,72,153,0.1)', color: '#ec4899', border: '1px solid rgba(236,72,153,0.2)', borderRadius: 6, fontSize: 11, fontWeight: 700, width: 'fit-content', marginBottom: 16 }}>
+                  MAANG EXCLUSIVE
+                </div>
+                <h3 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)', marginBottom: 12 }}>
+                  Interview Pro Vault {user?.isPremium && <span style={{ fontSize: 16, color: '#22c55e' }}>✓ Unlocked</span>}
+                </h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: 14, lineHeight: 1.6, marginBottom: 16 }}>
+                  Master the exact algorithms asked by top tech companies. Train with precision, zero distractions, and our integrated AI interviewer.
+                </p>
+
+                {/* Inline Banner Image - Reliable Server/Code Aesthetic */}
+                <div className="card-inline-image" style={{ 
+                  backgroundImage: "url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop')", 
+                  height: 160, width: '100%', marginBottom: 20, borderRadius: 12, 
+                  backgroundSize: 'cover', backgroundPosition: 'center',
+                  border: '1px solid var(--glass-border)'
+                }} />
 
                 <button style={{
                   background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', border: 'none', color: '#fff', borderRadius: 8,
-                  padding: '10px 20px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter',
+                  padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter',
                   boxShadow: '0 4px 14px rgba(255,107,53,0.3)', width: 'fit-content', marginBottom: 24
                 }}>
                   {user?.isPremium ? '⚡ Access Pro Vault' : '💎 Unlock Pro Vault'}
@@ -741,69 +752,98 @@ export default function Lobby() {
                   ))}
                 </div>
               </div>
+
               {!user?.isPremium && (
-                <div style={{ position: 'absolute', top: 32, right: 32, background: 'var(--glass-overlay)', padding: '6px 12px', borderRadius: 8, border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ position: 'absolute', top: 28, right: 28, background: 'var(--glass-overlay)', padding: '6px 12px', borderRadius: 8, border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ fontSize: 16 }}>🔒</span> <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>PREMIUM</span>
                 </div>
               )}
             </motion.div>
 
-            {/* Random Match Card */}
+            {/* 🔥 Random Match Card (INLINE POSTER) */}
             <motion.div
-              whileHover={{ y: -2 }}
+              whileHover={{ y: -4 }}
               onClick={() => { setMatchmakingMode('random'); setRoomType('public'); setShowMatchmaking(true); }}
-              style={{
-                background: 'var(--card-bg)', border: '1px solid var(--glass-border)',
-                borderRadius: 20, padding: 28, cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 16
-              }}
+              className="game-mode-card"
+              style={{ display: 'flex', flexDirection: 'column' }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(255,107,53,0.1)', color: '#ff6b35', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>⚡</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                <div className="mode-icon" style={{ background: 'rgba(255,107,53,0.1)', color: '#ff6b35', border: '1px solid rgba(255,107,53,0.2)' }}>⚡</div>
                 <h3 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-main)', margin: 0 }}>Random Match</h3>
               </div>
-              <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0, lineHeight: 1.5 }}>Find an opponent near your ELO instantly and battle!</p>
-              <button style={{ background: 'rgba(255,107,53,0.1)', border: '1px solid rgba(255,107,53,0.2)', color: '#ff6b35', borderRadius: 8, padding: '10px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', width: '100%', marginTop: 'auto', fontFamily: 'Inter' }}>
+              <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0, lineHeight: 1.5, marginBottom: 16 }}>
+                Find an opponent near your ELO instantly and battle!
+              </p>
+              
+              {/* Inline Banner Image */}
+              <div className="card-inline-image" style={{ 
+                backgroundImage: "url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop')", 
+                height: 120, width: '100%', marginTop: 'auto', marginBottom: 16, borderRadius: 12, 
+                backgroundSize: 'cover', backgroundPosition: 'center',
+                border: '1px solid var(--glass-border)'
+              }} />
+
+              <button className="mode-btn" style={{ background: 'rgba(255,107,53,0.1)', border: '1px solid rgba(255,107,53,0.2)', color: '#ff6b35' }}>
                 ⚡ Start Quick Play
               </button>
             </motion.div>
 
-            {/* Ranked Match Card */}
+            {/* 🔥 Ranked Match Card (INLINE POSTER) */}
             <motion.div
-              whileHover={{ y: -2 }}
+              whileHover={{ y: -4 }}
               onClick={handleRankedClick}
-              style={{
-                background: 'var(--card-bg)', border: '1px solid var(--glass-border)',
-                borderRadius: 20, padding: 28, cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 16
-              }}
+              className="game-mode-card"
+              style={{ display: 'flex', flexDirection: 'column' }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(168,85,247,0.1)', color: '#a855f7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>🎯</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                <div className="mode-icon" style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}>🎯</div>
                 <h3 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-main)', margin: 0 }}>Ranked Match</h3>
               </div>
-              <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0, lineHeight: 1.5 }}>Choose a specific problem and fight for global ELO ranking.</p>
-              <button style={{ background: 'rgba(168,85,247,0.1)', border: '1px solid rgba(168,85,247,0.2)', color: '#a855f7', borderRadius: 8, padding: '10px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', width: '100%', marginTop: 'auto', fontFamily: 'Inter' }}>
+              <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0, lineHeight: 1.5, marginBottom: 16 }}>
+                Choose a specific problem and fight for global ELO ranking.
+              </p>
+              
+              {/* Inline Banner Image */}
+              <div className="card-inline-image" style={{ 
+                backgroundImage: "url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop')", 
+                height: 120, width: '100%', marginTop: 'auto', marginBottom: 16, borderRadius: 12, 
+                backgroundSize: 'cover', backgroundPosition: 'center',
+                border: '1px solid var(--glass-border)'
+              }} />
+
+              <button className="mode-btn" style={{ background: 'rgba(168,85,247,0.1)', border: '1px solid rgba(168,85,247,0.2)', color: '#a855f7' }}>
                 🎯 Join Ranked Queue
               </button>
             </motion.div>
 
-            {/* Practice Bot Card */}
+            {/* 🔥 Practice Bot Card (INLINE POSTER REVERTED) */}
             <motion.div
-              whileHover={{ y: -2 }}
+              whileHover={{ y: -4 }}
               onClick={handlePracticeClick}
-              style={{
-                background: 'var(--card-bg)', border: '1px solid var(--glass-border)',
-                borderRadius: 20, padding: 28, cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 16
-              }}
+              className="game-mode-card"
+              style={{ display: 'flex', flexDirection: 'column', gridColumn: 'span 2' }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(34,197,94,0.1)', color: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>🤖</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                <div className="mode-icon" style={{ background: 'rgba(34,197,94,0.1)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.2)' }}>🤖</div>
                 <h3 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-main)', margin: 0 }}>Practice Bot</h3>
               </div>
-              <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0, lineHeight: 1.5 }}>Hone your skills against our AI speed bot. No ELO risk, just pure coding.</p>
-              <button style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', color: '#22c55e', borderRadius: 8, padding: '10px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', width: '100%', marginTop: 'auto', fontFamily: 'Inter' }}>
+              <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0, lineHeight: 1.5, marginBottom: 16, maxWidth: '80%' }}>
+                Hone your skills against our AI speed bot. No ELO risk, just pure coding. Perfect for warm-ups before ranked battles.
+              </p>
+              
+              {/* Inline Banner Image - Proper Cute Robot Head */}
+              <div className="card-inline-image" style={{ 
+                backgroundImage: "url('https://images.unsplash.com/photo-1589254065878-42c9da997008?q=80&w=1000&auto=format&fit=crop')", 
+                height: 140, width: '100%', marginTop: 'auto', marginBottom: 16, borderRadius: 12, 
+                backgroundSize: 'cover', backgroundPosition: 'center',
+                border: '1px solid var(--glass-border)'
+              }} />
+
+              <button className="mode-btn" style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', color: '#22c55e', width: '100%' }}>
                 🤖 Start Practice
               </button>
             </motion.div>
+
             </div>
 
             {/* RIGHT: Activity Calendar sidebar */}
@@ -916,7 +956,7 @@ export default function Lobby() {
           </div>
         )}
 
-        {/* RESTORED CREATE ROOM TAB */}
+        {/* CREATE ROOM TAB */}
         {tab === 'create' && (
           <div className="create-grid">
             <div className="glass-panel">
@@ -989,7 +1029,7 @@ export default function Lobby() {
           </div>
         )}
 
-        {/* RESTORED JOIN ROOM TAB */}
+        {/* JOIN ROOM TAB */}
         {tab === 'join' && (
           <div className="join-container glass-panel">
             <div className="join-icon">🔗</div>
@@ -1004,7 +1044,7 @@ export default function Lobby() {
           </div>
         )}
 
-        {/* RESTORED WATCH LIVE TAB */}
+        {/* WATCH LIVE TAB */}
         {tab === 'live' && (
           <div className="glass-panel" style={{ padding: '60px', textAlign: 'center', margin: '32px auto', maxWidth: 600 }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>👁</div>
@@ -1037,7 +1077,7 @@ export default function Lobby() {
           --cyan: #0ea5e9; 
         }
 
-        /* 🔥 NEW: Light Mode Overrides */
+        /* Light Mode Overrides */
         :root[data-theme='light'], .light, body.light {
           --bg: #f3f4f6;
           --nav-bg: #ffffff;
@@ -1066,70 +1106,59 @@ export default function Lobby() {
           transition: background-color 0.3s ease;
         }
 
-        .modal-close-btn {
-          width: 36px; height: 36px; border-radius: 50%;
-          background: var(--glass-overlay); border: 1px solid var(--glass-border);
-          color: var(--text-muted); cursor: pointer; font-size: 16px;
+        /* 🔥 NEW INLINE CARDS CSS 🔥 */
+        .game-mode-card {
+          background: var(--card-bg) !important;
+          border: 1px solid var(--glass-border) !important;
+          border-radius: 20px;
+          padding: 24px;
+          position: relative;
+          transition: all 0.2s ease;
+        }
+        .game-mode-card:hover {
+          border-color: rgba(255,107,53,0.3) !important;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .card-inline-image {
+          position: relative;
+          overflow: hidden;
+          transition: transform 0.4s ease;
+        }
+        .game-mode-card:hover .card-inline-image {
+          transform: scale(1.02);
+        }
+        /* Make images slightly muted in light mode to fit the aesthetic */
+        :root[data-theme='light'] .card-inline-image, .light .card-inline-image {
+          filter: grayscale(0.2) contrast(1.1) brightness(0.9);
+        }
+        
+        .mode-icon {
+          width: 36px; height: 36px; border-radius: 10px;
           display: flex; align-items: center; justify-content: center;
+          font-size: 16px;
+        }
+        .mode-btn {
+          margin-top: auto;
+          border-radius: 10px;
+          padding: 12px 16px;
+          font-size: 13px;
+          font-weight: 700;
+          cursor: pointer;
+          width: 100%;
+          font-family: Inter;
           transition: all 0.2s;
         }
-        .modal-close-btn:hover {
-          color: var(--orange); border-color: var(--orange); background: rgba(255,107,53,0.1);
+        .mode-btn:hover {
+          filter: brightness(1.2);
+          transform: translateY(-2px);
         }
 
-        .modal-cancel-btn {
-          background: transparent; border: 1px solid var(--glass-border);
-          color: var(--text-muted); border-radius: 12px; padding: 12px 24px;
-          cursor: pointer; font-size: 13px; font-weight: 600; font-family: Inter;
-          transition: all 0.2s;
-        }
-        .modal-cancel-btn:hover {
-          color: var(--orange); border-color: var(--orange); background: rgba(255,107,53,0.05);
-        }
-
-        .modal-search-input:focus {
-          border-color: var(--orange) !important;
-          box-shadow: 0 0 0 2px rgba(255,107,53,0.2);
-        }
-
-        /* PREMIUM MODAL REDESIGN */
-        .premium-overlay { position: fixed; inset: 0; background: var(--modal-overlay); backdrop-filter: blur(16px); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 20px; }
-        .premium-modal { position: relative; background: var(--modal-bg); border: 1px solid rgba(255,107,53,0.3); border-radius: 24px; padding: 48px 40px; width: 100%; max-width: 1000px; box-shadow: 0 0 80px rgba(255,107,53,0.08), 0 40px 80px rgba(0,0,0,0.6); overflow: hidden; }
-        .close-btn { position: absolute; top: 20px; right: 24px; background: var(--glass-overlay); border: 1px solid var(--glass-border); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; font-size: 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; z-index: 10; }
-        .close-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
-        .premium-glow-bg { position: absolute; top: -20%; left: 50%; transform: translateX(-50%); width: 80%; height: 50%; background: radial-gradient(ellipse at center, rgba(255,107,53,0.15) 0%, transparent 70%); filter: blur(60px); pointer-events: none; }
-        
-        .premium-header { text-align: center; margin-bottom: 48px; position: relative; z-index: 5; }
-        .premium-badge { display: inline-block; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); color: #fbbf24; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; padding: 6px 16px; border-radius: 20px; margin-bottom: 20px; }
-        .premium-title { font-family: Outfit, sans-serif; font-size: 42px; font-weight: 900; color: var(--text-main); margin: 0 0 16px 0; letter-spacing: -1px; }
-        .premium-title span { background: linear-gradient(135deg, #ff6b35, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .premium-subtitle { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.6; }
-
-        .premium-cards-container { display: flex; gap: 24px; position: relative; z-index: 5; }
-        .premium-card { flex: 1; background: var(--glass-overlay); border: 1px solid var(--glass-border); border-radius: 20px; padding: 32px 24px; display: flex; flex-direction: column; transition: all 0.3s cubic-bezier(0.25,0.8,0.25,1); }
-        .premium-card:hover { transform: translateY(-8px); background: rgba(255,255,255,0.03); }
-        
-        .pro-tier { border-color: rgba(96,165,250,0.3); background: linear-gradient(180deg, rgba(96,165,250,0.05) 0%, rgba(255,255,255,0.02) 100%); }
-        .pro-plus-tier { border-color: rgba(255,107,53,0.5); background: linear-gradient(180deg, rgba(255,107,53,0.08) 0%, rgba(255,255,255,0.02) 100%); position: relative; transform: scale(1.05); z-index: 10; box-shadow: 0 20px 40px rgba(255,107,53,0.15); }
-        .pro-plus-tier:hover { transform: scale(1.05) translateY(-8px); box-shadow: 0 30px 60px rgba(255,107,53,0.2); }
-        
-        .popular-tag { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #ff6b35, #f7451d); color: #fff; font-size: 10px; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(255,107,53,0.4); }
-        .tier-name { font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; font-family: Outfit, sans-serif; display: flex; align-items: center; justify-content: space-between; }
-        .tier-price { font-size: 36px; font-weight: 900; color: var(--text-main); margin-bottom: 12px; font-family: JetBrains Mono, monospace; }
-        .tier-price span { font-size: 14px; color: var(--text-muted); font-weight: 600; font-family: Inter, sans-serif; }
-        .tier-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; min-height: 38px; line-height: 1.5; }
-        
-        .tier-features { list-style: none; padding: 0; margin: 0 0 32px 0; flex: 1; display: flex; flex-direction: column; gap: 14px; }
-        .tier-features li { font-size: 13px; color: var(--text-main); display: flex; align-items: center; font-weight: 500; }
-        .tier-features li.disabled { color: var(--text-muted); text-decoration: line-through; opacity: 0.5; }
-        .highlight-feat { color: #ff6b35; font-weight: 700; background: rgba(255,107,53,0.1); padding: 4px 8px; border-radius: 6px; margin-left: -8px; border: 1px solid rgba(255,107,53,0.2); }
-        
-        .tier-btn { width: 100%; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.3s ease; font-family: Inter, sans-serif; text-align: center; }
-        .btn-free { background: var(--glass-overlay); color: var(--text-muted); border: 1px solid var(--glass-border); }
-        .btn-pro { background: rgba(96,165,250,0.1); color: #60a5fa; border: 1px solid rgba(96,165,250,0.3); }
-        .btn-pro:hover { background: rgba(96,165,250,0.2); color: #fff; }
-        .btn-pro-plus { background: linear-gradient(135deg, #ff6b35, #f7451d); color: #fff; border: none; box-shadow: 0 8px 20px rgba(255,107,53,0.3); }
-        .btn-pro-plus:hover { background: linear-gradient(135deg, #f7451d, #ea580c); box-shadow: 0 12px 28px rgba(255,107,53,0.4); }
+        /* REST OF EXISTING CSS */
+        .modal-close-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--glass-overlay); border: 1px solid var(--glass-border); color: var(--text-muted); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .modal-close-btn:hover { color: var(--orange); border-color: var(--orange); background: rgba(255,107,53,0.1); }
+        .modal-cancel-btn { background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); border-radius: 12px; padding: 12px 24px; cursor: pointer; font-size: 13px; font-weight: 600; font-family: Inter; transition: all 0.2s; }
+        .modal-cancel-btn:hover { color: var(--orange); border-color: var(--orange); background: rgba(255,107,53,0.05); }
+        .modal-search-input:focus { border-color: var(--orange) !important; box-shadow: 0 0 0 2px rgba(255,107,53,0.2); }
 
         .glass-nav { height: 60px; background: var(--nav-bg); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; padding: 0 24px; position: sticky; top: 0; z-index: 50; transition: background-color 0.3s; }
         .logo { font-size: 16px; cursor: pointer; display: flex; align-items: center; margin-right: 32px; color: var(--text-main); }
