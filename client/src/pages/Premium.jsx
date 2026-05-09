@@ -4,81 +4,64 @@ import { motion } from 'framer-motion'
 import API_URL from '../config/api'
 import { ThemeToggle } from '../context/ThemeContext'
 
-const PLANS = [
-  {
-    id: 'free',
-    name: 'Free',
-    price: 0,
-    priceLabel: '₹0',
-    period: '/mo',
-    desc: 'For coders who are just starting out.',
-    color: '#71717a',
-    glow: 'rgba(113,113,122,0.1)',
-    border: 'rgba(113,113,122,0.2)',
-    features: [
-      { label: 'Unlimited Practice Problems', included: true },
-      { label: 'Basic IDE & Code Execution', included: true },
-      { label: 'Global Leaderboard Access', included: true },
-      { label: 'ELO Rating System', included: true },
-      { label: 'AI Mock Interviews (Clara)', included: false },
-      { label: 'Ranked Tournaments', included: false },
-      { label: 'Company-Specific Problem Tags', included: false },
-      { label: 'AI Code Review on Submission', included: false },
-    ],
-    btnLabel: 'Current Plan',
-    btnStyle: 'free',
-    disabled: true,
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    price: 299,
-    priceLabel: '₹299',
-    period: '/mo',
-    desc: 'For serious competitive programmers.',
-    color: '#60a5fa',
-    glow: 'rgba(96,165,250,0.12)',
-    border: 'rgba(96,165,250,0.35)',
-    features: [
-      { label: 'Everything in Free', included: true },
-      { label: 'Ranked Tournaments Access', included: true },
-      { label: 'Company-Specific Problem Tags', included: true },
-      { label: 'Advanced Performance Analytics', included: true },
-      { label: 'Priority Matchmaking Servers', included: true },
-      { label: 'AI Mock Interviews (Clara)', included: false },
-      { label: 'AI Code Review on Submission', included: false },
-      { label: '1-on-1 Feedback Reports', included: false },
-    ],
-    btnLabel: 'Upgrade to Pro',
-    btnStyle: 'pro',
-    disabled: false,
-  },
-  {
-    id: 'pro_plus',
-    name: 'Pro+',
-    price: 599,
-    priceLabel: '₹599',
-    period: '/mo',
-    desc: 'The complete FAANG interview arsenal.',
-    color: '#ff6b35',
-    glow: 'rgba(255,107,53,0.15)',
-    border: 'rgba(255,107,53,0.5)',
-    popular: true,
-    features: [
-      { label: 'Everything in Pro', included: true },
-      { label: '⚡ Live AI Mock Interviews (Clara)', included: true, highlight: true },
-      { label: '🧠 AI Code Review on Submission', included: true, highlight: true },
-      { label: '1-on-1 Detailed Feedback Reports', included: true, highlight: true },
-      { label: 'Zero-Latency Priority Servers', included: true },
-      { label: 'Exclusive FAANG Vault Problems', included: true },
-      { label: 'Early Access to New Features', included: true },
-      { label: 'Premium Discord Community', included: true },
-    ],
-    btnLabel: 'Unlock Pro+',
-    btnStyle: 'pro_plus',
-    disabled: false,
-  },
-]
+function getPlans(isYearly) {
+  const period = isYearly ? '/yr' : '/mo'
+  return [
+    {
+      id: 'free', name: 'Free', price: 0, priceLabel: '₹0', period,
+      desc: 'For coders who are just starting out.',
+      color: '#71717a', glow: 'rgba(113,113,122,0.1)', border: 'rgba(113,113,122,0.2)',
+      features: [
+        { label: 'Unlimited Practice Problems', included: true },
+        { label: 'Basic IDE & Code Execution', included: true },
+        { label: 'Global Leaderboard Access', included: true },
+        { label: 'ELO Rating System', included: true },
+        { label: 'AI Mock Interviews (Clara)', included: false },
+        { label: 'Ranked Tournaments', included: false },
+        { label: 'Company-Specific Problem Tags', included: false },
+        { label: 'AI Code Review on Submission', included: false },
+      ],
+      btnStyle: 'free',
+    },
+    {
+      id: 'pro', name: 'Pro',
+      price: isYearly ? 2499 : 299,
+      priceLabel: isYearly ? '₹2,499' : '₹299', period,
+      desc: 'For serious competitive programmers.',
+      color: '#60a5fa', glow: 'rgba(96,165,250,0.12)', border: 'rgba(96,165,250,0.35)',
+      features: [
+        { label: 'Everything in Free', included: true },
+        { label: 'Ranked Tournaments Access', included: true },
+        { label: 'Company-Specific Problem Tags', included: true },
+        { label: 'Advanced Performance Analytics', included: true },
+        { label: 'Priority Matchmaking Servers', included: true },
+        { label: 'AI Mock Interviews (Clara)', included: false },
+        { label: 'AI Code Review on Submission', included: false },
+        { label: '1-on-1 Feedback Reports', included: false },
+      ],
+      btnStyle: 'pro',
+    },
+    {
+      id: 'pro_plus', name: 'Pro+',
+      price: isYearly ? 4999 : 599,
+      priceLabel: isYearly ? '₹4,999' : '₹599', period,
+      desc: 'The complete FAANG interview arsenal.',
+      color: '#ff6b35', glow: 'rgba(255,107,53,0.15)', border: 'rgba(255,107,53,0.5)',
+      popular: true,
+      features: [
+        { label: 'Everything in Pro', included: true },
+        { label: '⚡ Live AI Mock Interviews (Clara)', included: true, highlight: true },
+        { label: '🧠 AI Code Review on Submission', included: true, highlight: true },
+        { label: '1-on-1 Detailed Feedback Reports', included: true, highlight: true },
+        { label: 'Zero-Latency Priority Servers', included: true },
+        { label: 'Exclusive FAANG Vault Problems', included: true },
+        { label: 'Early Access to New Features', included: true },
+        { label: 'Premium Discord Community', included: true },
+      ],
+      btnStyle: 'pro_plus',
+    },
+  ]
+}
 
 const CHECK = (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -94,7 +77,8 @@ const CROSS = (
 export default function Premium() {
   const navigate = useNavigate()
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || '{}'))
-  const [processing, setProcessing] = useState(null) 
+  const [processing, setProcessing] = useState(null)
+  const [isYearly, setIsYearly] = useState(false)
   const [premiumStatus, setPremiumStatus] = useState(null)
   const initials = (user?.username || 'PL').slice(0, 2).toUpperCase()
 
@@ -125,7 +109,7 @@ export default function Premium() {
   }, [])
 
   const handlePayment = async (plan) => {
-    if (plan.disabled || plan.id === 'free') return
+    if (plan.id === 'free') return
     const token = localStorage.getItem('token')
     if (!token) { navigate('/auth'); return }
 
@@ -134,7 +118,7 @@ export default function Premium() {
       const res = await fetch(`${API_URL}/api/payment/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ plan: plan.id, amount: plan.price * 100 })
+        body: JSON.stringify({ plan: isYearly ? `${plan.id}_yearly` : `${plan.id}_monthly`, amount: plan.price * 100 })
       })
       const data = await res.json()
       if (!data.success) throw new Error(data.message || 'Order creation failed')
@@ -179,6 +163,22 @@ export default function Premium() {
   const currentPlan = user?.premiumPlan || premiumStatus?.premiumPlan || 'free'
   const isProUser = currentPlan === 'pro'
   const isProPlusUser = currentPlan === 'pro_plus'
+  const PLANS = getPlans(isYearly)
+
+  // Derive button label & disabled state per plan
+  const getBtnProps = (plan) => {
+    if (plan.id === 'free') return { label: 'Current Plan', disabled: true }
+    if (plan.id === 'pro') {
+      if (isProUser || isProPlusUser) return { label: '✓ Active', disabled: true }
+      return { label: 'Upgrade to Pro', disabled: false }
+    }
+    if (plan.id === 'pro_plus') {
+      if (isProPlusUser) return { label: '✓ Active', disabled: true }
+      if (isProUser) return { label: '⬆ Upgrade to Pro+', disabled: false }
+      return { label: 'Unlock Pro+', disabled: false }
+    }
+    return { label: plan.name, disabled: false }
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', fontFamily: 'Inter, sans-serif', overflowX: 'hidden', transition: 'background-color 0.3s ease' }}>
@@ -249,9 +249,47 @@ export default function Premium() {
           </p>
         </motion.div>
 
+        {/* BILLING TOGGLE */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 48 }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 16,
+            background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)',
+            borderRadius: 16, padding: '6px 8px'
+          }}>
+            <span style={{ fontSize: 14, fontWeight: isYearly ? 500 : 700, color: isYearly ? 'var(--text-muted)' : 'var(--text-main)', padding: '8px 16px', cursor: 'pointer', transition: 'all 0.3s' }}
+              onClick={() => setIsYearly(false)}>Monthly</span>
+            {/* Toggle pill */}
+            <button onClick={() => setIsYearly(p => !p)} style={{
+              position: 'relative', width: 52, height: 28, borderRadius: 14,
+              background: isYearly ? 'var(--orange, #ff6b35)' : 'var(--glass-border)',
+              border: 'none', cursor: 'pointer', transition: 'background 0.3s', padding: 0, flexShrink: 0
+            }}>
+              <div style={{
+                position: 'absolute', top: 3, left: isYearly ? 27 : 3,
+                width: 22, height: 22, borderRadius: '50%', background: '#fff',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
+                transition: 'left 0.3s cubic-bezier(0.68,-0.55,0.265,1.55)'
+              }} />
+            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 14, fontWeight: isYearly ? 700 : 500, color: isYearly ? 'var(--text-main)' : 'var(--text-muted)', padding: '8px 16px', cursor: 'pointer', transition: 'all 0.3s' }}
+                onClick={() => setIsYearly(true)}>Yearly</span>
+              <span style={{
+                fontSize: 10, fontWeight: 800, letterSpacing: 0.5,
+                background: 'rgba(34,197,94,0.12)', color: '#22c55e',
+                border: '1px solid rgba(34,197,94,0.25)',
+                padding: '4px 10px', borderRadius: 20, whiteSpace: 'nowrap'
+              }}>Save ~30%</span>
+            </div>
+          </div>
+        </div>
+
         {/* PRICING CARDS */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, alignItems: 'stretch' }}>
-          {PLANS.map((plan, idx) => (
+          {PLANS.map((plan, idx) => {
+            const btn = getBtnProps(plan)
+            const isDisabled = btn.disabled || processing === plan.id
+            return (
             <motion.div
               key={plan.id}
               initial={{ opacity: 0, y: 40 }}
@@ -272,7 +310,7 @@ export default function Premium() {
                 transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                 cursor: 'default',
               }}
-              whileHover={!plan.disabled ? { scale: plan.popular ? 1.05 : 1.02, transition: { duration: 0.2 } } : {}}
+              whileHover={!btn.disabled ? { scale: plan.popular ? 1.05 : 1.02, transition: { duration: 0.2 } } : {}}
             >
               {plan.popular && (
                 <div style={{
@@ -313,7 +351,7 @@ export default function Premium() {
               {/* CTA Button */}
               <button
                 onClick={() => handlePayment(plan)}
-                disabled={plan.disabled || processing === plan.id || (plan.id === 'pro' && (isProUser || isProPlusUser)) || (plan.id === 'pro_plus' && isProPlusUser)}
+                disabled={isDisabled}
                 style={{
                   width: '100%',
                   padding: '14px 0',
@@ -321,7 +359,7 @@ export default function Premium() {
                   fontSize: 14,
                   fontWeight: 700,
                   fontFamily: 'Inter, sans-serif',
-                  cursor: (plan.disabled || isPremiumUser) ? 'not-allowed' : 'pointer',
+                  cursor: isDisabled ? 'not-allowed' : 'pointer',
                   border: 'none',
                   transition: 'all 0.25s',
                   ...(plan.btnStyle === 'free'
@@ -330,23 +368,13 @@ export default function Premium() {
                       ? { background: 'rgba(96,165,250,0.12)', color: '#60a5fa', border: '1px solid rgba(96,165,250,0.3)' }
                       : { background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', boxShadow: '0 8px 24px rgba(255,107,53,0.35)' }
                   ),
-                  opacity: (plan.disabled || (isPremiumUser && plan.id !== 'free')) ? 0.5 : 1,
+                  opacity: isDisabled ? 0.5 : 1,
                 }}
               >
-                {processing === plan.id
-                  ? '⏳ Processing...'
-                  : plan.id === 'free'
-                    ? 'Current Plan'
-                    : plan.id === 'pro' && (isProUser || isProPlusUser)
-                      ? '✓ Active'
-                      : plan.id === 'pro_plus' && isProPlusUser
-                        ? '✓ Active'
-                        : plan.id === 'pro_plus' && isProUser
-                          ? '⬆ Upgrade to Pro+'
-                          : plan.btnLabel}
+                {processing === plan.id ? '⏳ Processing...' : btn.label}
               </button>
             </motion.div>
-          ))}
+          )})}
         </div>
 
         {/* WHY PREMIUM SECTION */}
@@ -380,10 +408,10 @@ export default function Premium() {
           <div style={{ fontSize: 40, marginBottom: 16 }}>🚀</div>
           <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 28, fontWeight: 900, color: 'var(--text-main)', margin: '0 0 12px 0' }}>Start your FAANG journey today</h2>
           <p style={{ color: 'var(--text-muted)', marginBottom: 28, fontSize: 15 }}>Join hundreds of coders who cracked their dream companies using CodeArena Premium.</p>
-          <button onClick={() => handlePayment(PLANS[2])} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none', borderRadius: 12, padding: '16px 40px', fontSize: 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 8px 30px rgba(255,107,53,0.35)', fontFamily: 'Inter, sans-serif', transition: 'all 0.2s' }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 14px 40px rgba(255,107,53,0.5)' }}
+          <button onClick={() => handlePayment(PLANS[2])} disabled={isProPlusUser} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none', borderRadius: 12, padding: '16px 40px', fontSize: 15, fontWeight: 700, cursor: isProPlusUser ? 'not-allowed' : 'pointer', boxShadow: '0 8px 30px rgba(255,107,53,0.35)', fontFamily: 'Inter, sans-serif', transition: 'all 0.2s', opacity: isProPlusUser ? 0.5 : 1 }}
+            onMouseEnter={e => { if (!isProPlusUser) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 14px 40px rgba(255,107,53,0.5)' } }}
             onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(255,107,53,0.35)' }}>
-            ✨ Unlock Pro+ — ₹599/mo
+            {isProPlusUser ? '✓ Pro+ Active' : `✨ Unlock Pro+ — ${PLANS[2].priceLabel}${PLANS[2].period}`}
           </button>
           <div style={{ marginTop: 16, fontSize: 12, color: 'var(--text-muted)' }}>Cancel anytime. Secure payments via Razorpay.</div>
         </motion.div>
