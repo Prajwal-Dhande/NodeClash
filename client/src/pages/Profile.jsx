@@ -792,22 +792,42 @@ export default function Profile() {
                     </span>
                   </div>
                   <div>
-                    <div 
-                      onClick={() => {
-                        const slug = b.problemSlug || b.problem?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-                        const isPremiumMatch = b.opponent === 'InterviewerBot' || (b.room && b.room.includes('vault'))
-                        navigate(`/battle?problem=${slug}&viewOnly=true${isPremiumMatch ? '&premium=true' : ''}`)
-                      }}
-                      style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-main)', marginBottom: 3, cursor: 'pointer', transition: 'color 0.2s' }}
-                      onMouseEnter={e => { e.currentTarget.style.color = '#ff6b35'; e.currentTarget.style.textDecoration = 'underline'; }}
-                      onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-main)'; e.currentTarget.style.textDecoration = 'none'; }}
-                      title="View this problem in Practice Mode"
-                    >
-                      {b.problem || 'Unknown'} ↗
-                    </div>
-                    <div style={{ fontSize: 11, color: b.result === 'win' ? '#22c55e' : b.result === 'draw' ? '#fbbf24' : '#ef4444', fontWeight: 700, fontFamily: 'JetBrains Mono' }}>
-                      {b.result === 'win' ? '+' : ''}{b.eloChange || 0} ELO
-                    </div>
+                    {(() => {
+                      const isPremiumMatch = b.opponent === 'InterviewerBot' || (b.room && b.room.includes('vault'))
+                      const isBot = b.opponent === 'PracticeBot' || b.opponent === 'AI_Bot'
+                      const isPrivate = b.room && (b.room.includes('room_') || b.room.includes('private'))
+                      const mode = isPremiumMatch
+                        ? { label: 'FAANG Vault', bg: 'rgba(168,85,247,0.1)', color: '#a855f7', border: 'rgba(168,85,247,0.25)' }
+                        : isBot
+                        ? { label: 'Practice', bg: 'rgba(96,165,250,0.1)', color: '#60a5fa', border: 'rgba(96,165,250,0.25)' }
+                        : isPrivate
+                        ? { label: 'Private Room', bg: 'rgba(20,184,166,0.1)', color: '#14b8a6', border: 'rgba(20,184,166,0.25)' }
+                        : { label: 'Random Match', bg: 'rgba(255,107,53,0.1)', color: '#ff6b35', border: 'rgba(255,107,53,0.25)' }
+                      return (
+                        <>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
+                            <div 
+                              onClick={() => {
+                                const slug = b.problemSlug || b.problem?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+                                navigate(`/battle?problem=${slug}&viewOnly=true${isPremiumMatch ? '&premium=true' : ''}`)
+                              }}
+                              style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-main)', cursor: 'pointer', transition: 'color 0.2s' }}
+                              onMouseEnter={e => { e.currentTarget.style.color = '#ff6b35'; e.currentTarget.style.textDecoration = 'underline'; }}
+                              onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-main)'; e.currentTarget.style.textDecoration = 'none'; }}
+                              title="View this problem in Review Mode"
+                            >
+                              {b.problem || 'Unknown'} ↗
+                            </div>
+                            <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 8px', borderRadius: 20, background: mode.bg, color: mode.color, border: `1px solid ${mode.border}`, letterSpacing: 0.5, whiteSpace: 'nowrap', lineHeight: '16px' }}>
+                              {mode.label}
+                            </span>
+                          </div>
+                          <div style={{ fontSize: 11, color: b.result === 'win' ? '#22c55e' : b.result === 'draw' ? '#fbbf24' : '#ef4444', fontWeight: 700, fontFamily: 'JetBrains Mono' }}>
+                            {b.result === 'win' ? '+' : ''}{b.eloChange || 0} ELO
+                          </div>
+                        </>
+                      )
+                    })()}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 26, height: 26, borderRadius: '50%', background: 'var(--avatar-bg)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 800, color: 'var(--text-main)' }}>
