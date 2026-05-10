@@ -200,6 +200,9 @@ export default function BattleRoom() {
       // ✅ Agar problem already solved hai toh timer mat chalaao
       if (isAlreadySolved) return;
 
+      // ✅ Premium/Vault mode = UNLIMITED time, no countdown
+      if (isPremiumMode()) return;
+
       const roomId = getRoomId();
       const savedEndTime = localStorage.getItem(`codeArena_endTime_${roomId}`);
       
@@ -714,6 +717,8 @@ export default function BattleRoom() {
   }
 
   const handleTimeUp = () => {
+    // ✅ Vault mode = unlimited time, never auto-end
+    if (isPremiumMode()) return;
     if (!gameOverRef.current) {
       gameOverRef.current = true;
       let finalResult = 'draw';
