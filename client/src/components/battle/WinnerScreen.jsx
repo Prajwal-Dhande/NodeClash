@@ -1,9 +1,11 @@
 import { useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import API_URL from '../../config/api'
 import PremiumRadarChart from './PremiumRadarChart'
 
 export default function WinnerScreen({ result, problem, myTests, totalTests, timeTaken, onRematch, onLobby, opponentName, difficulty, language, premiumMode, userCode, timeComplexity, complexity }) {
+  const navigate = useNavigate()
   const [eloData, setEloData] = useState(null)
   const [rankUp, setRankUp] = useState(false)
   const [aiFeedback, setAiFeedback] = useState(null)
@@ -331,8 +333,22 @@ export default function WinnerScreen({ result, problem, myTests, totalTests, tim
         display: 'flex', justifyContent: 'center'
       }}>
         <div style={{ display: 'flex', gap: 16, maxWidth: 500, width: '100%' }}>
-          <button onClick={onLobby} style={{ flex: 1, background: 'var(--card-bg, rgba(255,255,255,0.05))', border: '1px solid var(--glass-border, rgba(255,255,255,0.1))', color: '#fff', borderRadius: 100, padding: '16px', fontSize: 16, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif', backdropFilter: 'blur(12px)', transition: 'all 0.2s' }} onMouseOver={e => e.target.style.background = 'rgba(255,255,255,0.1)'} onMouseOut={e => e.target.style.background = 'var(--card-bg, rgba(255,255,255,0.05))'}>Dashboard</button>
-          <button onClick={onRematch} style={{ flex: 1, background: 'linear-gradient(135deg, #f97316, #ea580c)', border: 'none', color: '#fff', borderRadius: 100, padding: '16px', fontSize: 16, fontWeight: 800, cursor: 'pointer', fontFamily: 'Inter, sans-serif', boxShadow: '0 8px 32px rgba(249,115,22,0.4)', transition: 'transform 0.2s' }} onMouseOver={e => e.target.style.transform = 'translateY(-2px)'} onMouseOut={e => e.target.style.transform = 'none'}>Play Again</button>
+          <button 
+            onClick={() => navigate('/')} 
+            style={{ flex: 1, background: 'var(--card-bg, rgba(255,255,255,0.05))', border: '1px solid var(--glass-border, rgba(255,255,255,0.1))', color: 'var(--text-muted, #a1a1aa)', borderRadius: 100, padding: '16px', fontSize: 16, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif', backdropFilter: 'blur(12px)', transition: 'all 0.2s' }} 
+            onMouseOver={e => e.target.style.background = 'rgba(255,255,255,0.1)'} 
+            onMouseOut={e => e.target.style.background = 'var(--card-bg, rgba(255,255,255,0.05))'}
+          >
+            Dashboard
+          </button>
+          <button 
+            onClick={() => premiumMode ? navigate('/interview-dsa') : navigate('/lobby?tab=quickplay')} 
+            style={{ flex: 1, background: 'linear-gradient(135deg, #ff6b35, #f7451d)', border: 'none', color: '#fff', borderRadius: 100, padding: '16px', fontSize: 16, fontWeight: 800, cursor: 'pointer', fontFamily: 'Inter, sans-serif', boxShadow: '0 8px 32px rgba(249,115,22,0.4)', transition: 'transform 0.2s' }} 
+            onMouseOver={e => e.target.style.transform = 'translateY(-2px)'} 
+            onMouseOut={e => e.target.style.transform = 'none'}
+          >
+            Next Challenge ⚡
+          </button>
         </div>
       </div>
 
