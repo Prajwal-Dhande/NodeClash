@@ -783,9 +783,7 @@ export default function Profile() {
                   {isOwnProfile && <button onClick={() => navigate('/lobby')} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 28px', cursor: 'pointer', fontWeight: 700, fontFamily: 'Inter', fontSize: 14, boxShadow: '0 8px 24px rgba(255,107,53,0.3)', transition: 'all 0.3s' }}>⚡ Enter Arena</button>}
                 </div>
               ) : battles.slice(0, visibleCount).map((b, i) => (
-                <div key={i} style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 90px 70px 90px', padding: '16px 24px', alignItems: 'center', borderTop: '1px solid var(--glass-border)', transition: 'all 0.2s' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--glass-overlay)'; e.currentTarget.style.paddingLeft = '28px'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.paddingLeft = '24px'; }}>
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 90px 70px 90px', padding: '16px 24px', alignItems: 'center', borderTop: '1px solid var(--glass-border)' }}>
                   <div>
                     <span style={{ fontSize: 10, fontWeight: 800, padding: '4px 10px', borderRadius: 20, background: b.result === 'win' ? 'rgba(34,197,94,0.1)' : b.result === 'draw' ? 'rgba(251,191,36,0.1)' : 'rgba(239,68,68,0.1)', color: b.result === 'win' ? '#22c55e' : b.result === 'draw' ? '#fbbf24' : '#ef4444', border: `1px solid ${b.result === 'win' ? 'rgba(34,197,94,0.25)' : b.result === 'draw' ? 'rgba(251,191,36,0.25)' : 'rgba(239,68,68,0.25)'}`, letterSpacing: 0.5 }}>
                       {b.result?.toUpperCase()}
@@ -806,18 +804,9 @@ export default function Profile() {
                       return (
                         <>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
-                            <div 
-                              onClick={() => {
-                                const slug = b.problemSlug || b.problem?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-                                navigate(`/battle?problem=${slug}&viewOnly=true${isPremiumMatch ? '&premium=true' : ''}`)
-                              }}
-                              style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-main)', cursor: 'pointer', transition: 'color 0.2s' }}
-                              onMouseEnter={e => { e.currentTarget.style.color = '#ff6b35'; e.currentTarget.style.textDecoration = 'underline'; }}
-                              onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-main)'; e.currentTarget.style.textDecoration = 'none'; }}
-                              title="View this problem in Review Mode"
-                            >
-                              {b.problem || 'Unknown'} ↗
-                            </div>
+                            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-main)' }}>
+                              {b.problem || 'Unknown'}
+                            </span>
                             <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 8px', borderRadius: 20, background: mode.bg, color: mode.color, border: `1px solid ${mode.border}`, letterSpacing: 0.5, whiteSpace: 'nowrap', lineHeight: '16px' }}>
                               {mode.label}
                             </span>
@@ -833,7 +822,7 @@ export default function Profile() {
                     <div style={{ width: 26, height: 26, borderRadius: '50%', background: 'var(--avatar-bg)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 800, color: 'var(--text-main)' }}>
                       {(b.opponent || 'OP').slice(0, 2).toUpperCase()}
                     </div>
-                    <span onClick={() => navigate(`/profile/${b.opponent}`)} style={{ fontSize: 12, color: 'var(--text-muted)', cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.color='var(--text-main)'} onMouseLeave={e => e.currentTarget.style.color='var(--text-muted)'}>{b.opponent || 'Unknown'}</span>
+                    <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{b.opponent || 'Unknown'}</span>
                   </div>
                   <div>
                     <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20, background: diffColor[b.difficulty]?.bg, color: diffColor[b.difficulty]?.color, border: `1px solid ${diffColor[b.difficulty]?.color}30` }}>
