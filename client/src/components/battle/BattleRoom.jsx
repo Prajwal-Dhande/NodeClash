@@ -107,7 +107,7 @@ const getRoomId = () => new URLSearchParams(window.location.search).get('room') 
 const getProblemSlug = () => new URLSearchParams(window.location.search).get('problem') || 'contains-duplicate'
 const isPracticeMode = () => new URLSearchParams(window.location.search).get('practice') === 'true'
 const isRealMatch = () => new URLSearchParams(window.location.search).get('real') === 'true'
-const isPremiumMode = () => new URLSearchParams(window.location.search).get('premium') === 'true'
+const isPremiumMode = () => new URLSearchParams(window.location.search).get('premium') === 'true' || new URLSearchParams(window.location.search).get('bot') === 'InterviewerBot'
 const isViewOnlyMode = () => new URLSearchParams(window.location.search).get('viewOnly') === 'true'
 
 export default function BattleRoom() {

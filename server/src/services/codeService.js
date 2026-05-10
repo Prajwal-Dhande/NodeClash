@@ -292,7 +292,14 @@ except Exception as e:
       }
 
     } catch (err) {
-      results.push({ testCase: i + 1, passed: false, error: err.message, expected: tc.expected, input: tc.input });
+      // Clean developer-friendly error as requested
+      let friendlyError = err.message;
+      if (err.name === 'TypeError' || err.message.includes('undefined') || err.message.includes('null')) {
+        friendlyError = `Runtime Error: Check your variable initializations or inputs. (${err.message})`;
+      } else if (err.name === 'ReferenceError') {
+        friendlyError = `Reference Error: You are trying to use a variable that is not defined. (${err.message})`;
+      }
+      results.push({ testCase: i + 1, passed: false, error: friendlyError, expected: tc.expected, input: tc.input });
     }
   }
 

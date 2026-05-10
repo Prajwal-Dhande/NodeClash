@@ -292,6 +292,7 @@ export default function InterviewDSA() {
                 <AnimatePresence>
                   {filteredProblems.map((p, idx) => {
                     const isLocked = !isPremium;
+                    const isSolved = user?.solvedProblems?.includes(p._id) || user?.solvedProblems?.includes(p.slug);
                     const diffColors = {
                       Easy: { bg: 'rgba(34,197,94,0.1)', color: '#22c55e', border: 'rgba(34,197,94,0.2)' },
                       Medium: { bg: 'rgba(251,146,60,0.1)', color: '#fb923c', border: 'rgba(251,146,60,0.2)' },
@@ -344,6 +345,10 @@ export default function InterviewDSA() {
                           {isLocked ? (
                             <button className="action-btn locked-btn">
                               <LockIcon /> Unlock
+                            </button>
+                          ) : isSolved ? (
+                            <button className="action-btn" style={{ background: 'rgba(34,197,94,0.1)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)' }}>
+                              ✓ Solved
                             </button>
                           ) : (
                             <button className="action-btn play-btn">

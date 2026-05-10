@@ -183,9 +183,25 @@ export default function Hero() {
           <h2 className="testimonials-title">What coders are saying</h2>
         </div>
         <div className="marquee-wrapper">
-          <div className="marquee-track">
-            {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
-              <div key={i} className="testimonial-card">
+          <div className="marquee-track track-left">
+            {[...TESTIMONIALS.slice(0, 7), ...TESTIMONIALS.slice(0, 7)].map((t, i) => (
+              <div key={`r1-${i}`} className="testimonial-card">
+                <div className="testimonial-stars">{'★'.repeat(t.stars)}</div>
+                <p className="testimonial-text">"{t.text}"</p>
+                <div className="testimonial-author">
+                  <div className="testimonial-avatar" style={{ background: t.color }}>{t.name[0]}</div>
+                  <div>
+                    <div className="testimonial-name">{t.name}</div>
+                    <div className="testimonial-role">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="marquee-track track-right">
+            {[...TESTIMONIALS.slice(7), ...TESTIMONIALS.slice(7)].map((t, i) => (
+              <div key={`r2-${i}`} className="testimonial-card">
                 <div className="testimonial-stars">{'★'.repeat(t.stars)}</div>
                 <p className="testimonial-text">"{t.text}"</p>
                 <div className="testimonial-author">
@@ -291,17 +307,27 @@ export default function Hero() {
           overflow: hidden; width: 100%; position: relative;
           mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
           -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+          display: flex; flex-direction: column; gap: 24px;
         }
         .marquee-track {
-          display: flex; gap: 20px; width: max-content;
-          animation: marqueeScroll 60s linear infinite;
+          display: flex; gap: 24px; width: max-content;
+        }
+        .track-left {
+          animation: scroll-left 45s linear infinite;
+        }
+        .track-right {
+          animation: scroll-right 45s linear infinite;
         }
         .marquee-wrapper:hover .marquee-track {
           animation-play-state: paused;
         }
-        @keyframes marqueeScroll {
+        @keyframes scroll-left {
           0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          100% { transform: translateX(calc(-50% - 12px)); }
+        }
+        @keyframes scroll-right {
+          0% { transform: translateX(calc(-50% - 12px)); }
+          100% { transform: translateX(0); }
         }
         .testimonial-card {
           flex-shrink: 0; width: 320px;
