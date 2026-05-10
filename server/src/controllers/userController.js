@@ -2,15 +2,12 @@ const User = require('../models/User')
 
 // ✅ Rank system — 500 ELO per rank
 const RANKS = [
-  { name: 'Bronze',       minElo: 0,    maxElo: 499,  icon: '🥉', color: '#cd7f32' },
-  { name: 'Silver',       minElo: 500,  maxElo: 999,  icon: '🥈', color: '#94a3b8' },
-  { name: 'Gold',         minElo: 1000, maxElo: 1499, icon: '🥇', color: '#fbbf24' },
-  { name: 'Platinum',     minElo: 1500, maxElo: 1999, icon: '💠', color: '#67e8f9' },
-  { name: 'Diamond',      minElo: 2000, maxElo: 2499, icon: '💎', color: '#60a5fa' },
-  { name: 'Heroic',       minElo: 2500, maxElo: 2999, icon: '⚡', color: '#a855f7' },
-  { name: 'Elite Heroic', minElo: 3000, maxElo: 3499, icon: '🔥', color: '#ef4444' },
-  { name: 'Master',       minElo: 3500, maxElo: 3999, icon: '👑', color: '#ff6b35' },
-  { name: 'Grandmaster',  minElo: 4000, maxElo: Infinity, icon: '🌟', color: '#fff' },
+  { name: 'Bronze',   minElo: 0,    maxElo: 399,  icon: '🥉', color: '#cd7f32' },
+  { name: 'Silver',   minElo: 400,  maxElo: 799,  icon: '🥈', color: '#aaa9ad' },
+  { name: 'Gold',     minElo: 800,  maxElo: 1199, icon: '🥇', color: '#ffd700' },
+  { name: 'Platinum', min: 1200, maxElo: 1799, icon: '💎', color: '#00c8ff' },
+  { name: 'Diamond',  min: 1800, max: 2399, icon: '💠', color: '#a855f7' },
+  { name: 'Master',   minElo: 2400, maxElo: Infinity, icon: '👑', color: '#f97316' },
 ]
 
 const getRankFromElo = (elo) => {

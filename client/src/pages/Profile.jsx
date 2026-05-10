@@ -13,12 +13,12 @@ if (typeof document !== 'undefined') {
 }
 
 const getTier = (elo) => {
-  if (elo >= 2000) return { name: 'Grandmaster', icon: '👑', color: '#ff6b35', bg: '#ff6b3520' }
-  if (elo >= 1800) return { name: 'Master', icon: '💎', color: '#a855f7', bg: '#a855f720' }
-  if (elo >= 1600) return { name: 'Diamond', icon: '🔷', color: '#60a5fa', bg: '#60a5fa20' }
-  if (elo >= 1400) return { name: 'Gold', icon: '🥇', color: '#fbbf24', bg: '#fbbf2420' }
-  if (elo >= 1200) return { name: 'Silver', icon: '🥈', color: '#94a3b8', bg: '#94a3b820' }
-  return { name: 'Bronze', icon: '🥉', color: '#d97706', bg: '#d9770620' }
+  if (elo >= 2400) return { name: 'Master', icon: '👑', color: '#f97316', bg: '#f9731620' }
+  if (elo >= 1800) return { name: 'Diamond', icon: '💠', color: '#a855f7', bg: '#a855f720' }
+  if (elo >= 1200) return { name: 'Platinum', icon: '💎', color: '#00c8ff', bg: '#00c8ff20' }
+  if (elo >= 800) return { name: 'Gold', icon: '🥇', color: '#ffd700', bg: '#ffd70020' }
+  if (elo >= 400) return { name: 'Silver', icon: '🥈', color: '#aaa9ad', bg: '#aaa9ad20' }
+  return { name: 'Bronze', icon: '🥉', color: '#cd7f32', bg: '#cd7f3220' }
 }
 
 const LANGS = [
