@@ -87,18 +87,10 @@ export default function WinnerScreen({ result, problem, myTests, totalTests, tim
   return (
     <div style={{
       position: 'fixed', inset: 0,
-      background: 'rgba(0,0,0,0.96)', backdropFilter: 'blur(20px)',
-      zIndex: 100, overflowY: 'auto',
+      background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(30px)',
+      zIndex: 100, overflowY: 'auto', overflowX: 'hidden',
       fontFamily: 'Inter, sans-serif',
     }}>
-      {/* Ambient Glow */}
-      <div style={{
-        position: 'fixed', top: '30%', left: '50%', transform: 'translate(-50%, -50%)',
-        width: 800, height: 800,
-        background: `radial-gradient(circle, ${isWin ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)'} 0%, transparent 60%)`,
-        filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0
-      }} />
-
       {/* Confetti */}
       {isWin && (
         <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 101 }}>
@@ -114,208 +106,233 @@ export default function WinnerScreen({ result, problem, myTests, totalTests, tim
         </div>
       )}
 
-      {/* Content */}
-      <div style={{ maxWidth: 640, margin: '0 auto', padding: '28px 20px 100px', position: 'relative', zIndex: 1 }}>
+      {/* Immersive Victory Banner (Top) */}
+      <div style={{
+        width: '100%', position: 'relative', padding: '80px 20px 60px', textAlign: 'center',
+        background: isWin ? 'radial-gradient(circle at 50% 100%, rgba(34,197,94,0.15) 0%, transparent 60%)' : 'radial-gradient(circle at 50% 100%, rgba(239,68,68,0.15) 0%, transparent 60%)',
+        borderBottom: '1px solid var(--glass-border, rgba(255,255,255,0.05))',
+        marginBottom: 40
+      }}>
+        <div style={{ fontSize: 72, marginBottom: 16, filter: 'drop-shadow(0 0 40px rgba(255,255,255,0.3))' }}>{isWin ? '🏆' : '💀'}</div>
+        <h1 style={{
+          fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: 56, letterSpacing: '-1.5px', margin: '0 0 12px 0',
+          background: isWin ? 'linear-gradient(135deg, #4ade80, #10b981)' : 'linear-gradient(135deg, #f87171, #dc2626)',
+          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          filter: isWin ? 'drop-shadow(0 4px 16px rgba(34,197,94,0.4))' : 'drop-shadow(0 4px 16px rgba(239,68,68,0.4))'
+        }}>
+          {isWin ? 'Victory!' : 'Defeated!'}
+        </h1>
+        <p style={{ color: 'var(--text-muted, #a1a1aa)', fontSize: 18, fontWeight: 500, margin: 0, letterSpacing: '0.5px' }}>
+          {isWin ? `${problem?.title || 'Problem'} Crushed` : 'Better luck next time'}
+        </p>
+      </div>
 
-        {/* Result Header */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ fontSize: 48, marginBottom: 12, filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.2))' }}>{isWin ? '🏆' : '💀'}</div>
-          <div style={{
-            fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: 48, letterSpacing: '-1px',
-            background: isWin ? 'linear-gradient(to right, #4ade80, #22c55e)' : 'linear-gradient(to right, #f87171, #ef4444)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: 8,
-            filter: isWin ? 'drop-shadow(0 4px 12px rgba(34,197,94,0.3))' : 'drop-shadow(0 4px 12px rgba(239,68,68,0.3))'
-          }}>{isWin ? 'Victory!' : 'Defeated!'}</div>
-          <div style={{ color: 'var(--text-muted)', fontSize: 15, fontWeight: 500 }}>
-            {isWin ? 'You outpaced your opponent!' : 'Better luck next time.'}
-          </div>
-        </div>
+      <div style={{ maxWidth: 880, margin: '0 auto', padding: '0 20px 140px', position: 'relative', zIndex: 1 }}>
 
         {/* Rank Up Banner */}
         {rankUp && eloData && (
-          <div style={{ background: 'rgba(255,107,53,0.1)', border: '1px solid rgba(255,107,53,0.3)', borderRadius: 12, padding: '12px 16px', marginBottom: 20, textAlign: 'center', fontSize: 14, fontWeight: 700, color: '#fbbf24', boxShadow: '0 4px 20px rgba(255,107,53,0.2)' }}>
+          <div style={{ background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: 16, padding: '16px 20px', marginBottom: 32, textAlign: 'center', fontSize: 16, fontWeight: 800, color: '#fbbf24', boxShadow: '0 8px 32px rgba(251,191,36,0.15)' }}>
             🎉 RANK UP! {eloData.oldRank} → {eloData.newRank}
           </div>
         )}
 
-        {/* Compact Stats Bar */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(90px, 1fr))', gap: 12, marginBottom: 24 }}>
-          {[
-            { val: `${myTests}/${totalTests}`, label: 'Tests', color: '#22c55e' },
-            { val: fmt(timeTaken), label: 'Time', color: '#60a5fa' },
-            { val: problem?.difficulty || 'Medium', label: 'Difficulty', color: '#fb923c' },
-            { val: opponentName || 'Bot', label: 'Opponent', color: '#a855f7' },
-            ...(eloData ? [
-              { val: `${eloData.eloChange > 0 ? '+' : ''}${eloData.eloChange}`, label: 'ELO', color: isWin ? '#22c55e' : '#ef4444' },
-              { val: `${eloData.newElo}`, label: 'Rating', color: '#ff6b35' },
-            ] : []),
-          ].map(({ val, label, color }) => (
-            <div key={label} style={{ 
-              background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255,255,255,0.08)', borderTop: `2px solid ${color}60`,
-              borderRadius: 12, padding: '14px 10px', textAlign: 'center',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
-            }}>
-              <div style={{ fontSize: 18, fontWeight: 800, color, fontFamily: 'Outfit, sans-serif' }}>{val}</div>
-              <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 4, letterSpacing: '1.5px', fontWeight: 600 }}>{label.toUpperCase()}</div>
+        {/* Specialized Performance Split */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginBottom: 40 }}>
+          
+          {/* Left Card: Match Analytics */}
+          <div style={{ background: 'var(--card-bg, rgba(20,20,20,0.6))', border: '1px solid var(--glass-border, rgba(255,255,255,0.08))', borderRadius: 20, padding: 28, backdropFilter: 'blur(16px)', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ fontSize: 11, color: 'var(--text-muted, #a1a1aa)', fontWeight: 800, letterSpacing: '1.5px', marginBottom: 24 }}>PERFORMANCE</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 28 }}>
+              {/* Circular Progress */}
+              <div style={{ width: 90, height: 90, borderRadius: '50%', background: `conic-gradient(#22c55e ${(myTests/totalTests)*100}%, rgba(255,255,255,0.05) 0)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 30px rgba(34,197,94,0.15)' }}>
+                <div style={{ width: 78, height: 78, background: 'var(--bg-main, #0a0a0a)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: '#fff', fontFamily: 'Outfit, sans-serif' }}>{myTests}/{totalTests}</div>
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: 32, fontWeight: 900, color: '#fff', fontFamily: 'Outfit, sans-serif', marginBottom: 4 }}>{Math.round((myTests/totalTests)*100)}%</div>
+                <div style={{ fontSize: 13, color: 'var(--text-muted, #a1a1aa)' }}>Tests Passed</div>
+              </div>
             </div>
-          ))}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 'auto' }}>
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border, rgba(255,255,255,0.05))', padding: '16px', borderRadius: 14 }}>
+                <div style={{ fontSize: 10, color: 'var(--text-muted, #a1a1aa)', marginBottom: 6, letterSpacing: '1px', fontWeight: 600 }}>TIME TAKEN</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: '#60a5fa', fontFamily: 'Outfit, sans-serif' }}>⏱ {fmt(timeTaken)}</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border, rgba(255,255,255,0.05))', padding: '16px', borderRadius: 14 }}>
+                <div style={{ fontSize: 10, color: 'var(--text-muted, #a1a1aa)', marginBottom: 6, letterSpacing: '1px', fontWeight: 600 }}>DIFFICULTY</div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: '#fb923c' }}>{problem?.difficulty || 'Medium'}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Card: Player Progression */}
+          <div style={{ background: 'var(--card-bg, rgba(20,20,20,0.6))', border: '1px solid var(--glass-border, rgba(255,255,255,0.08))', borderRadius: 20, padding: 28, backdropFilter: 'blur(16px)', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ fontSize: 11, color: 'var(--text-muted, #a1a1aa)', fontWeight: 800, letterSpacing: '1.5px', marginBottom: 24 }}>YOUR PROGRESSION</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 28 }}>
+              <div style={{ background: eloData?.eloChange >= 0 ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', color: eloData?.eloChange >= 0 ? '#22c55e' : '#ef4444', width: 64, height: 64, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, border: `1px solid ${eloData?.eloChange >= 0 ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)'}` }}>
+                {eloData?.eloChange >= 0 ? '↗' : '↘'}
+              </div>
+              <div>
+                <div style={{ fontSize: 40, fontWeight: 900, color: eloData?.eloChange >= 0 ? '#22c55e' : '#ef4444', fontFamily: 'Outfit, sans-serif', textShadow: `0 0 30px ${eloData?.eloChange >= 0 ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}`, lineHeight: 1 }}>
+                  {eloData?.eloChange > 0 ? '+' : ''}{eloData?.eloChange || 0}
+                </div>
+                <div style={{ fontSize: 13, color: 'var(--text-muted, #a1a1aa)', marginTop: 6, fontWeight: 500 }}>ELO CHANGE</div>
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 'auto' }}>
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border, rgba(255,255,255,0.05))', padding: '16px', borderRadius: 14 }}>
+                <div style={{ fontSize: 10, color: 'var(--text-muted, #a1a1aa)', marginBottom: 6, letterSpacing: '1px', fontWeight: 600 }}>CURRENT RANK</div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: '#fbbf24' }}>🏅 {eloData?.newRank || 'Bronze I'}</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border, rgba(255,255,255,0.05))', padding: '16px', borderRadius: 14 }}>
+                <div style={{ fontSize: 10, color: 'var(--text-muted, #a1a1aa)', marginBottom: 6, letterSpacing: '1px', fontWeight: 600 }}>ELO RATING</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: '#fff', fontFamily: 'Outfit, sans-serif' }}>{eloData?.newElo || 500}</div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Premium Sections — Collapsible */}
+        {/* Unlocked Insights Section (Bottom - Full-width Cards) */}
         {premiumMode && isWin && (
-          <>
-            {/* Clara AI Review Toggle */}
-            <motion.button 
-              whileHover={{ borderColor: 'rgba(236,72,153,0.4)', boxShadow: '0 0 15px rgba(236,72,153,0.1)' }}
-              onClick={() => setShowAI(!showAI)} style={{
-                width: '100%', background: showAI ? 'rgba(236,72,153,0.08)' : 'rgba(255,255,255,0.02)',
-                border: `1px solid ${showAI ? 'rgba(236,72,153,0.3)' : 'rgba(255,255,255,0.08)'}`,
-                borderRadius: 12, padding: '16px 20px', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                marginBottom: showAI ? 0 : 12, color: '#ec4899', fontSize: 14, fontWeight: 700,
-                borderBottomLeftRadius: showAI ? 0 : 12, borderBottomRightRadius: showAI ? 0 : 12,
-                fontFamily: 'Inter, sans-serif', backdropFilter: 'blur(10px)'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ fontSize: 18 }}>🤖</span>
-                <span>Clara AI Review</span>
-              </div>
-              <motion.span animate={{ rotate: showAI ? 180 : 0 }} style={{ fontSize: 12, color: 'var(--text-muted)' }}>▼</motion.span>
-            </motion.button>
-
-            <AnimatePresence>
-              {showAI && (
-                <motion.div 
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  style={{ overflow: 'hidden', marginBottom: 12 }}
-                >
-                  <div style={{ background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)', border: '1px solid rgba(236,72,153,0.3)', borderTop: 'none', borderRadius: '0 0 12px 12px', padding: '20px' }}>
-                    {aiLoading ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#ec4899', justifyContent: 'center', padding: 16 }}>
-                        <div style={{ width: 14, height: 14, border: '2px solid rgba(236,72,153,0.3)', borderTopColor: '#ec4899', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                        <span style={{ fontSize: 12 }}>Analyzing code...</span>
-                      </div>
-                    ) : aiFeedback ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                        <div style={{ background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.15)', padding: '14px', borderRadius: 10 }}>
-                          <div style={{ fontSize: 12, color: '#22c55e', fontWeight: 800, marginBottom: 8 }}>✓ STRENGTHS</div>
-                          <ul style={{ margin: 0, paddingLeft: 16, color: '#e5e5e5', fontSize: 13, lineHeight: 1.6 }}>{aiFeedback.strengths?.map((s, i) => <li key={i} style={{ marginBottom: 4 }}>{s}</li>)}</ul>
-                        </div>
-                        <div style={{ background: 'rgba(255,107,53,0.05)', border: '1px solid rgba(255,107,53,0.15)', padding: '14px', borderRadius: 10 }}>
-                          <div style={{ fontSize: 12, color: '#ff6b35', fontWeight: 800, marginBottom: 8 }}>⚠ IMPROVEMENTS</div>
-                          <ul style={{ margin: 0, paddingLeft: 16, color: '#e5e5e5', fontSize: 13, lineHeight: 1.6 }}>{aiFeedback.improvements?.map((s, i) => <li key={i} style={{ marginBottom: 4 }}>{s}</li>)}</ul>
-                        </div>
-                      </div>
-                    ) : <div style={{ color: 'var(--text-muted)', fontSize: 13, textAlign: 'center' }}>Feedback unavailable.</div>}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <motion.div 
+              whileHover={{ boxShadow: '0 0 30px rgba(236,72,153,0.15)', borderColor: 'rgba(236,72,153,0.4)' }}
+              style={{ background: 'var(--card-bg, rgba(20,20,20,0.6))', border: '1px solid var(--glass-border, rgba(255,255,255,0.08))', borderRadius: 20, padding: '24px 28px', cursor: 'pointer', transition: 'all 0.3s', backdropFilter: 'blur(16px)' }}
+              onClick={() => setShowAI(!showAI)}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ width: 56, height: 56, borderRadius: 14, background: 'rgba(236,72,153,0.1)', color: '#ec4899', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, border: '1px solid rgba(236,72,153,0.2)' }}>🤖</div>
+                  <div>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: '#fff', fontFamily: 'Outfit, sans-serif' }}>Clara AI Review</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-muted, #a1a1aa)', marginTop: 2 }}>Unlock personalized code insights and feedback</div>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </>
-        )}
-
-        {premiumMode && (
-          <>
-            {/* Report Card Toggle */}
-            <motion.button 
-              whileHover={{ borderColor: 'rgba(168,85,247,0.4)', boxShadow: '0 0 15px rgba(168,85,247,0.1)' }}
-              onClick={() => setShowReport(!showReport)} style={{
-                width: '100%', background: showReport ? 'rgba(168,85,247,0.08)' : 'rgba(255,255,255,0.02)',
-                border: `1px solid ${showReport ? 'rgba(168,85,247,0.3)' : 'rgba(255,255,255,0.08)'}`,
-                borderRadius: 12, padding: '16px 20px', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                marginBottom: showReport ? 0 : 12, color: '#a855f7', fontSize: 14, fontWeight: 700,
-                borderBottomLeftRadius: showReport ? 0 : 12, borderBottomRightRadius: showReport ? 0 : 12,
-                fontFamily: 'Inter, sans-serif', backdropFilter: 'blur(10px)'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ fontSize: 18 }}>🏢</span>
-                <span>MAANG Report Card</span>
+                </div>
+                <motion.div animate={{ rotate: showAI ? 180 : 0 }} style={{ color: '#ec4899', width: 32, height: 32, background: 'rgba(236,72,153,0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>▼</motion.div>
               </div>
-              <motion.span animate={{ rotate: showReport ? 180 : 0 }} style={{ fontSize: 12, color: 'var(--text-muted)' }}>▼</motion.span>
-            </motion.button>
-
-            <AnimatePresence>
-              {showReport && (
-                <motion.div 
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  style={{ overflow: 'hidden', marginBottom: 12 }}
-                >
-                  <div style={{ background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)', border: '1px solid rgba(168,85,247,0.3)', borderTop: 'none', borderRadius: '0 0 12px 12px', padding: '20px' }}>
-                    {reportLoading ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#a855f7', justifyContent: 'center', padding: 16 }}>
-                        <div style={{ width: 14, height: 14, border: '2px solid rgba(168,85,247,0.3)', borderTopColor: '#a855f7', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                        <span style={{ fontSize: 12 }}>Clara is evaluating...</span>
-                      </div>
-                    ) : reportCard ? (
-                      <div>
-                        {/* Verdict */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                          <div style={{ fontSize: 14, color: '#d1d5db', fontStyle: 'italic', flex: 1, marginRight: 16 }}>"{reportCard.verdictReason}"</div>
-                          <div style={{
-                            background: reportCard.verdict === 'HIRE' ? 'rgba(34,197,94,0.15)' : reportCard.verdict === 'BORDERLINE' ? 'rgba(251,191,36,0.15)' : 'rgba(239,68,68,0.15)',
-                            border: `1px solid ${reportCard.verdict === 'HIRE' ? 'rgba(34,197,94,0.4)' : reportCard.verdict === 'BORDERLINE' ? 'rgba(251,191,36,0.4)' : 'rgba(239,68,68,0.4)'}`,
-                            padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 800, flexShrink: 0,
-                            color: reportCard.verdict === 'HIRE' ? '#22c55e' : reportCard.verdict === 'BORDERLINE' ? '#fbbf24' : '#ef4444'
-                          }}>
-                            {reportCard.verdict === 'HIRE' ? '✅ HIRE' : reportCard.verdict === 'BORDERLINE' ? '🔶 BORDERLINE' : '❌ NO HIRE'}
+              
+              <AnimatePresence>
+                {showAI && (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: 'hidden' }}>
+                    <div style={{ paddingTop: 24, marginTop: 24, borderTop: '1px solid var(--glass-border, rgba(255,255,255,0.05))' }}>
+                      {aiLoading ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: '#ec4899', justifyContent: 'center', padding: 20 }}>
+                          <div style={{ width: 16, height: 16, border: '2px solid rgba(236,72,153,0.3)', borderTopColor: '#ec4899', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                          <span style={{ fontSize: 14, fontWeight: 600 }}>Analyzing your solution...</span>
+                        </div>
+                      ) : aiFeedback ? (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+                          <div style={{ background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.15)', padding: 20, borderRadius: 14 }}>
+                            <div style={{ fontSize: 12, color: '#22c55e', fontWeight: 800, marginBottom: 12, letterSpacing: '1px' }}>✓ STRENGTHS</div>
+                            <ul style={{ margin: 0, paddingLeft: 16, color: '#e5e5e5', fontSize: 14, lineHeight: 1.6 }}>{aiFeedback.strengths?.map((s, i) => <li key={i} style={{ marginBottom: 6 }}>{s}</li>)}</ul>
+                          </div>
+                          <div style={{ background: 'rgba(255,107,53,0.05)', border: '1px solid rgba(255,107,53,0.15)', padding: 20, borderRadius: 14 }}>
+                            <div style={{ fontSize: 12, color: '#ff6b35', fontWeight: 800, marginBottom: 12, letterSpacing: '1px' }}>⚠ IMPROVEMENTS</div>
+                            <ul style={{ margin: 0, paddingLeft: 16, color: '#e5e5e5', fontSize: 14, lineHeight: 1.6 }}>{aiFeedback.improvements?.map((s, i) => <li key={i} style={{ marginBottom: 6 }}>{s}</li>)}</ul>
                           </div>
                         </div>
+                      ) : <div style={{ color: 'var(--text-muted, #a1a1aa)', fontSize: 14, textAlign: 'center' }}>Feedback unavailable.</div>}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
 
-                        {/* Score Bars */}
-                        {[
-                          { label: 'Code Quality', value: reportCard.codeQuality || 0, color: '#a855f7' },
-                          { label: 'Readability', value: reportCard.readability || 0, color: '#60a5fa' },
-                          { label: 'Problem Solving', value: reportCard.problemSolving || 0, color: '#22c55e' },
-                        ].map(({ label, value, color }) => (
-                          <div key={label} style={{ marginBottom: 12 }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                              <span style={{ fontSize: 12, color: '#9ca3af', fontWeight: 600 }}>{label}</span>
-                              <span style={{ fontSize: 12, fontWeight: 800, color }}>{value}/100</span>
-                            </div>
-                            <div style={{ height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden' }}>
-                              <div style={{ height: '100%', width: `${value}%`, background: color, borderRadius: 3 }} />
-                            </div>
-                          </div>
-                        ))}
-
-                        {/* Quick stats row */}
-                        <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
-                          <div style={{ flex: 1, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '12px', textAlign: 'center' }}>
-                            <div style={{ fontSize: 24, fontWeight: 900, color: reportCard.verdict === 'HIRE' ? '#22c55e' : '#fbbf24', fontFamily: 'Outfit, sans-serif' }}>{reportCard.hireScore}</div>
-                            <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '1px', marginTop: 4 }}>HIRE SCORE</div>
-                          </div>
-                          {reportCard.topStrength && (
-                            <div style={{ flex: 2, background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.15)', borderRadius: 10, padding: '12px', display: 'flex', alignItems: 'center' }}>
-                              <span style={{ fontSize: 13, color: '#86efac', fontWeight: 500 }}>✓ {reportCard.topStrength}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ) : <div style={{ color: 'var(--text-muted)', fontSize: 13, textAlign: 'center' }}>Report unavailable.</div>}
+            <motion.div 
+              whileHover={{ boxShadow: '0 0 30px rgba(168,85,247,0.15)', borderColor: 'rgba(168,85,247,0.4)' }}
+              style={{ background: 'var(--card-bg, rgba(20,20,20,0.6))', border: '1px solid var(--glass-border, rgba(255,255,255,0.08))', borderRadius: 20, padding: '24px 28px', cursor: 'pointer', transition: 'all 0.3s', backdropFilter: 'blur(16px)' }}
+              onClick={() => setShowReport(!showReport)}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ width: 56, height: 56, borderRadius: 14, background: 'rgba(168,85,247,0.1)', color: '#a855f7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, border: '1px solid rgba(168,85,247,0.2)' }}>🏢</div>
+                  <div>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: '#fff', fontFamily: 'Outfit, sans-serif' }}>MAANG Report Card</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-muted, #a1a1aa)', marginTop: 2 }}>See how you'd perform in a real interview</div>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </>
+                </div>
+                <motion.div animate={{ rotate: showReport ? 180 : 0 }} style={{ color: '#a855f7', width: 32, height: 32, background: 'rgba(168,85,247,0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>▼</motion.div>
+              </div>
+              
+              <AnimatePresence>
+                {showReport && (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: 'hidden' }}>
+                    <div style={{ paddingTop: 24, marginTop: 24, borderTop: '1px solid var(--glass-border, rgba(255,255,255,0.05))' }}>
+                      {reportLoading ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: '#a855f7', justifyContent: 'center', padding: 20 }}>
+                          <div style={{ width: 16, height: 16, border: '2px solid rgba(168,85,247,0.3)', borderTopColor: '#a855f7', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                          <span style={{ fontSize: 14, fontWeight: 600 }}>Evaluating interview performance...</span>
+                        </div>
+                      ) : reportCard ? (
+                        <div>
+                          {/* Verdict */}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, background: 'rgba(255,255,255,0.02)', padding: 16, borderRadius: 12, border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div style={{ fontSize: 15, color: '#d1d5db', fontStyle: 'italic', flex: 1, marginRight: 20 }}>"{reportCard.verdictReason}"</div>
+                            <div style={{
+                              background: reportCard.verdict === 'HIRE' ? 'rgba(34,197,94,0.15)' : reportCard.verdict === 'BORDERLINE' ? 'rgba(251,191,36,0.15)' : 'rgba(239,68,68,0.15)',
+                              border: `1px solid ${reportCard.verdict === 'HIRE' ? 'rgba(34,197,94,0.4)' : reportCard.verdict === 'BORDERLINE' ? 'rgba(251,191,36,0.4)' : 'rgba(239,68,68,0.4)'}`,
+                              padding: '10px 20px', borderRadius: 10, fontSize: 14, fontWeight: 800, flexShrink: 0,
+                              color: reportCard.verdict === 'HIRE' ? '#22c55e' : reportCard.verdict === 'BORDERLINE' ? '#fbbf24' : '#ef4444'
+                            }}>
+                              {reportCard.verdict === 'HIRE' ? '✅ HIRE' : reportCard.verdict === 'BORDERLINE' ? '🔶 BORDERLINE' : '❌ NO HIRE'}
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 24 }}>
+                            {/* Score Bars */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                              {[
+                                { label: 'Code Quality', value: reportCard.codeQuality || 0, color: '#a855f7' },
+                                { label: 'Readability', value: reportCard.readability || 0, color: '#60a5fa' },
+                                { label: 'Problem Solving', value: reportCard.problemSolving || 0, color: '#22c55e' },
+                              ].map(({ label, value, color }) => (
+                                <div key={label}>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                                    <span style={{ fontSize: 13, color: '#9ca3af', fontWeight: 600 }}>{label}</span>
+                                    <span style={{ fontSize: 13, fontWeight: 800, color }}>{value}/100</span>
+                                  </div>
+                                  <div style={{ height: 8, background: 'rgba(255,255,255,0.05)', borderRadius: 4, overflow: 'hidden' }}>
+                                    <div style={{ height: '100%', width: `${value}%`, background: color, borderRadius: 4, boxShadow: `0 0 10px ${color}80` }} />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Quick stats column */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                              <div style={{ flex: 1, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                                <div style={{ fontSize: 36, fontWeight: 900, color: reportCard.verdict === 'HIRE' ? '#22c55e' : '#fbbf24', fontFamily: 'Outfit, sans-serif', lineHeight: 1 }}>{reportCard.hireScore}</div>
+                                <div style={{ fontSize: 11, color: 'var(--text-muted, #a1a1aa)', fontWeight: 700, letterSpacing: '1px', marginTop: 8 }}>HIRE SCORE</div>
+                              </div>
+                              {reportCard.topStrength && (
+                                <div style={{ background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.15)', borderRadius: 12, padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+                                  <span style={{ fontSize: 13, color: '#86efac', fontWeight: 600 }}>✓ {reportCard.topStrength}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ) : <div style={{ color: 'var(--text-muted, #a1a1aa)', fontSize: 14, textAlign: 'center' }}>Report unavailable.</div>}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </div>
         )}
       </div>
 
-      {/* Sticky Action Buttons */}
+      {/* Primary Action Buttons */}
       <div style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: 'linear-gradient(transparent, rgba(0,0,0,0.95) 30%)',
-        padding: '24px 20px 20px', zIndex: 102,
+        background: 'linear-gradient(transparent, var(--bg-main, #0a0a0a) 60%)',
+        padding: '40px 20px 24px', zIndex: 102,
         display: 'flex', justifyContent: 'center'
       }}>
-        <div style={{ display: 'flex', gap: 16, maxWidth: 440, width: '100%' }}>
-          <button onClick={onLobby} style={{ flex: 1, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', color: '#e5e5e5', borderRadius: 14, padding: '16px', fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif', backdropFilter: 'blur(10px)', transition: 'all 0.2s' }} onMouseOver={e => e.target.style.background = 'rgba(255,255,255,0.08)'} onMouseOut={e => e.target.style.background = 'rgba(255,255,255,0.03)'}>🏠 Lobby</button>
-          <button onClick={onRematch} style={{ flex: 1, background: 'linear-gradient(135deg, #ff6b35, #f7451d)', border: 'none', color: '#fff', borderRadius: 14, padding: '16px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter, sans-serif', boxShadow: '0 8px 24px rgba(255,107,53,0.4)', transition: 'transform 0.2s' }} onMouseOver={e => e.target.style.transform = 'translateY(-2px)'} onMouseOut={e => e.target.style.transform = 'none'}>⚔️ Play Again</button>
+        <div style={{ display: 'flex', gap: 16, maxWidth: 500, width: '100%' }}>
+          <button onClick={onLobby} style={{ flex: 1, background: 'var(--card-bg, rgba(255,255,255,0.05))', border: '1px solid var(--glass-border, rgba(255,255,255,0.1))', color: '#fff', borderRadius: 100, padding: '16px', fontSize: 16, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif', backdropFilter: 'blur(12px)', transition: 'all 0.2s' }} onMouseOver={e => e.target.style.background = 'rgba(255,255,255,0.1)'} onMouseOut={e => e.target.style.background = 'var(--card-bg, rgba(255,255,255,0.05))'}>Dashboard</button>
+          <button onClick={onRematch} style={{ flex: 1, background: 'linear-gradient(135deg, #f97316, #ea580c)', border: 'none', color: '#fff', borderRadius: 100, padding: '16px', fontSize: 16, fontWeight: 800, cursor: 'pointer', fontFamily: 'Inter, sans-serif', boxShadow: '0 8px 32px rgba(249,115,22,0.4)', transition: 'transform 0.2s' }} onMouseOver={e => e.target.style.transform = 'translateY(-2px)'} onMouseOut={e => e.target.style.transform = 'none'}>Play Again</button>
         </div>
       </div>
 
