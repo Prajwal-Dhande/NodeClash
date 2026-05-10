@@ -796,7 +796,7 @@ export default function Profile() {
                       onClick={() => {
                         const slug = b.problemSlug || b.problem?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
                         const isPremiumMatch = b.opponent === 'InterviewerBot' || (b.room && b.room.includes('vault'))
-                        navigate(`/battle?problem=${slug}&practice=true${isPremiumMatch ? '&premium=true&bot=InterviewerBot' : '&bot=PracticeBot'}`)
+                        navigate(`/battle?problem=${slug}&viewOnly=true${isPremiumMatch ? '&premium=true' : ''}`)
                       }}
                       style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-main)', marginBottom: 3, cursor: 'pointer', transition: 'color 0.2s' }}
                       onMouseEnter={e => { e.currentTarget.style.color = '#ff6b35'; e.currentTarget.style.textDecoration = 'underline'; }}

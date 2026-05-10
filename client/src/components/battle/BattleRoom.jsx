@@ -108,6 +108,7 @@ const getProblemSlug = () => new URLSearchParams(window.location.search).get('pr
 const isPracticeMode = () => new URLSearchParams(window.location.search).get('practice') === 'true'
 const isRealMatch = () => new URLSearchParams(window.location.search).get('real') === 'true'
 const isPremiumMode = () => new URLSearchParams(window.location.search).get('premium') === 'true'
+const isViewOnlyMode = () => new URLSearchParams(window.location.search).get('viewOnly') === 'true'
 
 export default function BattleRoom() {
   const [searchParams] = useSearchParams()
@@ -226,8 +227,23 @@ export default function BattleRoom() {
     const fetchProblem = async () => {
       setProblemLoading(true)
       try {
-        const res = await fetch(`${API_URL}/api/problems/${slug}`)
-        const data = await res.json()
+        let res = await fetch(`${API_URL}/api/problems/${slug}`)
+        let data = await res.json()
+
+        // Fallback: if standard endpoint fails and premium flag is set, try vault
+        if (!data.problem && isPremiumMode()) {
+          try {
+            const vaultRes = await fetch(`${API_URL}/api/problems/vault`)
+            const vaultData = await vaultRes.json()
+            if (vaultData.problems) {
+              const found = vaultData.problems.find(p => p.slug === slug)
+              if (found) data = { problem: found }
+            }
+          } catch (vaultErr) {
+            console.error('Vault fallback failed', vaultErr)
+          }
+        }
+
         if (data.problem) {
           setProblem(data.problem)
           
@@ -736,6 +752,7 @@ export default function BattleRoom() {
   const roomId = getRoomId()
   const practiceMode = isPracticeMode()
   const premiumMode = isPremiumMode()
+  const viewOnlyMode = isViewOnlyMode()
 
   return (
     <div className={`battle-container ${zenMode ? 'zen-active' : ''}`}>
@@ -816,8 +833,8 @@ export default function BattleRoom() {
                 {i === 0 && roomPlayers.length > 1 && <span className="vs">vs</span>}
               </div>
             ))}
-            <span className="status-text" style={{ color: battleStarted ? '#22c55e' : '#fb923c' }}>
-              {battleStarted ? '⚔️ LIVE' : `${roomPlayers.length}/2`}
+            <span className="status-text" style={{ color: viewOnlyMode ? '#60a5fa' : battleStarted ? '#22c55e' : '#fb923c' }}>
+              {viewOnlyMode ? '📋 REVIEW' : battleStarted ? '⚔️ LIVE' : `${roomPlayers.length}/2`}
             </span>
           </div>
         )}
@@ -1263,10 +1280,17 @@ export default function BattleRoom() {
               </button>
             )}
 
-            {/* 🔥 ANTI-CHEAT: Hide Run/Submit if already solved! */}
-            {isAlreadySolved ? (
+            {/* 🔥 ANTI-CHEAT: Hide Run/Submit if already solved or viewOnly! */}
+            {viewOnlyMode ? (
               <button disabled style={{ 
-                background: 'rgba(34,197,94,0.1)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)',
+                background: 'rgba(96,165,250,0.1)', border: '1px solid rgba(96,165,250,0.3)', color: '#60a5fa',
+                padding: '6px 16px', borderRadius: 6, fontSize: 12, fontWeight: 700, fontFamily: 'Inter', cursor: 'default' 
+              }}>
+                📋 Review Mode
+              </button>
+            ) : isAlreadySolved ? (
+              <button disabled style={{ 
+                background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', color: '#22c55e',
                 padding: '6px 16px', borderRadius: 6, fontSize: 12, fontWeight: 700, fontFamily: 'Inter', cursor: 'not-allowed' 
               }}>
                 ✓ ALREADY SOLVED
@@ -1298,7 +1322,7 @@ export default function BattleRoom() {
               onMount={handleEditorMount}
               theme={zenMode ? 'synthwave' : 'vs-dark'}
               options={{
-                readOnly: isAlreadySolved, // 🔥 Make Editor read-only if solved!
+                readOnly: isAlreadySolved || viewOnlyMode, // 🔥 Read-only if solved or review mode
                 minimap: { enabled: false }, fontSize: 13.5,
                 fontFamily: 'JetBrains Mono', padding: { top: 14, bottom: 14 },
                 smoothScrolling: true, cursorBlinking: 'smooth',
@@ -1392,12 +1416,12 @@ export default function BattleRoom() {
       </PanelGroup>
     </Panel>
 
-        {/* Clara AI Panel — shows in premiumMode (replaces opponent panel) */}
-        {premiumMode && (
+        {/* Clara AI Panel — shows in premiumMode but NOT in viewOnly review */}
+        {premiumMode && !viewOnlyMode && (
           <PanelResizeHandle className="resize-handle-h" />
         )}
 
-        {premiumMode && (
+        {premiumMode && !viewOnlyMode && (
         <Panel defaultSize={28} minSize={20} className="panel opp-panel">
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#0d0d10', overflow: 'hidden' }}>
             {/* Clara Header */}
