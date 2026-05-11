@@ -71,27 +71,23 @@ const CustomTooltip = ({ active, payload, label }) => {
   )
 }
 
-// GitHub Style Heatmap
-function GitHubHeatmap({ matchHistory }) {
+// GitHub Style Heatmap — powered by real contribution data from backend
+function GitHubHeatmap({ contributions = {} }) {
   const weeks = 12 // roughly 84 days
   const daysInWeek = 7
   const totalDays = weeks * daysInWeek
   
   const today = new Date()
-  today.setHours(0,0,0,0) // Normalize today
+  today.setHours(0,0,0,0)
 
   const days = []
   for (let d = totalDays - 1; d >= 0; d--) {
     const date = new Date(today)
     date.setDate(date.getDate() - d)
-    days.push({ date: date.toDateString() })
+    // Build YYYY-MM-DD key to match backend format
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+    days.push({ key, label: date.toDateString() })
   }
-
-  const actMap = {}
-  ;(matchHistory || []).forEach(m => {
-    const k = new Date(m.date || Date.now()).toDateString()
-    actMap[k] = (actMap[k] || 0) + 1
-  })
 
   // Group into columns
   const columns = []
@@ -99,32 +95,47 @@ function GitHubHeatmap({ matchHistory }) {
     columns.push(days.slice(i * daysInWeek, (i + 1) * daysInWeek))
   }
 
+  // Total contributions count for summary
+  const totalContributions = Object.values(contributions).reduce((s, v) => s + v, 0)
+
   return (
-    <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 8 }}>
-      {columns.map((week, colIndex) => (
-        <div key={colIndex} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {week.map((day, rowIndex) => {
-            const count = actMap[day.date] || 0
-            let bg = 'var(--glass-overlay)'
-            if (count > 0 && count <= 2) { bg = 'rgba(34, 197, 94, 0.4)' }
-            else if (count > 2 && count <= 5) { bg = 'rgba(34, 197, 94, 0.7)' }
-            else if (count > 5) { bg = '#22c55e' }
-            
-            return (
-              <motion.div 
-                whileHover={{ scale: 1.2, zIndex: 10 }}
-                key={rowIndex} 
-                title={`${count} contributions on ${day.date}`} 
-                style={{
-                  width: 14, height: 14, borderRadius: 4,
-                  background: bg, border: '1px solid var(--glass-border)',
-                  cursor: 'pointer'
-                }} 
-              />
-            )
-          })}
+    <div>
+      <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 8 }}>
+        {columns.map((week, colIndex) => (
+          <div key={colIndex} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {week.map((day, rowIndex) => {
+              const count = contributions[day.key] || 0
+              let bg = 'var(--glass-overlay)'
+              if (count >= 1 && count <= 2) { bg = 'rgba(34, 197, 94, 0.35)' }
+              else if (count >= 3 && count <= 5) { bg = 'rgba(34, 197, 94, 0.65)' }
+              else if (count >= 6) { bg = '#22c55e' }
+              
+              return (
+                <motion.div 
+                  whileHover={{ scale: 1.2, zIndex: 10 }}
+                  key={rowIndex} 
+                  title={`${count} battle${count !== 1 ? 's' : ''} on ${day.label}`} 
+                  style={{
+                    width: 14, height: 14, borderRadius: 4,
+                    background: bg, border: '1px solid var(--glass-border)',
+                    cursor: 'pointer'
+                  }} 
+                />
+              )
+            })}
+          </div>
+        ))}
+      </div>
+      <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)' }}>
+        <span>{totalContributions} battles in the last {totalDays} days</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span>Less</span>
+          {['var(--glass-overlay)', 'rgba(34,197,94,0.35)', 'rgba(34,197,94,0.65)', '#22c55e'].map((c, i) => (
+            <div key={i} style={{ width: 12, height: 12, borderRadius: 3, background: c, border: '1px solid var(--glass-border)' }} />
+          ))}
+          <span>More</span>
         </div>
-      ))}
+      </div>
     </div>
   )
 }
@@ -161,7 +172,7 @@ export default function PremiumDashboard() {
     </div>
   )
 
-  const { stats, weeklyData, difficultyMap, eloHistory, recentMatches } = data
+  const { stats, weeklyData, difficultyMap, eloHistory, recentMatches, contributions } = data
   const { current: rank, next: nextRank, progress, toNext } = getRankData(stats.elo)
   
   const diffData  = [
@@ -251,7 +262,7 @@ export default function PremiumDashboard() {
           {/* Activity Heatmap */}
           <div className="heatmap-card card-padding" style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '32px', transition: 'all 0.3s' }}>
             <SectionTitle>🟩 Contribution Graph</SectionTitle>
-            <GitHubHeatmap matchHistory={data.recentMatches} />
+            <GitHubHeatmap contributions={data.contributions || {}} />
           </div>
         </div>
 

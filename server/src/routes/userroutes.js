@@ -107,6 +107,16 @@ router.get('/premium-stats', authMiddleware, async (req, res) => {
         date: new Date(m.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
       }))
 
+    // Contribution heatmap — aggregate ALL matchHistory by YYYY-MM-DD (last 365 days)
+    const contributions = {}
+    const cutoff = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
+    ;(user.matchHistory || []).forEach(m => {
+      const d = new Date(m.date)
+      if (d < cutoff) return
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      contributions[key] = (contributions[key] || 0) + 1
+    })
+
     res.json({
       success: true,
       stats: {
@@ -117,7 +127,7 @@ router.get('/premium-stats', authMiddleware, async (req, res) => {
         winRate, solvedCount: user.solvedProblems?.length || 0,
         isPremium: user.isPremium, username: user.username
       },
-      weeklyData, difficultyMap, eloHistory, recentMatches
+      weeklyData, difficultyMap, eloHistory, recentMatches, contributions
     })
   } catch (err) {
     console.error('Premium stats error:', err)
