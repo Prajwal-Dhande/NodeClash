@@ -25,6 +25,14 @@ const checkIsSolved = (user, p) => {
   });
 };
 
+const getRankFromElo = (elo) => {
+  if (elo >= 1800) return '👑 Diamond'
+  if (elo >= 1200) return '💎 Platinum'
+  if (elo >= 800) return '🥇 Gold'
+  if (elo >= 400) return '🥈 Silver'
+  return '🥉 Bronze'
+}
+
 const ProblemModal = ({ user, title, subtitle, borderColor, accentColor, selectedP, onSelect, diff, setDiff, topic, setTopic, status, setStatus, onPlay, onClose, btnLabel, problems, isRanked = false }) => {
   const [searchQ, setSearchQ] = useState('')
 
@@ -540,7 +548,7 @@ export default function Lobby() {
           <span><span className="text-green">{onlineCount}</span> online</span>
         </div>
         <div className="user-chip" onClick={() => navigate('/profile')}>
-          <div className="rank-icon">🥉 Bronze</div>
+          <div className="rank-icon">{getRankFromElo(user?.elo || 0)}</div>
           <div className="avatar">{initials}</div>
           <span className="username">{user?.username || 'Player_01'}</span>
         </div>

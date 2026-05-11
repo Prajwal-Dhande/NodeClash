@@ -73,7 +73,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 // GitHub Style Heatmap
 function GitHubHeatmap({ matchHistory }) {
-  const weeks = 16 // 16 weeks visible
+  const weeks = 12 // roughly 84 days
   const daysInWeek = 7
   const totalDays = weeks * daysInWeek
   
@@ -106,19 +106,18 @@ function GitHubHeatmap({ matchHistory }) {
           {week.map((day, rowIndex) => {
             const count = actMap[day.date] || 0
             let bg = 'var(--glass-overlay)'
-            let border = '1px solid var(--glass-border)'
-            if (count === 1) { bg = '#166534'; border = '1px solid #14532d' }
-            else if (count === 2) { bg = '#22c55e'; border = '1px solid #16a34a' }
-            else if (count >= 3) { bg = '#4ade80'; border = '1px solid #22c55e' }
+            if (count > 0 && count <= 2) { bg = 'rgba(34, 197, 94, 0.4)' }
+            else if (count > 2 && count <= 5) { bg = 'rgba(34, 197, 94, 0.7)' }
+            else if (count > 5) { bg = '#22c55e' }
             
             return (
               <motion.div 
                 whileHover={{ scale: 1.2, zIndex: 10 }}
                 key={rowIndex} 
-                title={`${day.date}: ${count} battle${count !== 1 ? 's' : ''}`} 
+                title={`${count} contributions on ${day.date}`} 
                 style={{
                   width: 14, height: 14, borderRadius: 4,
-                  background: bg, border,
+                  background: bg, border: '1px solid var(--glass-border)',
                   cursor: 'pointer'
                 }} 
               />
@@ -200,7 +199,7 @@ export default function PremiumDashboard() {
           <div style={{ 
             gridColumn: '1 / -1',
             '@media (min-width: 900px)': { gridColumn: '1 / 3' },
-            background: 'linear-gradient(135deg, rgba(30,30,30,0.8), rgba(15,15,15,0.9))', 
+            background: 'var(--card-bg)', 
             border: '1px solid var(--glass-border)', borderRadius: 24, padding: '36px 40px', 
             position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
           }}>
@@ -211,7 +210,7 @@ export default function PremiumDashboard() {
                 {rank.icon} CURRENT RANK
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 16 }}>
-                <div style={{ fontSize: 64, fontWeight: 900, fontFamily: 'Outfit', color: '#fff', lineHeight: 1 }}>{stats.elo}</div>
+                <div style={{ fontSize: 64, fontWeight: 900, fontFamily: 'Outfit', color: 'var(--text-main)', lineHeight: 1 }}>{stats.elo}</div>
                 <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-muted)', fontFamily: 'Outfit' }}>{rank.name}</div>
               </div>
             </div>
@@ -219,12 +218,12 @@ export default function PremiumDashboard() {
             <div style={{ position: 'relative', zIndex: 1, marginTop: 40 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12, fontSize: 14, fontWeight: 600 }}>
                 <span style={{ color: 'var(--text-muted)' }}>Progress to {nextRank ? nextRank.name : 'Max Rank'}</span>
-                {nextRank && <span style={{ color: '#fff' }}>{toNext} ELO remaining</span>}
+                {nextRank && <span style={{ color: 'var(--text-main)' }}>{toNext} ELO remaining</span>}
               </div>
-              <div style={{ height: 12, background: 'rgba(255,255,255,0.05)', borderRadius: 6, overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
+              <div style={{ height: 12, background: 'var(--glass-overlay)', borderRadius: 6, overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
                 <motion.div 
                   initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 1, ease: 'easeOut' }}
-                  style={{ height: '100%', background: `linear-gradient(90deg, ${rank.color}, #fff)`, borderRadius: 6, boxShadow: `0 0 20px ${rank.color}` }} 
+                  style={{ height: '100%', background: `linear-gradient(90deg, ${rank.color}, var(--text-main))`, borderRadius: 6, boxShadow: `0 0 20px ${rank.color}` }} 
                 />
               </div>
             </div>
@@ -244,7 +243,7 @@ export default function PremiumDashboard() {
                 <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Smart Insight</div>
               </div>
             </div>
-            <div style={{ fontSize: 16, lineHeight: 1.6, color: '#d1d5db', fontStyle: 'italic', flex: 1, display: 'flex', alignItems: 'center' }}>
+            <div style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--text-main)', fontStyle: 'italic', flex: 1, display: 'flex', alignItems: 'center' }}>
               "Your graph algorithm implementation speed has improved by 14% this week. Focus on Dynamic Programming to optimize your chances for Amazon."
             </div>
           </div>
