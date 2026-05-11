@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async' 
 import API_URL from '../config/api'
@@ -22,6 +23,7 @@ export default function Leaderboard() {
   const [players, setPlayers] = useState([])
   const [loading, setLoading] = useState(true)
   const [animatedElos, setAnimatedElos] = useState({})
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}')
 
@@ -79,14 +81,56 @@ export default function Leaderboard() {
         <span className="logo" onClick={() => navigate('/')}>
           <span style={{ color: '#ff6b35' }}>Code</span><span style={{ color: 'var(--text-main)' }}>Arena</span>
         </span>
-        <div className="nav-divider" />
-        <span className="nav-subtitle">Leaderboard</span>
+        <div className="nav-divider desktop-only" />
+        <span className="nav-subtitle desktop-only">Leaderboard</span>
         <div style={{ flex: 1 }} />
-        <ThemeToggle />
-        <button onClick={() => navigate('/lobby')} className="btn-battle-now">
+        <div className="desktop-only"><ThemeToggle /></div>
+        <button onClick={() => navigate('/lobby')} className="btn-battle-now desktop-only">
           ⚡ Battle Now
         </button>
+        <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          ☰
+        </button>
       </nav>
+
+      {/* Mobile Drawer Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+            className="mobile-drawer"
+          >
+            <div className="drawer-header">
+              <span className="logo" onClick={() => { setIsMobileMenuOpen(false); navigate('/') }}>
+                <span style={{ color: '#ff6b35', marginRight: '6px' }}>Code</span>
+                <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>Arena</span>
+              </span>
+              <button className="close-drawer-btn" onClick={() => setIsMobileMenuOpen(false)}>✕</button>
+            </div>
+            
+            <div className="drawer-content">
+              <div className="drawer-links">
+                <span onClick={() => { setIsMobileMenuOpen(false); navigate('/lobby') }}>Lobby</span>
+                <span className="active" onClick={() => setIsMobileMenuOpen(false)}>Leaderboard</span>
+                <span onClick={() => { setIsMobileMenuOpen(false); navigate('/profile') }}>Profile</span>
+              </div>
+              
+              <div className="drawer-footer">
+                <ThemeToggle />
+                <button onClick={() => { setIsMobileMenuOpen(false); navigate('/lobby') }} style={{
+                  background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', border: 'none', color: '#fff', borderRadius: 8,
+                  padding: '12px', fontSize: 14, fontWeight: 700, cursor: 'pointer', width: '100%', marginTop: 12
+                }}>
+                  ⚡ Battle Now
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="lb-container">
         <div className="lb-header animate-fade-in">
@@ -633,6 +677,34 @@ export default function Leaderboard() {
           .lb-controls { flex-direction: column; align-items: stretch; }
           .search-input { width: 100%; }
           .search-input:focus { width: 100%; }
+        }
+
+        /* Mobile Hamburger & Drawer Styles */
+        .mobile-menu-btn { display: none; background: transparent; border: none; font-size: 24px; color: var(--text-main); cursor: pointer; }
+        .mobile-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 300px; background: var(--card-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); z-index: 1000; display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.5); }
+        .drawer-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); }
+        .close-drawer-btn { background: transparent; border: none; font-size: 20px; color: var(--text-main); cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: var(--glass-overlay); }
+        .drawer-content { padding: 24px; flex: 1; display: flex; flex-direction: column; gap: 24px; overflow-y: auto; }
+        .drawer-links { display: flex; flex-direction: column; gap: 16px; }
+        .drawer-links span { font-size: 16px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
+        .drawer-links span:hover, .drawer-links span.active { color: var(--text-main); }
+        .drawer-footer { margin-top: auto; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+
+        @media (max-width: 768px) {
+          .desktop-only { display: none !important; }
+          .mobile-menu-btn { display: flex; align-items: center; justify-content: center; margin-left: auto; }
+          .glass-nav { padding: 0 16px !important; }
+          .lb-container { padding: 32px 16px 80px !important; }
+        }
+
+        @media (max-width: 480px) {
+          .page-title { font-size: 32px !important; }
+          .tab-btn { font-size: 12px !important; padding: 8px 16px !important; }
+          .table-header, .table-row { grid-template-columns: 40px 1fr 60px !important; gap: 10px !important; }
+          .col-elo { font-size: 14px !important; }
+          .row-name { font-size: 13px !important; }
+          .row-avatar { width: 32px !important; height: 32px !important; font-size: 11px !important; }
+          .podium-card { padding: 20px !important; }
         }
       `}</style>
     </div>

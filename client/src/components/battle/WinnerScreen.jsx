@@ -109,14 +109,14 @@ export default function WinnerScreen({ result, problem, myTests, totalTests, tim
       )}
 
       {/* Immersive Victory Banner (Top) */}
-      <div style={{
+      <div className="victory-banner" style={{
         width: '100%', position: 'relative', padding: '80px 20px 60px', textAlign: 'center',
         background: isWin ? 'radial-gradient(circle at 50% 100%, rgba(34,197,94,0.15) 0%, transparent 60%)' : 'radial-gradient(circle at 50% 100%, rgba(239,68,68,0.15) 0%, transparent 60%)',
         borderBottom: '1px solid var(--glass-border, rgba(255,255,255,0.05))',
         marginBottom: 40
       }}>
         <div style={{ fontSize: 72, marginBottom: 16, filter: 'drop-shadow(0 0 40px rgba(255,255,255,0.3))' }}>{isWin ? '🏆' : '💀'}</div>
-        <h1 style={{
+        <h1 className="victory-title" style={{
           fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: 56, letterSpacing: '-1.5px', margin: '0 0 12px 0',
           background: isWin ? 'linear-gradient(135deg, #4ade80, #10b981)' : 'linear-gradient(135deg, #f87171, #dc2626)',
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
@@ -139,7 +139,7 @@ export default function WinnerScreen({ result, problem, myTests, totalTests, tim
         )}
 
         {/* Specialized Performance Split */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginBottom: 40 }}>
+        <div className="performance-split" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginBottom: 40 }}>
           
           {/* Left Card: Match Analytics */}
           <div style={{ background: 'var(--card-bg, rgba(20,20,20,0.6))', border: '1px solid var(--glass-border, rgba(255,255,255,0.08))', borderRadius: 20, padding: 28, backdropFilter: 'blur(16px)', display: 'flex', flexDirection: 'column' }}>
@@ -156,7 +156,7 @@ export default function WinnerScreen({ result, problem, myTests, totalTests, tim
                 <div style={{ fontSize: 13, color: 'var(--text-muted, #a1a1aa)' }}>Tests Passed</div>
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 'auto' }}>
+            <div className="stat-boxes-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 'auto' }}>
               <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border, rgba(255,255,255,0.05))', padding: '16px', borderRadius: 14 }}>
                 <div style={{ fontSize: 10, color: 'var(--text-muted, #a1a1aa)', marginBottom: 6, letterSpacing: '1px', fontWeight: 600 }}>TIME TAKEN</div>
                 <div style={{ fontSize: 18, fontWeight: 800, color: '#60a5fa', fontFamily: 'Outfit, sans-serif' }}>⏱ {fmt(timeTaken)}</div>
@@ -182,7 +182,7 @@ export default function WinnerScreen({ result, problem, myTests, totalTests, tim
                 <div style={{ fontSize: 13, color: 'var(--text-muted, #a1a1aa)', marginTop: 6, fontWeight: 500 }}>ELO CHANGE</div>
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 'auto' }}>
+            <div className="stat-boxes-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 'auto' }}>
               <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border, rgba(255,255,255,0.05))', padding: '16px', borderRadius: 14 }}>
                 <div style={{ fontSize: 10, color: 'var(--text-muted, #a1a1aa)', marginBottom: 6, letterSpacing: '1px', fontWeight: 600 }}>CURRENT RANK</div>
                 <div style={{ fontSize: 16, fontWeight: 800, color: '#fbbf24' }}>🏅 {eloData?.newRank || 'Bronze I'}</div>
@@ -332,7 +332,7 @@ export default function WinnerScreen({ result, problem, myTests, totalTests, tim
         padding: '40px 20px 24px', zIndex: 102,
         display: 'flex', justifyContent: 'center'
       }}>
-        <div style={{ display: 'flex', gap: 16, maxWidth: 500, width: '100%' }}>
+        <div className="action-buttons-container" style={{ display: 'flex', gap: 16, maxWidth: 500, width: '100%' }}>
           <button 
             onClick={() => navigate('/')} 
             style={{ flex: 1, background: 'var(--card-bg, rgba(255,255,255,0.05))', border: '1px solid var(--glass-border, rgba(255,255,255,0.1))', color: 'var(--text-muted, #a1a1aa)', borderRadius: 100, padding: '16px', fontSize: 16, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif', backdropFilter: 'blur(12px)', transition: 'all 0.2s' }} 
@@ -355,6 +355,18 @@ export default function WinnerScreen({ result, problem, myTests, totalTests, tim
       <style>{`
         @keyframes confettiFall { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Responsive Overrides */
+        @media (max-width: 900px) {
+          .performance-split { grid-template-columns: 1fr !important; }
+        }
+
+        @media (max-width: 480px) {
+          .victory-banner { padding: 40px 16px 30px !important; }
+          .victory-title { font-size: 40px !important; }
+          .action-buttons-container { flex-direction: column !important; }
+          .action-buttons-container button { padding: 20px !important; font-size: 18px !important; }
+        }
       `}</style>
     </div>
   )

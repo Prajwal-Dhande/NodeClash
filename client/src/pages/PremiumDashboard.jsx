@@ -190,10 +190,10 @@ export default function PremiumDashboard() {
       </div>
 
       {/* Content - Bento Box Grid */}
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 24px 80px' }}>
+      <div className="dashboard-container" style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 24px 80px' }}>
         
         {/* Row 1: Hero & Insight (Bento Top) */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24, marginBottom: 24 }}>
+        <div className="bento-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24, marginBottom: 24 }}>
           
           {/* Hero Progression Card (Spans more naturally with grid layout) */}
           <div style={{ 
@@ -230,7 +230,7 @@ export default function PremiumDashboard() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24, marginBottom: 24 }}>
+        <div className="bento-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24, marginBottom: 24 }}>
           {/* Clara AI Insight Card */}
           <div style={{ 
             background: 'var(--card-bg)', border: '1px solid rgba(168,85,247,0.4)', borderRadius: 24, padding: '32px',
@@ -249,14 +249,14 @@ export default function PremiumDashboard() {
           </div>
           
           {/* Activity Heatmap */}
-          <div style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '32px', transition: 'all 0.3s' }}>
+          <div className="heatmap-card card-padding" style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '32px', transition: 'all 0.3s' }}>
             <SectionTitle>🟩 Contribution Graph</SectionTitle>
             <GitHubHeatmap matchHistory={data.recentMatches} />
           </div>
         </div>
 
         {/* Row 2: Stats Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 24, marginBottom: 24 }}>
+        <div className="stats-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 24, marginBottom: 24 }}>
           <StatCard icon="⚡" label="Peak ELO"       value={stats.peakElo}      sub={`Current: ${stats.elo}`}         color="#a855f7" />
           <StatCard icon="🏆" label="Total Wins"     value={stats.wins}         sub={`${stats.winRate}% win rate`}    color="#22c55e" />
           <StatCard icon="💀" label="Losses"         value={stats.losses}       sub={`${stats.totalBattles} battles`} color="#ef4444" />
@@ -266,11 +266,11 @@ export default function PremiumDashboard() {
         </div>
 
         {/* Row 3: Charts */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 24, marginBottom: 24 }}>
+        <div className="bento-row-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 24, marginBottom: 24 }}>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {/* ELO History */}
-            <div style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '32px', transition: 'all 0.3s' }}>
+            <div className="card-padding" style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '32px', transition: 'all 0.3s' }}>
               <SectionTitle>📈 ELO History (30 days)</SectionTitle>
               {eloHistory.length < 2 ? (
                 <div style={{ height: 240, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 14 }}>Play more battles to see your ELO trend!</div>
@@ -295,7 +295,7 @@ export default function PremiumDashboard() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {/* Weekly Performance */}
-            <div style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '32px', transition: 'all 0.3s' }}>
+            <div className="card-padding" style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '32px', transition: 'all 0.3s' }}>
               <SectionTitle>📅 Weekly Performance</SectionTitle>
               {weeklyData.every(d => d.wins === 0 && d.losses === 0) ? (
                 <div style={{ height: 240, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 14 }}>No battles this week</div>
@@ -339,6 +339,20 @@ export default function PremiumDashboard() {
           --glass-overlay: rgba(0, 0, 0, 0.04);
           --text-main: #111827;
           --text-muted: #6b7280;
+        }
+
+        /* 📱 Mobile Responsive Overrides */
+        @media (max-width: 768px) {
+          .dashboard-container { padding: 20px 16px !important; }
+          .bento-row { grid-template-columns: 1fr !important; }
+          .bento-row-charts { grid-template-columns: 1fr !important; }
+          .stats-row { grid-template-columns: 1fr 1fr !important; }
+          .card-padding { padding: 20px !important; }
+          .heatmap-card { overflow-x: auto; }
+        }
+
+        @media (max-width: 480px) {
+          .stats-row { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </div>

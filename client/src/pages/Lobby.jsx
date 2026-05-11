@@ -221,6 +221,7 @@ export default function Lobby() {
   const [searchParams] = useSearchParams()
   const initialTab = searchParams.get('tab') || 'quickplay'
   const [tab, setTab] = useState(initialTab)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [problems, setProblems] = useState([])
   const [problemsLoading, setProblemsLoading] = useState(true)
 
@@ -479,8 +480,9 @@ export default function Lobby() {
           <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
           <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
         </span>
-        <div style={{ flex: 1 }} />
-        <div className="nav-links">
+        
+        <div style={{ flex: 1 }} className="desktop-only" />
+        <div className="nav-links desktop-only">
           <span onClick={() => navigate('/dashboard')} style={{ color: user?.isPremium ? '#a855f7' : undefined }}>
             Dashboard
           </span>
@@ -490,9 +492,9 @@ export default function Lobby() {
           <span onClick={() => navigate('/leaderboard')}>Leaderboard</span>
           <span onClick={() => navigate('/profile')}>Profile</span>
         </div>
-        <div style={{ flex: 1 }} />
+        <div style={{ flex: 1 }} className="desktop-only" />
 
-        <div style={{ position: 'relative', width: '220px', marginRight: '16px' }}>
+        <div style={{ position: 'relative', width: '220px', marginRight: '16px' }} className="desktop-only">
           <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', color: '#888' }}>🔍</span>
           <input
             type="text"
@@ -533,7 +535,7 @@ export default function Lobby() {
         </div>
 
         {!user?.isPremium && (
-          <button onClick={() => navigate('/premium')} style={{
+          <button onClick={() => navigate('/premium')} className="desktop-only" style={{
             background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', border: 'none', color: '#fff', borderRadius: 8,
             padding: '6px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter', marginRight: 16,
             boxShadow: '0 4px 14px rgba(255,107,53,0.3)', transition: 'all 0.2s'
@@ -542,17 +544,71 @@ export default function Lobby() {
           </button>
         )}
 
-        <ThemeToggle />
-        <div className="online-badge">
+        <div className="desktop-only"><ThemeToggle /></div>
+        <div className="online-badge desktop-only">
           <div className={`status-dot ${pulse ? 'pulse-anim' : ''}`} />
           <span><span className="text-green">{onlineCount}</span> online</span>
         </div>
-        <div className="user-chip" onClick={() => navigate('/profile')}>
+        <div className="user-chip desktop-only" onClick={() => navigate('/profile')}>
           <div className="rank-icon">{getRankFromElo(user?.elo || 0)}</div>
           <div className="avatar">{initials}</div>
           <span className="username">{user?.username || 'Player_01'}</span>
         </div>
+
+        {/* Mobile Hamburger Button */}
+        <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          ☰
+        </button>
       </nav>
+
+      {/* Mobile Drawer Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+            className="mobile-drawer"
+          >
+            <div className="drawer-header">
+              <span className="logo" onClick={() => { setIsMobileMenuOpen(false); navigate('/') }}>
+                <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
+                <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
+              </span>
+              <button className="close-drawer-btn" onClick={() => setIsMobileMenuOpen(false)}>✕</button>
+            </div>
+            
+            <div className="drawer-content">
+              <div className="user-chip-mobile" onClick={() => { setIsMobileMenuOpen(false); navigate('/profile') }}>
+                <div className="rank-icon">{getRankFromElo(user?.elo || 0)}</div>
+                <div className="avatar">{initials}</div>
+                <span className="username">{user?.username || 'Player_01'}</span>
+              </div>
+              
+              <div className="drawer-links">
+                <span onClick={() => { setIsMobileMenuOpen(false); navigate('/dashboard') }} style={{ color: user?.isPremium ? '#a855f7' : undefined }}>Dashboard</span>
+                <span className="active" onClick={() => setIsMobileMenuOpen(false)}>Practice</span>
+                <span onClick={() => { setIsMobileMenuOpen(false); user?.isPremium ? navigate('/interview-dsa') : navigate('/premium') }}>FAANG Vault</span>
+                <span onClick={() => { setIsMobileMenuOpen(false); navigate('/tournaments') }}>Tournaments</span>
+                <span onClick={() => { setIsMobileMenuOpen(false); navigate('/leaderboard') }}>Leaderboard</span>
+              </div>
+              
+              <div className="drawer-footer">
+                <ThemeToggle />
+                {!user?.isPremium && (
+                  <button onClick={() => { setIsMobileMenuOpen(false); navigate('/premium') }} style={{
+                    background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', border: 'none', color: '#fff', borderRadius: 8,
+                    padding: '12px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter', width: '100%'
+                  }}>
+                    💎 Get Premium
+                  </button>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="lobby-container">
         <div className="lobby-header">
@@ -1138,6 +1194,32 @@ export default function Lobby() {
 
         .text-cyan { color: var(--cyan); }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        /* Mobile Hamburger & Drawer Styles */
+        .mobile-menu-btn { display: none; background: transparent; border: none; font-size: 24px; color: var(--text-main); cursor: pointer; }
+        .mobile-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 300px; background: var(--card-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); z-index: 1000; display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.5); }
+        .drawer-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); }
+        .close-drawer-btn { background: transparent; border: none; font-size: 20px; color: var(--text-main); cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: var(--glass-overlay); }
+        .drawer-content { padding: 24px; flex: 1; display: flex; flex-direction: column; gap: 24px; overflow-y: auto; }
+        .drawer-links { display: flex; flex-direction: column; gap: 16px; }
+        .drawer-links span { font-size: 16px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
+        .drawer-links span:hover, .drawer-links span.active { color: var(--text-main); }
+        .user-chip-mobile { display: flex; align-items: center; gap: 12px; background: var(--glass-overlay); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); cursor: pointer; }
+        .user-chip-mobile .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #ff6b35, #ea580c); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; }
+        .user-chip-mobile .username { font-weight: 700; font-size: 14px; color: var(--text-main); }
+        .drawer-footer { margin-top: auto; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+        
+        /* Responsive Overrides */
+        @media (max-width: 768px) {
+          .desktop-only { display: none !important; }
+          .mobile-menu-btn { display: flex; align-items: center; justify-content: center; margin-left: auto; }
+          .lobby-container { padding: 16px; }
+          .page-title { font-size: 28px; }
+          .page-subtitle { font-size: 14px; }
+          .glass-nav { padding: 16px; }
+          .tab-container { overflow-x: auto; padding-bottom: 8px; }
+          .tab-btn { white-space: nowrap; font-size: 12px; padding: 6px 12px; }
+        }
       `}</style>
     </div>
   )

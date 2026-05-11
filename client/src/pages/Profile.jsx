@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async' 
 import { ThemeToggle } from '../context/ThemeContext'
@@ -130,6 +131,7 @@ export default function Profile() {
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(false)
   const [editingBio, setEditingBio] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const [globalRank, setGlobalRank] = useState(0)
   const [isFollowing, setIsFollowing] = useState(false)
@@ -440,21 +442,70 @@ export default function Profile() {
       )}
 
       {/* NAV */}
-      <nav style={{ height: 64, background: 'var(--nav-bg)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', padding: '0 32px', gap: 16, position: 'sticky', top: 0, zIndex: 50, transition: 'background-color 0.3s' }}>
+      <nav style={{ height: 64, background: 'var(--nav-bg)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', padding: '0 32px', gap: 16, position: 'sticky', top: 0, zIndex: 50, transition: 'background-color 0.3s' }} className="profile-nav">
         <span onClick={() => navigate('/')} style={{ fontWeight: 700, fontSize: 18, cursor: 'pointer', letterSpacing: '-0.5px' }}>
           <span style={{ color: '#ff6b35' }}>Code</span><span style={{ color: 'var(--text-main)' }}>Arena</span>
         </span>
         <div style={{ flex: 1 }} />
-        <ThemeToggle />
-        {[{ label: 'Lobby', path: '/lobby' }, { label: 'Leaderboard', path: '/leaderboard' }].map(({ label, path }) => (
-          <span key={label} onClick={() => navigate(path)} style={{ fontSize: 13, color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500 }}>{label}</span>
-        ))}
-        <button onClick={handleShare} style={{ background: copied ? 'rgba(34,197,94,0.1)' : 'transparent', border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : 'var(--glass-border)'}`, color: copied ? '#22c55e' : 'var(--text-muted)', borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter', transition: 'all 0.2s' }}>
-          {copied ? '✓ Copied!' : '↗ Share'}
+        <div className="desktop-only"><ThemeToggle /></div>
+        <div className="desktop-only" style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+          {[{ label: 'Lobby', path: '/lobby' }, { label: 'Leaderboard', path: '/leaderboard' }].map(({ label, path }) => (
+            <span key={label} onClick={() => navigate(path)} style={{ fontSize: 13, color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500 }}>{label}</span>
+          ))}
+          <button onClick={handleShare} style={{ background: copied ? 'rgba(34,197,94,0.1)' : 'transparent', border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : 'var(--glass-border)'}`, color: copied ? '#22c55e' : 'var(--text-muted)', borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter', transition: 'all 0.2s' }}>
+            {copied ? '✓ Copied!' : '↗ Share'}
+          </button>
+          {isOwnProfile && <button onClick={() => navigate('/settings')} style={{ background: 'transparent', border: '1px solid var(--glass-border)', color: 'var(--text-muted)', borderRadius: 8, padding: '6px 12px', fontSize: 15, cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e=>e.currentTarget.style.color='var(--text-main)'} onMouseLeave={e=>e.currentTarget.style.color='var(--text-muted)'}>⚙️</button>}
+          <button onClick={() => navigate('/lobby')} style={{ background: '#ff6b35', color: '#fff', border: 'none', padding: '6px 18px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter' }}>⚡ Battle</button>
+        </div>
+        
+        {/* Mobile Hamburger Button */}
+        <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          ☰
         </button>
-        {isOwnProfile && <button onClick={() => navigate('/settings')} style={{ background: 'transparent', border: '1px solid var(--glass-border)', color: 'var(--text-muted)', borderRadius: 8, padding: '6px 12px', fontSize: 15, cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e=>e.currentTarget.style.color='var(--text-main)'} onMouseLeave={e=>e.currentTarget.style.color='var(--text-muted)'}>⚙️</button>}
-        <button onClick={() => navigate('/lobby')} style={{ background: '#ff6b35', color: '#fff', border: 'none', padding: '6px 18px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter' }}>⚡ Battle</button>
       </nav>
+
+      {/* Mobile Drawer Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+            className="mobile-drawer"
+          >
+            <div className="drawer-header">
+              <span className="logo" onClick={() => { setIsMobileMenuOpen(false); navigate('/') }}>
+                <span style={{ color: '#ff6b35', marginRight: '6px' }}>Code</span>
+                <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>Arena</span>
+              </span>
+              <button className="close-drawer-btn" onClick={() => setIsMobileMenuOpen(false)}>✕</button>
+            </div>
+            
+            <div className="drawer-content">
+              <div className="drawer-links">
+                <span onClick={() => { setIsMobileMenuOpen(false); navigate('/lobby') }}>Lobby</span>
+                <span onClick={() => { setIsMobileMenuOpen(false); navigate('/leaderboard') }}>Leaderboard</span>
+                {isOwnProfile && <span onClick={() => { setIsMobileMenuOpen(false); navigate('/settings') }}>⚙️ Settings</span>}
+              </div>
+              
+              <div className="drawer-footer">
+                <ThemeToggle />
+                <button onClick={handleShare} style={{ background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: 8, padding: '12px', fontSize: 14, fontWeight: 600, cursor: 'pointer', width: '100%', marginTop: 12 }}>
+                  {copied ? '✓ Link Copied!' : '↗ Share Profile'}
+                </button>
+                <button onClick={() => { setIsMobileMenuOpen(false); navigate('/lobby') }} style={{
+                  background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', border: 'none', color: '#fff', borderRadius: 8,
+                  padding: '12px', fontSize: 14, fontWeight: 700, cursor: 'pointer', width: '100%'
+                }}>
+                  ⚡ Battle Now
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="profile-main-grid" style={{ width: '100%', maxWidth: '1280px', margin: '0 auto', padding: '40px 24px 80px', display: 'grid', gridTemplateColumns: '280px 1fr', gap: 32, alignItems: 'start', position: 'relative', zIndex: 1 }}>
 
@@ -1045,10 +1096,28 @@ export default function Profile() {
           transition: background 0.2s ease;
         }
 
+        /* Mobile Hamburger & Drawer Styles */
+        .mobile-menu-btn { display: none; background: transparent; border: none; font-size: 24px; color: var(--text-main); cursor: pointer; }
+        .mobile-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 300px; background: var(--card-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); z-index: 1000; display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.5); }
+        .drawer-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); }
+        .close-drawer-btn { background: transparent; border: none; font-size: 20px; color: var(--text-main); cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: var(--glass-overlay); }
+        .drawer-content { padding: 24px; flex: 1; display: flex; flex-direction: column; gap: 24px; overflow-y: auto; }
+        .drawer-links { display: flex; flex-direction: column; gap: 16px; }
+        .drawer-links span { font-size: 16px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
+        .drawer-links span:hover { color: var(--text-main); }
+        .drawer-footer { margin-top: auto; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+
         @media (max-width: 900px) {
           .profile-main-grid {
             grid-template-columns: 1fr !important;
           }
+        }
+        
+        @media (max-width: 768px) {
+          .desktop-only { display: none !important; }
+          .mobile-menu-btn { display: flex; align-items: center; justify-content: center; margin-left: auto; }
+          .profile-nav { padding: 0 16px !important; }
+          .profile-main-grid { padding: 20px 16px 80px !important; }
         }
       `}</style>
     </div>

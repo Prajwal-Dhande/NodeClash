@@ -966,6 +966,31 @@ export default function Auth() {
           .stats-row { display: none; }
           .auth-right { width: 100%; padding: 0 20px 40px; }
         }
+
+        @media (max-width: 480px) {
+          .auth-left { padding: 32px 16px 16px; }
+          .auth-headline { font-size: 28px; }
+          .auth-tagline { font-size: 14px; margin-bottom: 20px; }
+          .auth-right { padding: 0 16px 32px; }
+          
+          .glass-card { padding: 32px 20px; border-radius: 24px; }
+          .card-title { font-size: 24px; }
+          .card-subtitle { font-size: 13px; }
+          
+          .mode-toggle { margin-bottom: 24px; }
+          .mode-btn { padding: 10px 0; font-size: 12px; }
+          
+          .oauth-btn { font-size: 13px; padding: 12px 0; }
+          .divider { margin-bottom: 20px; }
+          
+          .field { margin-bottom: 16px; }
+          .glass-input { padding: 12px 14px; font-size: 14px; }
+          .submit-btn { padding: 14px 0; font-size: 14px; }
+          
+          .otp-row { gap: 6px; }
+          .otp-input { width: 44px; height: 54px; font-size: 20px; border-radius: 10px; }
+          .otp-icon-box { width: 52px; height: 52px; font-size: 24px; margin-bottom: 20px; }
+        }
       `}</style>
     </div>
   )
