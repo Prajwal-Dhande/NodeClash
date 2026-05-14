@@ -441,30 +441,67 @@ export default function BattleRoom() {
     return () => { socket.disconnect(); clearTimeout(botTimeoutRef.current) }
   }, [currentUser])
 
-  // Browser back/close warning during active battle
+  // Refs to hold event handlers so handleForfeit can remove them before navigating
+  const popstateHandlerRef = useRef(null)
+  const beforeUnloadHandlerRef = useRef(null)
+
+  // Browser back button (popstate) + tab close (beforeunload) interception
   useEffect(() => {
     if (!battleStarted || gameOver) return
+
+    // Push a dummy state so there is "somewhere" to go back to (traps the user)
+    window.history.pushState(null, null, window.location.pathname + window.location.search)
+
+    const handlePopState = () => {
+      // Re-push immediately so the user stays trapped on this page
+      window.history.pushState(null, null, window.location.pathname + window.location.search)
+      setShowLeaveModal(true)
+    }
+
     const handleBeforeUnload = (e) => {
       e.preventDefault()
-      e.returnValue = 'You are in an active battle! Leaving will count as a forfeit.'
-      return e.returnValue
+      e.returnValue = ''
+      return ''
     }
+
+    popstateHandlerRef.current = handlePopState
+    beforeUnloadHandlerRef.current = handleBeforeUnload
+
+    window.addEventListener('popstate', handlePopState)
     window.addEventListener('beforeunload', handleBeforeUnload)
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState)
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      popstateHandlerRef.current = null
+      beforeUnloadHandlerRef.current = null
+    }
   }, [battleStarted, gameOver])
 
-  // Handle explicit forfeit (Quit Game button)
+  // Handle explicit forfeit (Quit Game button in modal)
   const handleForfeit = () => {
     setShowLeaveModal(false)
+
+    // Remove the browser-level traps so navigation can actually proceed
+    if (popstateHandlerRef.current) {
+      window.removeEventListener('popstate', popstateHandlerRef.current)
+      popstateHandlerRef.current = null
+    }
+    if (beforeUnloadHandlerRef.current) {
+      window.removeEventListener('beforeunload', beforeUnloadHandlerRef.current)
+      beforeUnloadHandlerRef.current = null
+    }
+
     const roomId = getRoomId()
     socketRef.current?.emit('leave_match', { roomId, username: currentUser?.username })
+
     // Record loss locally before navigating
     if (!gameOverRef.current) {
       gameOverRef.current = true
       setGameResult('loss')
       setGameOver(true)
     }
-    setTimeout(() => navigate('/lobby'), 500)
+    setTimeout(() => navigate('/lobby'), 300)
   }
 
   const handleLanguageChange = (lang) => {
