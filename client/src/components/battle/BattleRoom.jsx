@@ -160,6 +160,8 @@ export default function BattleRoom() {
   const [zenMode, setZenMode] = useState(false)
   const [showProblemPicker, setShowProblemPicker] = useState(false)
   const [allProblems, setAllProblems] = useState([])
+  const [showLeaveModal, setShowLeaveModal] = useState(false)
+  const [opponentForfeitToast, setOpponentForfeitToast] = useState(null)
 
   // Clara AI Interview State
   const [claraMessages, setClaraMessages] = useState([])
@@ -406,11 +408,22 @@ export default function BattleRoom() {
       }
     })
     
-    socket.on('opponent_left_win', () => {
+    socket.on('opponent_left_win', ({ message }) => {
       if (!gameOverRef.current) {
         gameOverRef.current = true
+        setOpponentForfeitToast(message || 'Opponent disconnected. You win!')
         setTimeTaken(Math.round((Date.now() - startTimeRef.current) / 1000))
-        setGameResult('win'); setGameOver(true)
+        setTimeout(() => { setGameResult('win'); setGameOver(true) }, 2000)
+      }
+    })
+
+    // Explicit forfeit by opponent (no grace period)
+    socket.on('opponent_left_match', ({ message }) => {
+      if (!gameOverRef.current) {
+        gameOverRef.current = true
+        setOpponentForfeitToast(message || 'Opponent left the battle!')
+        setTimeTaken(Math.round((Date.now() - startTimeRef.current) / 1000))
+        setTimeout(() => { setGameResult('win'); setGameOver(true) }, 2000)
       }
     })
 
@@ -419,13 +432,40 @@ export default function BattleRoom() {
       clearTimeout(botTimeoutRef.current)
       if (!gameOverRef.current) {
         gameOverRef.current = true
+        setOpponentForfeitToast(`${username} left the battle!`)
         setTimeTaken(Math.round((Date.now() - startTimeRef.current) / 1000))
-        setGameResult('win'); setGameOver(true)
+        setTimeout(() => { setGameResult('win'); setGameOver(true) }, 2000)
       }
     })
 
     return () => { socket.disconnect(); clearTimeout(botTimeoutRef.current) }
   }, [currentUser])
+
+  // Browser back/close warning during active battle
+  useEffect(() => {
+    if (!battleStarted || gameOver) return
+    const handleBeforeUnload = (e) => {
+      e.preventDefault()
+      e.returnValue = 'You are in an active battle! Leaving will count as a forfeit.'
+      return e.returnValue
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [battleStarted, gameOver])
+
+  // Handle explicit forfeit (Quit Game button)
+  const handleForfeit = () => {
+    setShowLeaveModal(false)
+    const roomId = getRoomId()
+    socketRef.current?.emit('leave_match', { roomId, username: currentUser?.username })
+    // Record loss locally before navigating
+    if (!gameOverRef.current) {
+      gameOverRef.current = true
+      setGameResult('loss')
+      setGameOver(true)
+    }
+    setTimeout(() => navigate('/lobby'), 500)
+  }
 
   const handleLanguageChange = (lang) => {
     setLanguage(lang)
@@ -764,7 +804,9 @@ export default function BattleRoom() {
       {premiumMode && <LofiRadio />}
 
       <div className="battle-header" style={{ display: zenMode ? 'none' : 'flex' }}>
-        <span className="logo" onClick={() => navigate('/')}>
+        <span className="logo" onClick={() => {
+          if (battleStarted && !gameOver) { setShowLeaveModal(true) } else { navigate('/') }
+        }}>
           <span style={{ color: '#ff6b35' }}>Code</span>
           <span style={{ color: 'var(--text-main)' }}>Arena</span>
         </span>
@@ -1610,6 +1652,58 @@ export default function BattleRoom() {
 
       <ConstraintAlert constraint={constraint} onDismiss={() => setConstraint(null)} />
 
+      {/* Opponent Forfeit Toast */}
+      {opponentForfeitToast && (
+        <div style={{
+          position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 9999,
+          background: 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05))',
+          border: '1px solid rgba(34,197,94,0.4)', backdropFilter: 'blur(16px)',
+          borderRadius: 16, padding: '16px 32px', display: 'flex', alignItems: 'center', gap: 12,
+          boxShadow: '0 8px 32px rgba(34,197,94,0.2)', animation: 'slideDown 0.4s ease-out'
+        }}>
+          <span style={{ fontSize: 24 }}>🏆</span>
+          <div>
+            <div style={{ fontWeight: 800, fontSize: 15, color: '#22c55e', fontFamily: 'Outfit' }}>Victory!</div>
+            <div style={{ fontSize: 13, color: '#e5e5e5', marginTop: 2 }}>{opponentForfeitToast}</div>
+          </div>
+        </div>
+      )}
+
+      {/* Leave Match Confirmation Modal */}
+      {showLeaveModal && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)'
+        }}>
+          <div style={{
+            background: 'rgba(18,18,22,0.95)', border: '1px solid rgba(255,107,53,0.3)',
+            borderRadius: 24, padding: '40px 36px', maxWidth: 420, width: '90%', textAlign: 'center',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,107,53,0.1)',
+            backdropFilter: 'blur(24px)', position: 'relative'
+          }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,107,53,0.6), transparent)' }} />
+            <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
+            <h2 style={{ fontFamily: 'Outfit', fontWeight: 900, fontSize: 26, color: '#e5e5e5', margin: '0 0 12px', letterSpacing: '-0.5px' }}>Leave Match?</h2>
+            <p style={{ fontSize: 14, color: '#888', lineHeight: 1.7, margin: '0 0 32px' }}>
+              Are you sure you want to leave? This will count as a <span style={{ color: '#ef4444', fontWeight: 700 }}>forfeit</span> and you will <span style={{ color: '#ef4444', fontWeight: 700 }}>lose ELO</span>.
+            </p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setShowLeaveModal(false)} style={{
+                flex: 1, padding: '14px 0', borderRadius: 12, fontSize: 14, fontWeight: 700,
+                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+                color: '#e5e5e5', cursor: 'pointer', fontFamily: 'Inter', transition: 'all 0.2s'
+              }}>Continue Playing</button>
+              <button onClick={handleForfeit} style={{
+                flex: 1, padding: '14px 0', borderRadius: 12, fontSize: 14, fontWeight: 700,
+                background: 'linear-gradient(135deg, #ef4444, #dc2626)', border: 'none',
+                color: '#fff', cursor: 'pointer', fontFamily: 'Inter', transition: 'all 0.2s',
+                boxShadow: '0 4px 20px rgba(239,68,68,0.3)'
+              }}>Quit Game</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <style>{`
         :root {
           --bg-main: #0a0a0a; --bg-panel: #121212;
@@ -1761,6 +1855,7 @@ export default function BattleRoom() {
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
         @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
         @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes slideDown { from{opacity:0;transform:translate(-50%,-20px)} to{opacity:1;transform:translate(-50%,0)} }
         @media (max-width: 1024px) {
           .main-grid { grid-template-columns: 1fr; overflow-y: auto; display: flex; flex-direction: column; }
           .opp-panel { display: none; }

@@ -1,10 +1,84 @@
 const { Server } = require('socket.io')
+const User = require('../models/User')
 
 let io
 const rooms = new Map() 
 const matchmakingQueue = [] 
-// 🔥 Naya Object Disconnect Timers ko track karne ke liye
+// Disconnect grace period timers
 const disconnectTimers = new Map()
+
+// ELO rank calculation (mirrors userController logic)
+const RANKS = [
+  { name: 'Bronze',   minElo: 0,    maxElo: 399 },
+  { name: 'Silver',   minElo: 400,  maxElo: 799 },
+  { name: 'Gold',     minElo: 800,  maxElo: 1199 },
+  { name: 'Platinum', minElo: 1200, maxElo: 1799 },
+  { name: 'Diamond',  minElo: 1800, maxElo: 2399 },
+  { name: 'Master',   minElo: 2400, maxElo: Infinity },
+]
+const getRankName = (elo) => (RANKS.find(r => elo >= r.minElo && elo <= r.maxElo) || RANKS[0]).name
+
+/**
+ * Record a forfeit result in the database for both players.
+ * Winner gets +15 ELO, loser gets -10 ELO.
+ */
+async function recordForfeitResult(winnerUsername, loserUsername) {
+  try {
+    const [winner, loser] = await Promise.all([
+      User.findOne({ username: winnerUsername }),
+      User.findOne({ username: loserUsername })
+    ])
+
+    // Skip if either player is a bot or not found
+    if (!winner || !loser) return
+    if (winnerUsername.startsWith('Bot_') || loserUsername.startsWith('Bot_')) return
+
+    const winnerNewElo = Math.max(0, (winner.elo || 0) + 15)
+    const loserNewElo = Math.max(0, (loser.elo || 0) - 10)
+
+    // Update winner
+    await User.findByIdAndUpdate(winner._id, {
+      $set: {
+        elo: winnerNewElo,
+        peakElo: Math.max(winner.peakElo || 0, winnerNewElo),
+        rank: getRankName(winnerNewElo),
+        'stats.wins': (winner.stats?.wins || 0) + 1,
+        'stats.totalBattles': (winner.stats?.totalBattles || 0) + 1,
+        'stats.streak': (winner.stats?.streak || 0) + 1,
+        'stats.maxStreak': Math.max(winner.stats?.maxStreak || 0, (winner.stats?.streak || 0) + 1),
+      },
+      $push: {
+        matchHistory: {
+          opponent: loserUsername, problem: 'Forfeit', result: 'win',
+          eloChange: 15, eloAfter: winnerNewElo, rankAfter: getRankName(winnerNewElo),
+          difficulty: 'Medium', timeTaken: 0, date: new Date()
+        }
+      }
+    })
+
+    // Update loser
+    await User.findByIdAndUpdate(loser._id, {
+      $set: {
+        elo: loserNewElo,
+        rank: getRankName(loserNewElo),
+        'stats.losses': (loser.stats?.losses || 0) + 1,
+        'stats.totalBattles': (loser.stats?.totalBattles || 0) + 1,
+        'stats.streak': 0,
+      },
+      $push: {
+        matchHistory: {
+          opponent: winnerUsername, problem: 'Forfeit', result: 'loss',
+          eloChange: -10, eloAfter: loserNewElo, rankAfter: getRankName(loserNewElo),
+          difficulty: 'Medium', timeTaken: 0, date: new Date()
+        }
+      }
+    })
+
+    console.log(`📊 Forfeit recorded: ${winnerUsername} (+15) vs ${loserUsername} (-10)`)
+  } catch (err) {
+    console.error('Failed to record forfeit result:', err.message)
+  }
+}
 
 function initSocket(server) {
   io = new Server(server, {
@@ -20,9 +94,9 @@ function initSocket(server) {
   io.on('connection', (socket) => {
     console.log(`⚡ Connected: ${socket.id}`)
 
-    // ✅ MATCHMAKING 
-    socket.on('find_match', ({ username, elo, problemSlug }) => {
-      console.log(`🔍 ${username} looking for match...`)
+    // ✅ MATCHMAKING — now accepts mode (quick_play / ranked)
+    socket.on('find_match', ({ username, elo, problemSlug, mode }) => {
+      console.log(`🔍 ${username} looking for ${mode || 'quick_play'} match...`)
 
       const alreadyInQueue = matchmakingQueue.findIndex(p => p.username === username)
       if (alreadyInQueue !== -1) matchmakingQueue.splice(alreadyInQueue, 1)
@@ -32,13 +106,14 @@ function initSocket(server) {
 
         if (opponent.username === username) {
           matchmakingQueue.push(opponent)
-          matchmakingQueue.push({ socket, username, elo, problemSlug })
+          matchmakingQueue.push({ socket, username, elo, problemSlug, mode })
           socket.emit('waiting_in_queue', { position: matchmakingQueue.length })
           return
         }
 
         const roomId = `room_${Date.now()}`
         const sharedProblemSlug = opponent.problemSlug || problemSlug || 'contains-duplicate'
+        const matchMode = mode || opponent.mode || 'quick_play'
 
         socket.join(roomId)
         opponent.socket.join(roomId)
@@ -48,20 +123,21 @@ function initSocket(server) {
             { username, socketId: socket.id },
             { username: opponent.username, socketId: opponent.socket.id }
           ],
-          battleStarted: true
+          battleStarted: true,
+          mode: matchMode
         })
 
         socket.emit('match_found', {
-          roomId, problem: sharedProblemSlug, opponent: opponent.username, elo: opponent.elo 
+          roomId, problem: sharedProblemSlug, opponent: opponent.username, elo: opponent.elo, mode: matchMode
         })
         opponent.socket.emit('match_found', {
-          roomId, problem: sharedProblemSlug, opponent: username, elo: elo 
+          roomId, problem: sharedProblemSlug, opponent: username, elo: elo, mode: matchMode
         })
 
         io.to(roomId).emit('battle_start', { players: rooms.get(roomId).players })
 
       } else {
-        matchmakingQueue.push({ socket, username, elo, problemSlug })
+        matchmakingQueue.push({ socket, username, elo, problemSlug, mode })
         socket.emit('waiting_in_queue', { position: matchmakingQueue.length })
       }
     })
@@ -71,23 +147,21 @@ function initSocket(server) {
       if (idx !== -1) matchmakingQueue.splice(idx, 1)
     })
 
-    // ✅ ROOM JOIN FIX & RECONNECTION LOGIC
+    // ✅ ROOM JOIN & RECONNECTION
     socket.on('join_room', ({ roomId, username }) => {
       socket.join(roomId)
 
       if (!rooms.has(roomId)) {
-        rooms.set(roomId, { players: [], battleStarted: false })
+        rooms.set(roomId, { players: [], battleStarted: false, mode: 'quick_play' })
       }
       
       const roomData = rooms.get(roomId)
-      
       const existingPlayer = roomData.players.find(p => p.username === username)
       
       if (existingPlayer) {
-        // Player reconnected after refresh!
         existingPlayer.socketId = socket.id
         
-        // 🔥 Agar koi disconnect timer chal raha tha is user ka, usko radd (clear) kar do
+        // Cancel disconnect grace timer if player reconnected
         if (disconnectTimers.has(username)) {
           clearTimeout(disconnectTimers.get(username))
           disconnectTimers.delete(username)
@@ -125,6 +199,31 @@ function initSocket(server) {
       rooms.delete(roomId) 
     })
 
+    // ✅ EXPLICIT FORFEIT — player intentionally leaves mid-battle
+    socket.on('leave_match', ({ roomId, username }) => {
+      console.log(`🏳️ ${username} forfeited from room ${roomId}`)
+      const roomData = rooms.get(roomId)
+      if (!roomData || !roomData.battleStarted) return
+
+      const remaining = roomData.players.filter(p => p.username !== username)
+      if (remaining.length === 1) {
+        const winner = remaining[0]
+
+        // Notify the remaining player immediately (no grace period for explicit quit)
+        io.to(winner.socketId).emit('opponent_left_match', {
+          winner: winner.username,
+          loser: username,
+          message: `${username} forfeited the match. You win!`
+        })
+
+        // Record the forfeit in the database with ELO changes
+        recordForfeitResult(winner.username, username)
+      }
+
+      rooms.delete(roomId)
+    })
+
+    // ✅ DISCONNECT — unexpected connection loss (tab close, network drop)
     socket.on('disconnect', () => {
       console.log(`❌ Disconnected: ${socket.id}`)
 
@@ -138,11 +237,10 @@ function initSocket(server) {
           const leavingPlayer = roomData.players[playerIndex]
           
           if (roomData.battleStarted) {
-            // 🔥 TURANT MATCH END MAT KARO. 15 SECOND WAIT KARO.
+            // 15-second grace period for reconnection
             console.log(`⏳ Starting 15s grace period for ${leavingPlayer.username}...`)
             
             const timer = setTimeout(() => {
-              // 15 second baad bhi nahi aaya
               const finalRoomData = rooms.get(roomId)
               if (finalRoomData) {
                 const remainingPlayers = finalRoomData.players.filter(p => p.username !== leavingPlayer.username)
@@ -154,15 +252,18 @@ function initSocket(server) {
                     loser: leavingPlayer.username,
                     message: `${leavingPlayer.username} disconnected and didn't return. You win!`
                   })
+
+                  // Record the disconnect forfeit in the database
+                  recordForfeitResult(winner.username, leavingPlayer.username)
                 }
                 rooms.delete(roomId)
               }
               disconnectTimers.delete(leavingPlayer.username)
-            }, 15000) // 15 seconds
+            }, 15000)
 
             disconnectTimers.set(leavingPlayer.username, timer)
           } else {
-            // Battle start nahi hui thi, seedha nikal do
+            // Battle hadn't started — just remove the player
             const remainingPlayers = roomData.players.filter(p => p.socketId !== socket.id)
             roomData.players = remainingPlayers
             if (remainingPlayers.length === 0) {
@@ -185,4 +286,4 @@ function getIO() {
   return io
 }
 
-module.exports = { initSocket, getIO }
+module.exports = { initSocket, getIO }

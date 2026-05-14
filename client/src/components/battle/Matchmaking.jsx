@@ -42,7 +42,8 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
       socket.emit('find_match', {
         username: user?.username || 'Player',
         elo: userElo,
-        problemSlug: selectedProblem?.slug || null
+        problemSlug: selectedProblem?.slug || null,
+        mode: mode || 'quick_play'
       })
     })
 
