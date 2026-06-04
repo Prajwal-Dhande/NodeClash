@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react'
+import { Moon, Sun } from 'lucide-react'
 
 const ThemeContext = createContext()
 
@@ -84,11 +85,19 @@ export function ThemeToggle() {
         transition: 'left 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
         zIndex: 2
       }}>
-        {isDark ? (
-          <span style={{ fontSize: 16, color: '#000', lineHeight: 1 }}>🌙</span>
-        ) : (
-          <span style={{ fontSize: 18, color: '#000', lineHeight: 1 }}>☀️</span>
-        )}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transform: isDark ? 'rotate(-360deg)' : 'rotate(0deg)',
+          transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}>
+          {isDark ? (
+            <Moon size={18} color="#000" />
+          ) : (
+            <Sun size={18} color="#f59e0b" />
+          )}
+        </div>
       </div>
     </button>
   )

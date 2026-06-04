@@ -40,40 +40,34 @@ const diffColor = {
 }
 
 const CircleChart = ({ wins, losses, total, easyWins, medWins, hardWins }) => {
-  const r = 54
+  const r = 58
   const cx = 70
   const cy = 70
   const circ = 2 * Math.PI * r
-  const easyPct = total > 0 ? easyWins / total : 0
-  const medPct = total > 0 ? medWins / total : 0
-  const hardPct = total > 0 ? hardWins / total : 0
-  const gap = 0.02
-
-  const easy = easyPct * (1 - gap * 3)
-  const med = medPct * (1 - gap * 3)
-  const hard = hardPct * (1 - gap * 3)
+  const solvedTotal = Math.max(1, easyWins + medWins + hardWins)
+  const easyPct = easyWins / solvedTotal
+  const medPct = medWins / solvedTotal
+  const hardPct = hardWins / solvedTotal
 
   const segments = [
-    { pct: easy, color: '#22c55e', offset: 0 },
-    { pct: med, color: '#fb923c', offset: easy + gap },
-    { pct: hard, color: '#ef4444', offset: easy + gap + med + gap },
+    { pct: easyPct, color: '#22c55e', offset: 0 },
+    { pct: medPct, color: '#fb923c', offset: easyPct },
+    { pct: hardPct, color: '#ef4444', offset: easyPct + medPct },
   ]
 
   return (
     <svg width={140} height={140} style={{ transform: 'rotate(-90deg)' }}>
-      <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--glass-border)" strokeWidth={10} />
-      {total === 0 ? (
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--glass-border-strong)" strokeWidth={10} strokeDasharray={`${circ * 0.98} ${circ * 0.02}`} />
-      ) : (
-        segments.map((s, i) => s.pct > 0 && (
-          <circle key={i} cx={cx} cy={cy} r={r} fill="none"
-            stroke={s.color} strokeWidth={10}
-            strokeDasharray={`${circ * s.pct} ${circ * (1 - s.pct)}`}
-            strokeDashoffset={-circ * s.offset}
-            strokeLinecap="round"
-          />
-        ))
-      )}
+      {/* Background Track */}
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(128,128,128,0.15)" strokeWidth={4} />
+      {total > 0 && segments.map((s, i) => s.pct > 0 && (
+        <circle key={i} cx={cx} cy={cy} r={r} fill="none"
+          stroke={s.color} strokeWidth={6}
+          strokeDasharray={`${circ * s.pct} ${circ * (1 - s.pct)}`}
+          strokeDashoffset={-circ * s.offset}
+          strokeLinecap="butt"
+          style={{ transition: 'all 1s ease-out' }}
+        />
+      ))}
     </svg>
   )
 }
@@ -655,22 +649,32 @@ export default function Profile() {
               <div style={{ position: 'relative', width: 140, height: 140, flexShrink: 0 }}>
                 <CircleChart wins={wins} losses={losses} total={total} easyWins={easyWins} medWins={medWins} hardWins={hardWins} />
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  <div style={{ fontFamily: 'Outfit', fontWeight: 900, fontSize: 28, color: 'var(--text-main)', lineHeight: 1 }}>{wins}</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: -2 }}>All</div>
+                  <div style={{ fontFamily: 'Outfit', fontWeight: 900, fontSize: 32, color: 'var(--text-main)', lineHeight: 1 }}>{wins}</div>
                   <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>Solved</div>
                 </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14, flex: 1, minWidth: 200 }}>
                 {[
                   { label: 'Easy', val: easyWins, color: '#22c55e' },
-                  { label: 'Med.', val: medWins, color: '#fb923c' },
+                  { label: 'Medium', val: medWins, color: '#fb923c' },
                   { label: 'Hard', val: hardWins, color: '#ef4444' },
-                ].map(({ label, val, color }) => (
-                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color, width: 36 }}>{label}</span>
-                    <span style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-main)' }}>{val}</span>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>wins</span>
-                  </div>
-                ))}
+                ].map(({ label, val, color }) => {
+                  const pct = wins > 0 ? Math.round((val / wins) * 100) : 0;
+                  return (
+                    <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
+                        <span style={{ color: 'var(--text-muted)' }}>{label}</span>
+                        <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>
+                          {val} <span style={{ color: 'var(--text-muted)', fontSize: 11, fontWeight: 500, marginLeft: 2 }}>wins</span>
+                        </span>
+                      </div>
+                      <div style={{ background: 'rgba(128,128,128,0.15)', height: 6, borderRadius: 3, overflow: 'hidden' }}>
+                        <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: 3, transition: 'width 1s ease-out' }} />
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </div>
 
