@@ -7,6 +7,7 @@ const authMiddleware = require('../middleware/authmiddleware')
 router.get('/profile', authMiddleware, userController.getProfile)
 router.get('/profile/:username', userController.getPublicProfile)
 router.put('/profile', authMiddleware, userController.updateProfile)
+router.delete('/me', authMiddleware, userController.deleteAccount)
 
 // ✅ BATTLES & LEADERBOARD
 router.get('/battles', authMiddleware, userController.getBattleHistory)

@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Editor from '@monaco-editor/react'
+import { initVimMode } from 'monaco-vim'
 import { io } from 'socket.io-client'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import Timer from './Timer'
@@ -127,8 +128,18 @@ export default function BattleRoom() {
     if (solvedLang) return solvedLang;
     
     const roomId = getRoomId();
-    return localStorage.getItem(`codeArena_lang_${roomId}`) || 'javascript';
+    return localStorage.getItem(`codeArena_lang_${roomId}`) || localStorage.getItem('ca_defaultLang') || 'javascript';
   })
+
+  // --- PREFERENCES ---
+  const prefTheme = localStorage.getItem('ca_editorTheme') || 'Monokai';
+  const prefTabSize = parseInt(localStorage.getItem('ca_tabSize') || '4', 10);
+  const prefFontSize = parseInt(localStorage.getItem('ca_fontSize') || '14', 10);
+  const prefAutoClose = localStorage.getItem('ca_autoCloseBrackets') !== 'false' ? 'always' : 'never';
+  const prefMinimap = localStorage.getItem('ca_minimap') === 'true';
+  const prefMatchSounds = localStorage.getItem('ca_matchSounds') !== 'false';
+  const prefVimMode = localStorage.getItem('ca_vimMode') === 'true';
+
 
   // CHECK IF ALREADY SOLVED
   const isAlreadySolved = currentUser?.solvedProblems?.some(sp => {
@@ -548,6 +559,13 @@ export default function BattleRoom() {
 
   const handleEditorMount = (editor, monaco) => {
     monaco.editor.defineTheme('synthwave', synthwaveTheme);
+    // Simple theme mapping if we don't have all custom themes defined
+    if (prefTheme === 'One Dark' || prefTheme === 'Dracula') {
+       monaco.editor.setTheme('vs-dark');
+    }
+    if (prefVimMode) {
+      initVimMode(editor, document.createElement('div'));
+    }
   };
 
   const handleProblemChange = async (slug) => {
@@ -1435,13 +1453,15 @@ export default function BattleRoom() {
               value={code}
               onChange={handleCodeChange}
               onMount={handleEditorMount}
-              theme={zenMode ? 'synthwave' : 'vs-dark'}
+              theme={zenMode ? 'synthwave' : (prefTheme === 'GitHub Dark' ? 'vs-dark' : 'vs-dark')}
               options={{
-                readOnly: viewOnlyMode, // 🔥 Read-only if review mode
-                minimap: { enabled: false }, fontSize: 13.5,
-                fontFamily: 'JetBrains Mono', padding: { top: 14, bottom: 14 },
+                readOnly: viewOnlyMode,
+                minimap: { enabled: prefMinimap }, 
+                fontSize: prefFontSize,
+                autoClosingBrackets: prefAutoClose,
+                fontFamily: 'JetBrains Mono, monospace', padding: { top: 14, bottom: 14 },
                 smoothScrolling: true, cursorBlinking: 'smooth',
-                wordWrap: 'on', tabSize: 2, lineNumbers: 'on',
+                wordWrap: 'on', tabSize: prefTabSize, lineNumbers: 'on',
                 scrollBeyondLastLine: false
               }}
             />

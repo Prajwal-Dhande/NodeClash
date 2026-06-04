@@ -41,6 +41,9 @@ exports.getPublicProfile = async (req, res) => {
       .populate('following', 'username');
 
     if (!user) return res.status(404).json({ message: 'User not found' });
+    if (user.publicProfile === false && req.userId !== user._id.toString()) {
+      return res.status(403).json({ message: 'This account is private' });
+    }
 
     // Calculate Global Rank
     const higherEloCount = await User.countDocuments({ elo: { $gt: user.elo } });
@@ -121,7 +124,7 @@ exports.getBattleHistory = async (req, res) => {
 // ✅ UPDATE Profile
 exports.updateProfile = async (req, res) => {
   try {
-    const { username, bio, github, linkedin, website, education, company, languages } = req.body
+    const { username, bio, github, linkedin, website, education, company, languages, publicProfile, showEloOnLeaderboard } = req.body
     if (username && username.length < 3)
       return res.status(400).json({ message: 'Username too short' })
     if (username) {
@@ -131,14 +134,27 @@ exports.updateProfile = async (req, res) => {
     }
     const user = await User.findByIdAndUpdate(
       req.userId,
-      { username, bio, github, linkedin, website, education, company, languages },
+      { username, bio, github, linkedin, website, education, company, languages, publicProfile, showEloOnLeaderboard },
       { new: true }
     ).select('-password -otp -otpExpiry')
     res.json({ message: 'Profile updated', user })
   } catch (err) {
-    res.status(500).json({ message: 'Server error' })
+// 🔥 DELETE Account
+exports.deleteAccount = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    
+    // Perform cleanup if necessary (e.g. removing them from others' followers lists)
+    await User.updateMany({ following: req.userId }, { $pull: { following: req.userId } });
+    await User.updateMany({ followers: req.userId }, { $pull: { followers: req.userId } });
+
+    await User.findByIdAndDelete(req.userId);
+    res.json({ success: true, message: 'Account deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error during deletion' });
   }
-}
+};
 
 // ✅ UPDATE Match Result + ELO + RANK
 exports.updateMatchResult = async (req, res) => {
@@ -256,7 +272,7 @@ exports.updatePuzzleResult = async (req, res) => {
 // ✅ LEADERBOARD with ranks & puzzle XP
 exports.getLeaderboard = async (req, res) => {
   try {
-    const players = await User.find({ isVerified: true })
+    const players = await User.find({ isVerified: true, showEloOnLeaderboard: { $ne: false } })
       .sort({ elo: -1, puzzleXp: -1 })
       .limit(100)
       .select('username elo rank stats country createdAt puzzleXp')

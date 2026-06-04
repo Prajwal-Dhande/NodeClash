@@ -145,7 +145,12 @@ export default function Premium() {
       .then(data => {
         setPremiumStatus(data)
         if (data.isPremium) {
-          const updatedUser = { ...user, isPremium: true, premiumPlan: data.premiumPlan || 'pro' }
+          const updatedUser = { ...user, isPremium: true, premiumPlan: data.premiumPlan || 'pro', premiumExpiry: data.premiumExpiry }
+          setUser(updatedUser)
+          localStorage.setItem('user', JSON.stringify(updatedUser))
+        } else if (user?.isPremium) {
+          // Fix corrupted local storage
+          const updatedUser = { ...user, isPremium: false }
           setUser(updatedUser)
           localStorage.setItem('user', JSON.stringify(updatedUser))
         }
@@ -153,7 +158,8 @@ export default function Premium() {
       .catch(() => {})
   }, [])
 
-  const isPremiumUser = user?.isPremium || premiumStatus?.isPremium
+  // Trust backend if available, fallback to local storage
+  const isPremiumUser = premiumStatus ? premiumStatus.isPremium : user?.isPremium;
 
   // ── Professional PDF Receipt Generator ──
   const generateReceipt = (purchaseInfo) => {
@@ -274,7 +280,6 @@ export default function Premium() {
 
   const handlePayment = async (plan) => {
     if (plan.id === 'free') return
-    if (isPremiumUser) return
     const token = localStorage.getItem('token')
     if (!token) { navigate('/auth'); return }
 
@@ -348,10 +353,38 @@ export default function Premium() {
   }
 
   const getBtnProps = (plan) => {
-    if (plan.id === 'free') return { label: 'Current Plan', disabled: true }
-    if (isPremiumUser) return { label: '✓ PRO Active', disabled: true }
-    return { label: plan.btnLabel, disabled: false }
+    let activePlanId = premiumStatus?.premiumPlan || user?.premiumPlan;
+    
+    // Auto-fix for UI if activePlanId is somehow 'free' but user is Premium
+    if (isPremiumUser && (!activePlanId || activePlanId === 'free')) {
+      activePlanId = 'pro_1m';
+    }
+    
+    const isActive = isPremiumUser && (activePlanId === plan.id || (activePlanId === 'pro' && plan.id === 'pro_1m'));
+
+    if (plan.id === 'free') {
+      return { label: isPremiumUser ? 'Free Tier' : 'Current Plan', disabled: true, isActive: !isPremiumUser };
+    }
+    
+    if (isActive) {
+      return { label: '✓ PRO Active', disabled: true, isActive: true };
+    }
+    
+    if (isPremiumUser) {
+      return { label: 'Switch Plan', disabled: false, isActive: false };
+    }
+    
+    return { label: plan.btnLabel, disabled: false, isActive: false };
   }
+
+  // Calculate start date if expiry is known
+  const getStartDate = (expiryStr, planId) => {
+    if (!expiryStr) return 'Unknown';
+    const date = new Date(expiryStr);
+    if (planId === 'pro_6m') date.setMonth(date.getMonth() - 6);
+    else date.setMonth(date.getMonth() - 1);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', fontFamily: 'Inter, sans-serif', overflowX: 'hidden', transition: 'background-color 0.3s ease' }}>
@@ -397,14 +430,20 @@ export default function Premium() {
       <div style={{ position: 'relative', zIndex: 10, maxWidth: 1200, margin: '0 auto', padding: '80px 24px 60px' }}>
 
         {/* SUCCESS / EXPIRY WARNING BANNER */}
-        {isPremiumUser && (() => {
-          const daysLeft = premiumStatus?.daysLeft
-          const isExpiring = daysLeft != null && daysLeft <= 5
+        {isPremiumUser && premiumStatus && (() => {
+          const daysLeft = premiumStatus?.daysLeft || 0;
+          const isExpiring = daysLeft > 0 && daysLeft <= 5;
           const bannerBg = isExpiring
             ? 'linear-gradient(135deg, rgba(245,158,11,0.18), rgba(239,68,68,0.08))'
-            : 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05))'
-          const bannerBorder = isExpiring ? '1px solid rgba(245,158,11,0.4)' : '1px solid rgba(34,197,94,0.3)'
-          const accentColor = isExpiring ? '#f59e0b' : '#22c55e'
+            : 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05))';
+          const bannerBorder = isExpiring ? '1px solid rgba(245,158,11,0.4)' : '1px solid rgba(34,197,94,0.3)';
+          const accentColor = isExpiring ? '#f59e0b' : '#22c55e';
+          
+          const expiryDateStr = premiumStatus?.premiumExpiry || user?.premiumExpiry;
+          const activePlanId = premiumStatus?.premiumPlan || user?.premiumPlan;
+          const expireFormatted = expiryDateStr ? new Date(expiryDateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown';
+          const startFormatted = getStartDate(expiryDateStr, activePlanId);
+
           return (
             <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
               style={{ background: bannerBg, border: bannerBorder, borderRadius: 16, padding: '20px 28px', marginBottom: 48, display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -413,11 +452,16 @@ export default function Premium() {
                 <div style={{ fontSize: 18, fontWeight: 800, color: accentColor, fontFamily: 'Outfit, sans-serif', marginBottom: 4 }}>
                   {isExpiring ? `Your PRO plan expires in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}!` : "You're a PRO Member!"}
                 </div>
-                <div style={{ fontSize: 13, color: accentColor, opacity: 0.9 }}>
+                <div style={{ fontSize: 13, color: accentColor, opacity: 0.9, marginBottom: 8 }}>
                   {isExpiring
                     ? <>Renew now to avoid losing access to FAANG Vault. <span style={{ fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.scrollTo({ top: document.querySelector('[data-pricing]')?.offsetTop - 80 || 600, behavior: 'smooth' })}>Renew →</span></>
-                    : <>{daysLeft ? `${daysLeft} days remaining.` : 'Your PRO access is active.'} <span style={{ fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => navigate('/interview-dsa')}>Go to AI Interview →</span></>
+                    : <>{daysLeft > 0 ? `${daysLeft} days remaining.` : 'Your PRO access is active.'} <span style={{ fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => navigate('/interview-dsa')}>Go to AI Interview →</span></>
                   }
+                </div>
+                {/* Billing Cycle Details */}
+                <div style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--text-main)', opacity: 0.8, background: 'rgba(0,0,0,0.2)', padding: '6px 12px', borderRadius: 8, width: 'fit-content' }}>
+                  <span><strong style={{ color: 'var(--text-muted)' }}>Activated:</strong> {startFormatted}</span>
+                  <span><strong style={{ color: 'var(--text-muted)' }}>Expires:</strong> {expireFormatted}</span>
                 </div>
               </div>
               {/* Download Receipt */}
@@ -573,7 +617,9 @@ export default function Premium() {
                     cursor: isDisabled ? 'not-allowed' : 'pointer',
                     border: 'none',
                     transition: 'all 0.25s',
-                    ...(plan.btnStyle === 'free'
+                    ...(btn.isActive
+                      ? { background: 'rgba(34,197,94,0.1)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)', cursor: 'default' }
+                      : plan.btnStyle === 'free'
                       ? { background: 'var(--glass-overlay)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)' }
                       : plan.btnStyle === 'pro'
                         ? { background: 'rgba(96,165,250,0.12)', color: '#60a5fa', border: '1px solid rgba(96,165,250,0.3)' }
@@ -581,6 +627,8 @@ export default function Premium() {
                     ),
                     opacity: isDisabled ? 0.5 : 1,
                   }}
+                  onMouseOver={e => { if (!isDisabled && !btn.isActive) e.currentTarget.style.transform = 'translateY(-2px)' }}
+                  onMouseOut={e => { if (!isDisabled && !btn.isActive) e.currentTarget.style.transform = 'none' }}
                 >
                   {processing === plan.id ? '⏳ Processing...' : btn.label}
                 </button>

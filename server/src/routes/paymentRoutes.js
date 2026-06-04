@@ -82,10 +82,10 @@ router.post('/verify', authMiddleware, async (req, res) => {
         expiry.setMonth(expiry.getMonth() + 1);
       }
 
-      // Always set to 'pro' — no more pro_plus
+      // Save the specific plan ID so we know if it's 1-month or 6-months
       await User.findByIdAndUpdate(req.userId, { 
         isPremium: true,
-        premiumPlan: 'pro',
+        premiumPlan: planId,
         premiumExpiry: expiry,
         premiumOrderId: razorpay_order_id
       });
@@ -169,6 +169,18 @@ router.get('/status', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.userId).select('isPremium premiumPlan premiumExpiry');
     if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Auto-fix for legacy/test premium users missing expiry
+    if (user.isPremium && !user.premiumExpiry) {
+      const expiry = new Date();
+      expiry.setMonth(expiry.getMonth() + 1); // Give them 30 days default
+      user.premiumExpiry = expiry;
+      user.premiumPlan = (!user.premiumPlan || user.premiumPlan === 'free') ? 'pro_1m' : user.premiumPlan;
+      await User.findByIdAndUpdate(req.userId, {
+        premiumExpiry: user.premiumExpiry,
+        premiumPlan: user.premiumPlan
+      });
+    }
 
     // Expiry check karo
     if (user.isPremium && user.premiumExpiry && new Date() > user.premiumExpiry) {

@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
   // 🔥 SOCIAL FIELDS (FOLLOW SYSTEM) 🔥
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  
+  // 🔥 PRIVACY FIELDS 🔥
+  publicProfile: { type: Boolean, default: true },
+  showEloOnLeaderboard: { type: Boolean, default: true },
 
   country: { type: String, default: 'IN' },
   isVerified: { type: Boolean, default: false },
