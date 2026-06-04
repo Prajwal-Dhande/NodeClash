@@ -110,6 +110,9 @@ export default function Settings() {
   const [newPw, setNewPw] = useState('')
   const [confirmPw, setConfirmPw] = useState('')
   const [pwMsg, setPwMsg] = useState('')
+  const [pwStep, setPwStep] = useState(1)
+  const [otp, setOtp] = useState('')
+  const [pwLoading, setPwLoading] = useState(false)
 
   // Delete
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -148,11 +151,56 @@ export default function Settings() {
     navigate('/auth')
   }
 
-  const handleChangePw = async () => {
+  const handleRequestPw = async () => {
     if (newPw !== confirmPw) { setPwMsg('Passwords do not match'); return }
-    if (newPw.length < 6) { setPwMsg('Password must be at least 6 characters'); return }
-    setPwMsg('Backend update pending — connection structure ready.');
-    // setTimeout(() => setShowPwModal(false), 2000);
+    if (newPw.length < 8) { setPwMsg('Password must be at least 8 characters'); return }
+    if (!oldPw) { setPwMsg('Current password is required'); return }
+    setPwLoading(true)
+    setPwMsg('')
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${API_URL}/api/auth/change-password/request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ oldPassword: oldPw })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setPwStep(2)
+        setPwMsg(data.message)
+      } else {
+        setPwMsg(data.message || 'Failed to request OTP')
+      }
+    } catch (err) {
+      setPwMsg('Server error')
+    }
+    setPwLoading(false)
+  }
+
+  const handleVerifyPw = async () => {
+    if (!otp) { setPwMsg('OTP is required'); return }
+    setPwLoading(true)
+    setPwMsg('')
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${API_URL}/api/auth/change-password/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ oldPassword: oldPw, newPassword: newPw, otp })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setPwStep(1)
+        setShowPwModal(false)
+        setOldPw(''); setNewPw(''); setConfirmPw(''); setOtp(''); setPwMsg('')
+        alert('Password updated successfully!')
+      } else {
+        setPwMsg(data.message || 'Failed to update password')
+      }
+    } catch (err) {
+      setPwMsg('Server error')
+    }
+    setPwLoading(false)
   }
 
   const handleDelete = async () => {
@@ -297,22 +345,39 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* CHANGE PASSWORD MODAL (Updated Aesthetic: Glass + Outfit Typography) */}
+      {/* CHANGE PASSWORD MODAL */}
       {showPwModal && (
         <div style={modalOverlayStyle}>
           <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={modalBgStyle}>
             <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: 22, margin: '0 0 24px 0', color: 'var(--text-main)' }}>Reset Security Credentials</h3>
-            {[{ label: 'Current System Password', val: oldPw, set: setOldPw }, { label: 'New Arena Password', val: newPw, set: setNewPw }, { label: 'Confirm New Password', val: confirmPw, set: setConfirmPw }].map(f => (
-              <div key={f.label} style={{ marginBottom: 16 }}>
-                <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, display: 'block', marginBottom: 8, letterSpacing: 1.5, textTransform: 'uppercase' }}>{f.label}</label>
-                <input type="password" value={f.val} onChange={e => f.set(e.target.value)} style={{ width: '100%', background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', padding: '12px 16px', borderRadius: 12, fontSize: 14, outline: 'none', fontFamily: 'Inter', boxSizing: 'border-box' }} />
-              </div>
-            ))}
-            {pwMsg && <div style={{ fontSize: 12, color: '#fbbf24', margin: '0 0 16px 0', textAlign: 'center' }}>{pwMsg}</div>}
-            <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
-              <button onClick={() => { setShowPwModal(false); setPwMsg('') }} style={{ flex: 1, background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', color: 'var(--text-muted)', borderRadius: 10, padding: '12px', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter' }}>Cancel</button>
-              <button onClick={handleChangePw} style={{ flex: 1, background: '#ff6b35', border: 'none', color: '#fff', borderRadius: 10, padding: '12px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter' }}>Update credentials</button>
-            </div>
+            {pwStep === 1 ? (
+              <>
+                {[{ label: 'Current System Password', val: oldPw, set: setOldPw }, { label: 'New Arena Password', val: newPw, set: setNewPw }, { label: 'Confirm New Password', val: confirmPw, set: setConfirmPw }].map(f => (
+                  <div key={f.label} style={{ marginBottom: 16 }}>
+                    <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, display: 'block', marginBottom: 8, letterSpacing: 1.5, textTransform: 'uppercase' }}>{f.label}</label>
+                    <input type="password" value={f.val} onChange={e => f.set(e.target.value)} style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--text-main)', padding: '12px 16px', borderRadius: 12, fontSize: 14, outline: 'none', fontFamily: 'Inter', boxSizing: 'border-box', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)' }} />
+                  </div>
+                ))}
+                {pwMsg && <div style={{ fontSize: 13, color: '#ff6b35', margin: '0 0 16px 0', textAlign: 'center', fontWeight: 600 }}>{pwMsg}</div>}
+                <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
+                  <button onClick={() => { setShowPwModal(false); setPwMsg(''); setPwStep(1); setOldPw(''); setNewPw(''); setConfirmPw('') }} style={{ flex: 1, background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', color: 'var(--text-muted)', borderRadius: 10, padding: '12px', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter' }}>Cancel</button>
+                  <button onClick={handleRequestPw} disabled={pwLoading} style={{ flex: 1, background: '#ff6b35', border: 'none', color: '#fff', borderRadius: 10, padding: '12px', fontSize: 14, fontWeight: 700, cursor: pwLoading ? 'not-allowed' : 'pointer', fontFamily: 'Inter', opacity: pwLoading ? 0.7 : 1 }}>{pwLoading ? 'Processing...' : 'Next Step →'}</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, display: 'block', marginBottom: 8, letterSpacing: 1.5, textTransform: 'uppercase' }}>Enter 6-Digit OTP</label>
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 12 }}>Check your email (and spam folder) for the verification code.</div>
+                  <input type="text" value={otp} onChange={e => setOtp(e.target.value)} maxLength={6} style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--text-main)', padding: '12px 16px', borderRadius: 12, fontSize: 18, outline: 'none', fontFamily: 'Inter', boxSizing: 'border-box', letterSpacing: 4, textAlign: 'center', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)' }} />
+                </div>
+                {pwMsg && <div style={{ fontSize: 13, color: '#ff6b35', margin: '0 0 16px 0', textAlign: 'center', fontWeight: 600 }}>{pwMsg}</div>}
+                <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
+                  <button onClick={() => setPwStep(1)} style={{ flex: 1, background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', color: 'var(--text-muted)', borderRadius: 10, padding: '12px', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter' }}>← Back</button>
+                  <button onClick={handleVerifyPw} disabled={pwLoading} style={{ flex: 1, background: '#22c55e', border: 'none', color: '#fff', borderRadius: 10, padding: '12px', fontSize: 14, fontWeight: 700, cursor: pwLoading ? 'not-allowed' : 'pointer', fontFamily: 'Inter', opacity: pwLoading ? 0.7 : 1 }}>{pwLoading ? 'Verifying...' : 'Verify & Update ✓'}</button>
+                </div>
+              </>
+            )}
           </motion.div>
         </div>
       )}
