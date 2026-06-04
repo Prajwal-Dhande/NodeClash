@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import Matchmaking from '../components/battle/Matchmaking'
 import ActivityCalendar from '../components/ActivityCalendar'
+import { Crown, Diamond, Medal, Zap, Target, Dumbbell, Brain, ShieldCheck, Moon, Swords, Rocket, MapPin, GraduationCap, Briefcase, Calendar, Award, Search, X, Flame, SearchIcon, Lightbulb, Bot, Puzzle, Eye } from 'lucide-react'
 import { ThemeToggle } from '../context/ThemeContext'
 import API_URL from '../config/api'
 
@@ -26,11 +27,11 @@ const checkIsSolved = (user, p) => {
 };
 
 const getRankFromElo = (elo) => {
-  if (elo >= 1800) return '👑 Diamond'
-  if (elo >= 1200) return '💎 Platinum'
-  if (elo >= 800) return '🥇 Gold'
-  if (elo >= 400) return '🥈 Silver'
-  return '🥉 Bronze'
+  if (elo >= 1800) return <><Crown size={14}/> Diamond</>
+  if (elo >= 1200) return <><Diamond size={14}/> Platinum</>
+  if (elo >= 800) return <><Award size={14}/> Gold</>
+  if (elo >= 400) return <><Medal size={14}/> Silver</>
+  return <><Medal size={14}/> Bronze</>
 }
 
 const ProblemModal = ({ user, title, subtitle, borderColor, accentColor, selectedP, onSelect, diff, setDiff, topic, setTopic, status, setStatus, onPlay, onClose, btnLabel, problems, isRanked = false }) => {
@@ -78,7 +79,7 @@ const ProblemModal = ({ user, title, subtitle, borderColor, accentColor, selecte
             <div style={{ fontFamily: 'Outfit', fontWeight: 900, fontSize: 24, color: 'var(--text-main)', marginBottom: 6 }}>{title}</div>
             <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{subtitle}</div>
           </div>
-          <button onClick={onClose} className="modal-close-btn">✕</button>
+          <button onClick={onClose} className="modal-close-btn"><X size={20} /></button>
         </div>
 
         <div style={{
@@ -87,7 +88,7 @@ const ProblemModal = ({ user, title, subtitle, borderColor, accentColor, selecte
         }}>
           <input
             type="text"
-            placeholder="🔍 Search problems..."
+            placeholder="Search problems..."
             value={searchQ}
             onChange={e => setSearchQ(e.target.value)}
             className="modal-search-input"
@@ -433,15 +434,15 @@ export default function Lobby() {
 
       {showMatchmaking && <Matchmaking user={user} onMatchFound={handleMatchFound} onCancel={() => setShowMatchmaking(false)} selectedProblem={matchmakingMode === 'ranked' ? rankedSelected : null} mode={matchmakingMode} />}
 
-      {showRankedList && <ProblemModal user={user} title="🎯 Ranked Arena" subtitle="Choose your battlefield wisely. Higher difficulty = more ELO." borderColor="var(--purple)" accentColor="#a855f7" selectedP={rankedSelected} onSelect={setRankedSelected} diff={rankedDiff} setDiff={setRankedDiff} topic={rankedTopic} setTopic={setRankedTopic} status={rankedStatus} setStatus={setRankedStatus} onPlay={handleRankedPlay} onClose={() => setShowRankedList(false)} btnLabel="⚔️ Enter Ranked Arena" problems={problems} isRanked={true} />}
+      {showRankedList && <ProblemModal user={user} title={<><Target size={20}/> Ranked Arena</>} subtitle="Choose your battlefield wisely. Higher difficulty = more ELO." borderColor="var(--purple)" accentColor="#a855f7" selectedP={rankedSelected} onSelect={setRankedSelected} diff={rankedDiff} setDiff={setRankedDiff} topic={rankedTopic} setTopic={setRankedTopic} status={rankedStatus} setStatus={setRankedStatus} onPlay={handleRankedPlay} onClose={() => setShowRankedList(false)} btnLabel={<span style={{display: 'flex', alignItems: 'center', gap: '6px'}}><Swords size={16}/> Enter Ranked Arena</span>} problems={problems} isRanked={true} />}
 
-      {showPracticeList && <ProblemModal user={user} title="🧠 Practice Mode" subtitle="Solo training against an AI bot. No ELO at stake." borderColor="var(--green)" accentColor="#22c55e" selectedP={practiceSelected} onSelect={setPracticeSelected} diff={practiceDiff} setDiff={setPracticeDiff} topic={practiceTopic} setTopic={setPracticeTopic} status={practiceStatus} setStatus={setPracticeStatus} onPlay={handlePracticePlay} onClose={() => setShowPracticeList(false)} btnLabel="🧠 Start Practice" problems={problems} isRanked={false} />}
+      {showPracticeList && <ProblemModal user={user} title={<><Brain size={20}/> Practice Mode</>} subtitle="Solo training against an AI bot. No ELO at stake." borderColor="var(--green)" accentColor="#22c55e" selectedP={practiceSelected} onSelect={setPracticeSelected} diff={practiceDiff} setDiff={setPracticeDiff} topic={practiceTopic} setTopic={setPracticeTopic} status={practiceStatus} setStatus={setPracticeStatus} onPlay={handlePracticePlay} onClose={() => setShowPracticeList(false)} btnLabel={<span style={{display: 'flex', alignItems: 'center', gap: '6px'}}><Brain size={16}/> Start Practice</span>} problems={problems} isRanked={false} />}
 
       {/* ROOM CODE MODAL */}
       {createdRoomCode && (
         <div style={{ position: 'fixed', inset: 0, background: 'var(--modal-overlay)', backdropFilter: 'blur(12px)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ background: 'var(--modal-bg)', border: '1px solid var(--orange)', borderRadius: 24, width: '90%', maxWidth: 440, padding: '40px', textAlign: 'center' }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>⚔️</div>
+            <div style={{ fontSize: 48, marginBottom: 16, color: '#ff6b35' }}><Swords size={48} /></div>
             <h2 style={{ fontFamily: 'Outfit', fontWeight: 900, fontSize: 24, color: 'var(--text-main)', margin: '0 0 8px 0' }}>Room Created!</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: '0 0 24px 0' }}>Share this code with your opponent to start the battle.</p>
             
@@ -469,7 +470,7 @@ export default function Lobby() {
               <button onClick={handleStartCreatedRoom} style={{ flex: 1, background: 'linear-gradient(135deg, #ff6b35, #f7451d)', border: 'none', color: '#fff', borderRadius: 10, padding: '12px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter' }}>⚡ Enter Room</button>
             </div>
 
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 14 }}>💡 Your opponent enters this code in the "Join Room" tab</div>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 14, display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}><Lightbulb size={12}/> Your opponent enters this code in the "Join Room" tab</div>
           </div>
         </div>
       )}
@@ -754,7 +755,7 @@ export default function Lobby() {
               style={{ display: 'flex', flexDirection: 'column', gridColumn: 'span 2' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                <div className="mode-icon" style={{ background: 'rgba(34,197,94,0.1)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.2)' }}>🤖</div>
+                <div className="mode-icon" style={{ background: 'rgba(34,197,94,0.1)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.2)' }}><Bot size={24} /></div>
                 <h3 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-main)', margin: 0 }}>Practice Bot</h3>
               </div>
               <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0, lineHeight: 1.5, marginBottom: 16, maxWidth: '80%' }}>
@@ -770,7 +771,7 @@ export default function Lobby() {
               }} />
 
               <button className="mode-btn" style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', color: '#22c55e', width: '100%' }}>
-                🤖 Start Practice
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><Bot size={16} /> Start Practice</span>
               </button>
             </motion.div>
 
@@ -810,7 +811,7 @@ export default function Lobby() {
                 <div style={{ color: '#0ea5e9', padding: '20px' }}>⟳ Loading Brain Teasers...</div>
               ) : dailyPuzzles.length === 0 ? (
                 <div style={{ color: 'var(--text-muted)', padding: '40px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 40, marginBottom: 12 }}>🧩</div>
+                  <div style={{ fontSize: 40, marginBottom: 12, color: 'var(--text-muted)' }}><Puzzle size={40} /></div>
                   <div style={{ fontWeight: 600, marginBottom: 6 }}>No puzzles available</div>
                   <div style={{ fontSize: 12 }}>Check back soon — new puzzles are being added!</div>
                 </div>
@@ -977,7 +978,7 @@ export default function Lobby() {
         {/* WATCH LIVE TAB */}
         {tab === 'live' && (
           <div className="glass-panel" style={{ padding: '60px', textAlign: 'center', margin: '32px auto', maxWidth: 600 }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>👁</div>
+            <div style={{ fontSize: 48, marginBottom: 16, color: 'var(--text-muted)' }}><Eye size={48} /></div>
             <h2 style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: 24, marginBottom: 8, color: 'var(--text-main)' }}>Watch Live Battles</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: 13 }}>Live spectating coming soon!</p>
           </div>

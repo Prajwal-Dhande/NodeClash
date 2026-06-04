@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { io } from 'socket.io-client'
 import API_URL from '../../config/api'
+import { Swords, X, Star } from 'lucide-react'
 
 const FAKE_PLAYERS = [
   { name: 'ByteSlayer99', elo: 1180, avatar: 'BS', country: '🇮🇳' },
@@ -173,7 +174,7 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
             <div style={{ background: 'rgba(255,107,53,0.08)', border: '1px solid rgba(255,107,53,0.2)', borderRadius: 16, padding: '20px', textAlign: 'center' }}>
               <div style={{ width: 56, height: 56, borderRadius: '50%', margin: '0 auto 12px', background: 'linear-gradient(135deg, #ff6b35, #f7451d)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit', fontWeight: 900, fontSize: 18, color: 'var(--text-main)' }}>{(user?.username || 'PL').slice(0, 2).toUpperCase()}</div>
               <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{user?.username || 'Player'}</div>
-              <div style={{ fontSize: 12, color: '#ff6b35', fontWeight: 700 }}>⭐ {userElo} ELO</div>
+              <div style={{ fontSize: 12, color: '#ff6b35', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Star size={12} /> {userElo} ELO</div>
               <div style={{ marginTop: 8, fontSize: 10, fontWeight: 600, color: '#22c55e', letterSpacing: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}><div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 6px #22c55e' }} />READY</div>
             </div>
 
@@ -187,7 +188,7 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
                 <>
                   <div style={{ width: 56, height: 56, borderRadius: '50%', margin: '0 auto 12px', background: 'linear-gradient(135deg, #374151, #1f2937)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit', fontWeight: 900, fontSize: 18, color: 'var(--text-muted)', animation: 'flash 0.3s ease-in-out' }}>{flashPlayers[0].avatar}</div>
                   <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4, color: 'var(--text-muted)', animation: 'flash 0.3s' }}>{flashPlayers[0].name}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 700 }}>⭐ {flashPlayers[0].elo} ELO</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Star size={12} /> {flashPlayers[0].elo} ELO</div>
                 </>
               ) : (
                 <>
@@ -198,13 +199,13 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
               )}
             </div>
           </div>
-          <button className="cancel-btn" onClick={handleCancel}>✕ Cancel</button>
+          <button className="cancel-btn" onClick={handleCancel} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><X size={16} /> Cancel</button>
         </>
       )}
 
       {(phase === 'found' || phase === 'starting') && matchedPlayer && (
         <div style={{ textAlign: 'center', animation: 'popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)' }}>
-          <div style={{ fontSize: 48, marginBottom: 16, animation: 'bounce 0.6s ease infinite' }}>⚔️</div>
+          <div style={{ fontSize: 48, marginBottom: 16, animation: 'bounce 0.6s ease infinite', color: '#ff6b35' }}><Swords size={48} /></div>
           <div style={{ fontFamily: 'Outfit', fontWeight: 900, fontSize: 36, background: 'linear-gradient(90deg, #ff6b35, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: 8, letterSpacing: '-1px' }}>{phase === 'starting' ? 'BATTLE STARTING!' : 'MATCH FOUND!'}</div>
           <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 40 }}>{phase === 'starting' ? 'Prepare your weapons...' : 'Opponent locked in!'}</p>
 
@@ -212,7 +213,7 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
             <div style={{ background: 'rgba(255,107,53,0.08)', border: '1px solid rgba(255,107,53,0.3)', borderRadius: 16, padding: '24px', textAlign: 'center', boxShadow: '0 0 30px rgba(255,107,53,0.1)' }}>
               <div style={{ width: 64, height: 64, borderRadius: '50%', margin: '0 auto 12px', background: 'linear-gradient(135deg, #ff6b35, #f7451d)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit', fontWeight: 900, fontSize: 22, color: 'var(--text-main)', boxShadow: '0 0 20px rgba(255,107,53,0.4)' }}>{(user?.username || 'PL').slice(0, 2).toUpperCase()}</div>
               <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{user?.username || 'You'}</div>
-              <div style={{ fontSize: 13, color: '#ff6b35', fontWeight: 700 }}>⭐ {userElo}</div>
+              <div style={{ fontSize: 13, color: '#ff6b35', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Star size={12} /> {userElo}</div>
             </div>
 
             <div style={{ textAlign: 'center' }}><div style={{ fontFamily: 'Outfit', fontWeight: 900, fontSize: 28, color: '#ff6b35', textShadow: '0 0 20px rgba(255,107,53,0.5)' }}>VS</div></div>
@@ -220,9 +221,7 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
             <div style={{ background: matchedPlayer.isReal ? 'rgba(96,165,250,0.08)' : 'rgba(239,68,68,0.08)', border: `1px solid ${matchedPlayer.isReal ? 'rgba(96,165,250,0.3)' : 'rgba(239,68,68,0.3)'}`, borderRadius: 16, padding: '24px', textAlign: 'center', boxShadow: `0 0 30px ${matchedPlayer.isReal ? 'rgba(96,165,250,0.1)' : 'rgba(239,68,68,0.1)'}` }}>
               <div style={{ width: 64, height: 64, borderRadius: '50%', margin: '0 auto 12px', background: matchedPlayer.isReal ? 'linear-gradient(135deg, #1e3a5f, #1e40af)' : 'linear-gradient(135deg, #374151, #1f2937)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit', fontWeight: 900, fontSize: 22, color: '#e5e5e5', boxShadow: `0 0 20px ${matchedPlayer.isReal ? 'rgba(96,165,250,0.3)' : 'rgba(239,68,68,0.3)'}` }}>{matchedPlayer.avatar}</div>
               <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{matchedPlayer.name}</div>
-              <div style={{ fontSize: 13, color: matchedPlayer.isReal ? '#60a5fa' : '#ef4444', fontWeight: 700 }}>
-                ⭐ {matchedPlayer.elo} ELO
-              </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Star size={12} /> {matchedPlayer.elo} ELO</div>
             </div>
           </div>
         </div>

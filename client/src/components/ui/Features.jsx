@@ -1,14 +1,15 @@
 import React, { useState, useRef } from 'react';
+import { Zap, Bot, Lock, BarChart3 } from 'lucide-react';
 
 const features = [
-  { icon: '⚡', title: 'Real-Time Sync', desc: 'Every keystroke synced via WebSockets under 98ms. Watch your opponent code live.', color: '#ff6b35', tag: 'SOCKET.IO', size: 'large' },
-  { icon: '🤖', title: 'AI Interviewer', desc: 'Mid-battle constraint injection. AI reads your logic and raises the bar.', color: '#fb923c', tag: 'LLM POWERED', size: 'small' },
-  { icon: '🔒', title: 'Secure Sandbox', desc: 'All code runs in isolated Docker containers. Malicious scripts die here.', color: '#22c55e', tag: 'DOCKER', size: 'small' },
-  { icon: '📊', title: 'Live Analytics', desc: 'Execution time, space complexity, test case delta — tracked in real-time.', color: '#60a5fa', tag: 'REAL-TIME', size: 'large' },
+  { icon: <Zap size={32} />, bgIcon: <Zap size={150} />, title: 'Real-Time Sync', desc: 'Every keystroke synced via WebSockets under 98ms. Watch your opponent code live.', color: '#ff6b35', tag: 'SOCKET.IO', size: 'large' },
+  { icon: <Bot size={32} />, bgIcon: <Bot size={150} />, title: 'AI Interviewer', desc: 'Mid-battle constraint injection. AI reads your logic and raises the bar.', color: '#fb923c', tag: 'LLM POWERED', size: 'small' },
+  { icon: <Lock size={32} />, bgIcon: <Lock size={150} />, title: 'Secure Sandbox', desc: 'All code runs in isolated Docker containers. Malicious scripts die here.', color: '#22c55e', tag: 'DOCKER', size: 'small' },
+  { icon: <BarChart3 size={32} />, bgIcon: <BarChart3 size={150} />, title: 'Live Analytics', desc: 'Execution time, space complexity, test case delta — tracked in real-time.', color: '#60a5fa', tag: 'REAL-TIME', size: 'large' },
 ]
 
 // 3D Tilt Card Logic
-function TiltCard({ icon, title, desc, color, tag, size }) {
+function TiltCard({ icon, bgIcon, title, desc, color, tag, size }) {
   const cardRef = useRef(null);
   const [style, setStyle] = useState({ transition: 'transform 0.5s ease-out' });
 
@@ -62,7 +63,7 @@ function TiltCard({ icon, title, desc, color, tag, size }) {
         <p className="card-desc">{desc}</p>
       </div>
 
-      <div className="bg-watermark">{icon}</div>
+      <div className="bg-watermark">{bgIcon}</div>
     </div>
   );
 }
@@ -105,14 +106,14 @@ export default function Features() {
         .bento-card:hover .card-glow { opacity: 0.15; }
         
         .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: auto; transform: translateZ(30px); }
-        .feature-icon-wrapper { font-size: 32px; background: var(--bg3); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 16px; border: 1px solid var(--border2); }
+        .feature-icon-wrapper { background: var(--bg3); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 16px; border: 1px solid var(--border2); }
         .feature-badge { font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 6px 12px; border-radius: 30px; border: 1px solid; }
         
         .card-content { transform-style: preserve-3d; }
         .card-title { font-family: Outfit, sans-serif; font-weight: 700; font-size: 22px; color: var(--text-main); margin: 30px 0 10px 0; transform: translateZ(40px); }
         .card-desc { color: var(--text-dim); font-size: 14px; line-height: 1.6; margin: 0; max-width: 90%; transform: translateZ(20px); }
         
-        .bg-watermark { position: absolute; bottom: -20px; right: -20px; font-size: 150px; opacity: 0.02; z-index: 0; filter: grayscale(100%); transition: all 0.4s; transform: translateZ(-10px); }
+        .bg-watermark { position: absolute; bottom: -20px; right: -20px; color: #fff; opacity: 0.02; z-index: 0; filter: grayscale(100%); transition: all 0.4s; transform: translateZ(-10px); }
         .bento-card:hover .bg-watermark { opacity: 0.05; transform: scale(1.1) translateZ(-10px); }
 
         @media (max-width: 900px) {

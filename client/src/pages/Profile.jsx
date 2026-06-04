@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async' 
 import { ThemeToggle } from '../context/ThemeContext'
 import API_URL from '../config/api'
+import { Crown, Diamond, Medal, Zap, Target, Dumbbell, Brain, ShieldCheck, Moon, Swords, Rocket, MapPin, GraduationCap, Briefcase, Calendar, Award, Edit2, GitBranch, Globe, Search, Flame } from 'lucide-react'
 
 // Load premium fonts
 if (typeof document !== 'undefined') {
@@ -14,12 +15,12 @@ if (typeof document !== 'undefined') {
 }
 
 const getTier = (elo) => {
-  if (elo >= 2400) return { name: 'Master', icon: '👑', color: '#f97316', bg: '#f9731620' }
-  if (elo >= 1800) return { name: 'Diamond', icon: '💠', color: '#a855f7', bg: '#a855f720' }
-  if (elo >= 1200) return { name: 'Platinum', icon: '💎', color: '#00c8ff', bg: '#00c8ff20' }
-  if (elo >= 800) return { name: 'Gold', icon: '🥇', color: '#ffd700', bg: '#ffd70020' }
-  if (elo >= 400) return { name: 'Silver', icon: '🥈', color: '#aaa9ad', bg: '#aaa9ad20' }
-  return { name: 'Bronze', icon: '🥉', color: '#cd7f32', bg: '#cd7f3220' }
+  if (elo >= 2400) return { name: 'Master', icon: <Crown size={16} />, color: '#f97316', bg: '#f9731620' }
+  if (elo >= 1800) return { name: 'Diamond', icon: <Diamond size={16} />, color: '#a855f7', bg: '#a855f720' }
+  if (elo >= 1200) return { name: 'Platinum', icon: <Award size={16} />, color: '#00c8ff', bg: '#00c8ff20' }
+  if (elo >= 800) return { name: 'Gold', icon: <Medal size={16} />, color: '#ffd700', bg: '#ffd70020' }
+  if (elo >= 400) return { name: 'Silver', icon: <Medal size={16} />, color: '#aaa9ad', bg: '#aaa9ad20' }
+  return { name: 'Bronze', icon: <Medal size={16} />, color: '#cd7f32', bg: '#cd7f3220' }
 }
 
 const LANGS = [
@@ -331,15 +332,19 @@ export default function Profile() {
   const heatColor = (v) => ['var(--glass-overlay)', 'rgba(34,197,94,0.3)', 'rgba(34,197,94,0.6)', 'rgba(34,197,94,0.85)', '#22c55e'][v]
 
   const ACHIEVEMENTS = [
-    { icon: '🔥', title: 'Hot Streak', desc: '5 wins in a row', unlocked: (user?.stats?.streak||0) >= 5 },
-    { icon: '⚡', title: 'Speed Demon', desc: 'Win in under 3 min', unlocked: battles.some(b => b.result==='win' && b.timeTaken<180) },
-    { icon: '🎯', title: 'Sharp Shooter', desc: '90%+ win rate', unlocked: winRate >= 90 && total >= 5 },
-    { icon: '💪', title: 'Battle Tested', desc: '10+ battles', unlocked: total >= 10 },
-    { icon: '🧠', title: 'Big Brain', desc: 'Win a Hard problem', unlocked: hardWins > 0 },
-    { icon: '🥈', title: 'Silver Rank', desc: 'Reach 1200 ELO', unlocked: elo >= 1200 },
-    { icon: '🥇', title: 'Gold Rank', desc: 'Reach 1400 ELO', unlocked: elo >= 1400 },
-    { icon: '🔷', title: 'Diamond', desc: 'Reach 1600 ELO', unlocked: elo >= 1600 },
-    { icon: '👑', title: 'Grandmaster', desc: 'Reach 2000 ELO', unlocked: elo >= 2000 },
+    { icon: <Flame size={20} color="#ff6b35" />, title: 'Hot Streak', desc: '5 wins in a row', unlocked: (user?.stats?.streak||0) >= 5 },
+    { icon: <Zap size={20} color="#fbbf24" />, title: 'Speed Demon', desc: 'Win in under 3 min', unlocked: battles.some(b => b.result==='win' && b.timeTaken<180) },
+    { icon: <Target size={20} color="#ef4444" />, title: 'Sharp Shooter', desc: '90%+ win rate', unlocked: winRate >= 90 && total >= 5 },
+    { icon: <Dumbbell size={20} color="#60a5fa" />, title: 'Battle Tested', desc: '10+ battles', unlocked: total >= 10 },
+    { icon: <Brain size={20} color="#a855f7" />, title: 'Big Brain', desc: 'Win a Hard problem', unlocked: hardWins > 0 },
+    { icon: <ShieldCheck size={20} color="#22c55e" />, title: 'Flawless Victory', desc: 'Win without any failed tests', unlocked: battles.some(b => b.result === 'win' && b.testsFailed === 0) },
+    { icon: <Moon size={20} color="#818cf8" />, title: 'Night Owl', desc: 'Win a match between 12 AM and 5 AM', unlocked: battles.some(b => b.result === 'win' && (new Date(b.date).getHours() >= 0 && new Date(b.date).getHours() <= 5)) },
+    { icon: <Swords size={20} color="#f43f5e" />, title: 'Code Ninja', desc: 'Reach 10 wins', unlocked: (user?.stats?.wins || 0) >= 10 },
+    { icon: <Rocket size={20} color="#10b981" />, title: 'Unstoppable', desc: 'Win 10 matches in a row', unlocked: (user?.stats?.streak || 0) >= 10 },
+    { icon: <Medal size={20} color="#aaa9ad" />, title: 'Silver Rank', desc: 'Reach 1200 ELO', unlocked: elo >= 1200 },
+    { icon: <Medal size={20} color="#ffd700" />, title: 'Gold Rank', desc: 'Reach 1400 ELO', unlocked: elo >= 1400 },
+    { icon: <Diamond size={20} color="#00c8ff" />, title: 'Diamond', desc: 'Reach 1600 ELO', unlocked: elo >= 1600 },
+    { icon: <Crown size={20} color="#f97316" />, title: 'Grandmaster', desc: 'Reach 2000 ELO', unlocked: elo >= 2000 },
   ]
 
   const masteryData = [
@@ -567,8 +572,8 @@ export default function Profile() {
 
             {/* 🔥 DYNAMIC BUTTON (EDIT VS FOLLOW) */}
             {isOwnProfile ? (
-              <button onClick={() => setShowEditProfile(true)} style={{ width: '100%', background: 'rgba(255,107,53,0.08)', border: '1px solid rgba(255,107,53,0.25)', color: '#ff6b35', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter', transition: 'all 0.2s' }}>
-                ✏️ Edit Profile
+              <button onClick={() => setShowEditProfile(true)} style={{ width: '100%', background: 'rgba(255,107,53,0.08)', border: '1px solid rgba(255,107,53,0.25)', color: '#ff6b35', borderRadius: 10, padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter', transition: 'all 0.2s' }}>
+                <Edit2 size={16} /> Edit Profile
               </button>
             ) : (
               <button onClick={handleFollowToggle} style={{ width: '100%', background: isFollowing ? 'transparent' : 'rgba(255,107,53,0.15)', border: `1px solid ${isFollowing ? 'var(--glass-border)' : 'rgba(255,107,53,0.4)'}`, color: isFollowing ? 'var(--text-muted)' : '#ff6b35', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter', transition: 'all 0.2s' }}>
@@ -580,10 +585,10 @@ export default function Profile() {
           {/* Info Card */}
           <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '22px 24px', display: 'flex', flexDirection: 'column', gap: 10 }}>
             {[
-              { icon: '🇮🇳', text: 'India' },
-              education && { icon: '🎓', text: education },
-              company && { icon: '💼', text: company },
-              { icon: '📅', text: `Joined ${new Date(user?.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}` },
+              { icon: <MapPin size={16} />, text: 'India' },
+              education && { icon: <GraduationCap size={16} />, text: education },
+              company && { icon: <Briefcase size={16} />, text: company },
+              { icon: <Calendar size={16} />, text: `Joined ${new Date(user?.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}` },
             ].filter(Boolean).map(({ icon, text }, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)' }}>
                 <span>{icon}</span><span>{text}</span>
@@ -592,9 +597,9 @@ export default function Profile() {
 
             {(github || linkedin || website) ? (
               <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {github && <a href={`https://${github}`} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}>🐙 <span style={{ color: '#60a5fa' }}>{github}</span></a>}
-                {linkedin && <a href={`https://${linkedin}`} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}>💼 <span style={{ color: '#60a5fa' }}>{linkedin}</span></a>}
-                {website && <a href={`https://${website}`} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}>🌐 <span style={{ color: '#60a5fa' }}>{website}</span></a>}
+                {github && <a href={`https://${github}`} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}><GitBranch size={16} /> <span style={{ color: '#60a5fa' }}>{github}</span></a>}
+                {linkedin && <a href={`https://${linkedin}`} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}><Briefcase size={16} /> <span style={{ color: '#60a5fa' }}>{linkedin}</span></a>}
+                {website && <a href={`https://${website}`} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}><Globe size={16} /> <span style={{ color: '#60a5fa' }}>{website}</span></a>}
               </div>
             ) : isOwnProfile && (
               <button onClick={() => setShowEditProfile(true)} style={{ marginTop: 8, fontSize: 12, color: 'var(--text-muted)', background: 'none', border: '1px dashed var(--glass-border)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontFamily: 'Inter' }}>+ Add social links</button>
@@ -607,7 +612,7 @@ export default function Profile() {
             
             {primaryWeapon && (
                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 12, marginBottom: 16 }}>
-                 <div style={{ fontSize: 20 }}>⚔️</div>
+                 <div style={{ fontSize: 20, color: '#ff6b35' }}><Swords size={24} /></div>
                  <div>
                    <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>Primary Weapon</div>
                    <div style={{ fontSize: 14, color: primaryWeapon.color, fontWeight: 700 }}>{primaryWeapon.label}</div>
@@ -699,7 +704,7 @@ export default function Profile() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 {[
                   { label: 'Win Rate', val: `${winRate}%`, color: '#fb923c' },
-                  { label: 'Streak 🔥', val: user?.stats?.streak || 0, color: '#fb923c' },
+                  { label: <><Flame size={14} style={{ marginRight: 4, verticalAlign: 'text-bottom' }} color="#ff6b35" /> Streak</>, val: user?.stats?.streak || 0, color: '#fb923c' },
                   { label: 'Peak ELO', val: Math.max(peakElo, elo), color: 'var(--text-muted)' },
                   { label: 'Battles', val: total, color: 'var(--text-muted)' },
                 ].map(({ label, val, color }) => (
@@ -829,7 +834,7 @@ export default function Profile() {
               </div>
               {battles.length === 0 ? (
                 <div style={{ padding: '80px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                  <div style={{ fontSize: 48, marginBottom: 16 }}>⚔️</div>
+                  <div style={{ fontSize: 48, marginBottom: 16, color: 'var(--text-muted)' }}><Swords size={48} /></div>
                   <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8, color: 'var(--text-muted)' }}>No battles yet!</div>
                   <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>Enter the arena and start your coding combat journey</div>
                   {isOwnProfile && <button onClick={() => navigate('/lobby')} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 28px', cursor: 'pointer', fontWeight: 700, fontFamily: 'Inter', fontSize: 14, boxShadow: '0 8px 24px rgba(255,107,53,0.3)', transition: 'all 0.3s' }}>⚡ Enter Arena</button>}

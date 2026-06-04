@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { Zap, Menu, X } from 'lucide-react'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -55,7 +56,7 @@ export default function Navbar() {
               <span onClick={() => navigate('/profile')} className="profile-btn" title="View Profile">
                 {(user?.username || 'P').slice(0, 2).toUpperCase()}
               </span>
-              <button onClick={() => navigate('/lobby')} className="btn-primary">⚡ Enter Arena</button>
+              <button onClick={() => navigate('/lobby')} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Zap size={16} /> Enter Arena</button>
             </>
           ) : (
             <>
@@ -67,7 +68,7 @@ export default function Navbar() {
 
         {/* Mobile Hamburger Icon */}
         <div className="mobile-only menu-icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          {mobileMenuOpen ? '✖' : '☰'}
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </div>
       </nav>
 
@@ -83,7 +84,7 @@ export default function Navbar() {
           ))}
           <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
             {isLoggedIn ? (
-              <button onClick={() => navigate('/lobby')} className="btn-primary">⚡ Enter Arena</button>
+              <button onClick={() => navigate('/lobby')} className="btn-primary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}><Zap size={16} /> Enter Arena</button>
             ) : (
               <>
                 <button onClick={() => navigate('/auth')} className="btn-secondary" style={{ width: '100%' }}>Log In</button>

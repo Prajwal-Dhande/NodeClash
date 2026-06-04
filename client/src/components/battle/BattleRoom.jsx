@@ -10,6 +10,7 @@ import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from "reac
 import { synthwaveTheme } from './MonacoThemes';
 import LofiRadio from './LofiRadio';
 import VisualFlowHint from './VisualFlowHint';
+import { CheckCircle, Lock, Bot, Brain, Swords, ClipboardList } from 'lucide-react'
 
 const PROBLEM_COMPLEXITY = {
   'two-sum': 'O(N)',
@@ -890,7 +891,7 @@ export default function BattleRoom() {
             background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)',
             color: '#22c55e', fontSize: 11, fontWeight: 700,
             padding: '4px 12px', borderRadius: 6, letterSpacing: 0.5
-          }}>🧠 PRACTICE MODE</div>
+          }}><Brain size={14} style={{ marginRight: 6 }}/> PRACTICE MODE</div>
         ) : null}
 
         <div className="picker-wrapper">
@@ -908,7 +909,7 @@ export default function BattleRoom() {
               </>
             )}
             {isProblemLocked ? (
-               <span style={{ fontSize: 12, color: '#ef4444', marginLeft: 4 }} title="Problem locked in Matchmaking">🔒</span>
+               <span style={{ fontSize: 12, color: '#ef4444', marginLeft: 4, display: 'flex', alignItems: 'center' }} title="Problem locked in Matchmaking"><Lock size={12}/></span>
             ) : (
                <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>▼</span>
             )}
@@ -947,7 +948,7 @@ export default function BattleRoom() {
               </div>
             ))}
             <span className="status-text" style={{ color: viewOnlyMode ? '#60a5fa' : battleStarted ? '#22c55e' : '#fb923c' }}>
-              {viewOnlyMode ? '📋 REVIEW' : battleStarted ? '⚔️ LIVE' : `${roomPlayers.length}/2`}
+              {viewOnlyMode ? <span style={{display: 'flex', alignItems: 'center', gap: 4}}><ClipboardList size={14}/> REVIEW</span> : battleStarted ? <span style={{display: 'flex', alignItems: 'center', gap: 4}}><Swords size={14}/> LIVE</span> : `${roomPlayers.length}/2`}
             </span>
           </div>
         )}
@@ -981,7 +982,7 @@ export default function BattleRoom() {
             background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)',
             borderRadius: 8, padding: '5px 14px', fontSize: 12, fontWeight: 700, color: '#22c55e'
           }}>
-            ✅ Solved
+            <span style={{display: 'flex', alignItems: 'center', gap: 6}}><CheckCircle size={16}/> Solved</span>
           </div>
         )}
       </div>
@@ -1073,7 +1074,7 @@ export default function BattleRoom() {
                   alignItems: 'center', justifyContent: 'center',
                   fontSize: 24
                 }}>
-                  {practiceMode ? '🧠' : '⚔️'}
+                  {practiceMode ? <Brain size={16}/> : <Swords size={16}/>}
                 </div>
               </div>
 
@@ -1147,7 +1148,7 @@ export default function BattleRoom() {
                     boxShadow: practiceMode ? '0 0 20px rgba(34,197,94,0.3)' : 'none',
                     animation: 'avatarPop 0.4s cubic-bezier(0.16,1,0.3,1) 0.15s both'
                   }}>
-                    {practiceMode ? '🤖' : '?'}
+                    {practiceMode ? <Bot size={20}/> : '?'}
                   </div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: practiceMode ? '#e5e5e5' : '#444' }}>
                     {practiceMode ? 'AI Opponent' : 'Searching...'}
@@ -1341,9 +1342,9 @@ export default function BattleRoom() {
                   <div className="battle-alert alert-green">
                     <div className="pulse-dot green" />
                     <span>
-                      {premiumMode ? '🤖 AI Interview in progress!' : 
-                       practiceMode ? '🧠 Practice Session active!' : 
-                       '⚔️ Battle in progress!'}
+                      {premiumMode ? <><Bot size={14}/> AI Interview in progress!</> : 
+                       practiceMode ? <><Brain size={14}/> Practice Session active!</> : 
+                       <><Swords size={14}/> Battle in progress!</>}
                     </span>
                   </div>
                 )}
@@ -1532,7 +1533,7 @@ export default function BattleRoom() {
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#0d0d10', overflow: 'hidden' }}>
             {/* Clara Header */}
             <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(236,72,153,0.15)', background: 'linear-gradient(135deg, rgba(236,72,153,0.08), rgba(139,92,246,0.06))', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-              <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, boxShadow: '0 0 14px rgba(236,72,153,0.4)', flexShrink: 0 }}>🤖</div>
+              <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 14px rgba(236,72,153,0.4)', flexShrink: 0 }}><Bot size={20} color="white"/></div>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-main)', fontFamily: 'Outfit' }}>Clara</div>
                 <div style={{ fontSize: 10, color: '#ec4899', fontWeight: 700, letterSpacing: 1 }}>MAANG INTERVIEWER</div>

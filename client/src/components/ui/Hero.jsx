@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Zap, Trophy, Bot } from 'lucide-react'
 
 const TESTIMONIALS = [
   { name: 'Arjun K.', role: 'SDE @ Amazon', stars: 5, color: '#ff6b35', text: 'The free tier gave me a solid foundation, but the PRO FAANG Vault is what actually got me my Amazon offer. The curated problems are scarily accurate.' },
@@ -95,8 +96,8 @@ export default function Hero() {
           </p>
 
           <div className="hero-buttons">
-            <button onClick={() => navigate('/lobby')} className="btn-start">⚡ Start Battle</button>
-            <button onClick={() => navigate('/leaderboard')} className="btn-leaderboard">🏆 Leaderboard</button>
+            <button onClick={() => navigate('/lobby')} className="btn-start" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Zap size={18} /> Start Battle</button>
+            <button onClick={() => navigate('/leaderboard')} className="btn-leaderboard" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Trophy size={18} /> Leaderboard</button>
           </div>
 
           <div className="stats-box">
@@ -126,7 +127,7 @@ export default function Hero() {
             className="ai-alert"
             style={{ transform: 'translateZ(50px)' }} // Pops out in 3D
           >
-            🤖 AI CONSTRAINT INJECTED
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Bot size={14} /> AI CONSTRAINT INJECTED</span>
           </div>
 
           <div className="terminal-window">
@@ -141,7 +142,7 @@ export default function Hero() {
             <div className="terminal-tabs">
               <div className="tab active">YOU</div>
               <div className="tab inactive">OPPONENT</div>
-              <div className="timer">⚡ 01:42</div>
+              <div className="timer" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Zap size={14} /> 01:42</div>
             </div>
 
             <div className="terminal-body">
