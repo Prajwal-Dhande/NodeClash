@@ -389,7 +389,9 @@ export default function Lobby() {
     } else if (matchData.problemSlug) {
       finalProblemSlug = matchData.problemSlug;
     } else {
-      const fallbackProb = problems[Math.floor(Date.now() / 30000) % problems.length];
+      const unsolvedProblems = problems.filter(p => !checkIsSolved(user, p));
+      const pool = unsolvedProblems.length > 0 ? unsolvedProblems : problems;
+      const fallbackProb = pool[Math.floor(Math.random() * pool.length)];
       finalProblemSlug = fallbackProb ? fallbackProb.slug : 'contains-duplicate';
     }
 

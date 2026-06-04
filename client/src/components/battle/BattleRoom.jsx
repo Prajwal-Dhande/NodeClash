@@ -266,6 +266,14 @@ export default function BattleRoom() {
             const solvedCode = localStorage.getItem(`codeArena_solvedCode_${slug}_${language}`) || localStorage.getItem(`codeArena_solvedCode_${slug}`);
             if (solvedCode) {
               setCode(solvedCode);
+              
+              // Fallback for legacy solved problems that didn't save their language
+              if (!localStorage.getItem(`codeArena_solvedLang_${slug}`)) {
+                if (solvedCode.includes('public class') || solvedCode.includes('import java')) setLanguage('java');
+                else if (solvedCode.includes('def ') || solvedCode.includes('class Solution:')) setLanguage('python');
+                else if (solvedCode.includes('#include') || solvedCode.includes('using namespace')) setLanguage('cpp');
+                else setLanguage('javascript');
+              }
             } else {
               setCode(data.problem.starterCode?.[language] || DEFAULT_STARTER[language] || DEFAULT_STARTER.javascript);
             }
