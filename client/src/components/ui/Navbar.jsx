@@ -34,9 +34,8 @@ export default function Navbar() {
     <>
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <span onClick={() => navigate('/')} className="logo">
-          <span style={{ color: '#ff6b35' }}>Code</span>
-          {/* BRIGHTER ARENA LOGO TEXT */}
-          <span style={{ color: 'var(--text-main)', textShadow: scrolled ? '0 0 10px rgba(255,107,53,0.3)' : 'none' }}>Arena</span>
+          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
+          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
         </span>
 
         {/* Desktop Nav */}
@@ -98,15 +97,15 @@ export default function Navbar() {
       <style>{`
         .navbar {
           position: fixed; top: 0; width: 100%; z-index: 100;
-          background: rgba(13,13,13,0.6); backdrop-filter: blur(20px);
+          background: var(--nav-bg); backdrop-filter: blur(20px);
           border-bottom: 1px solid transparent;
           display: flex; justify-content: space-between; align-items: center;
           padding: 0 32px; height: 60px; transition: all 0.3s;
           font-family: Inter, sans-serif;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         .navbar.scrolled { 
-          background: rgba(13,13,13,0.9); 
+          background: var(--nav-bg); 
           border-bottom: 1px solid rgba(255,107,53,0.15);
         }
         .logo { font-family: Outfit, sans-serif; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; cursor: pointer; }
@@ -114,27 +113,27 @@ export default function Navbar() {
         .nav-actions { display: flex; gap: 10px; align-items: center; }
         
         .nav-link { 
-          color: #A0A0A0; 
+          color: var(--text-secondary); 
           font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease-in-out; 
           border-bottom: 2px solid transparent; padding-bottom: 2px;
         }
         .nav-link:hover { 
-          color: #ffffff; 
-          text-shadow: 0 0 10px rgba(255,255,255,0.3);
+          color: var(--text-main); 
+          text-shadow: 0 0 10px rgba(255,107,53,0.2);
           border-color: rgba(255,107,53,0.5);
         }
         
-        .btn-primary { font-family: Inter; font-size: 13px; font-weight: 700; color: #fff; background: linear-gradient(135deg, #ff6b35, #f7451d); border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; box-shadow: 0 5px 15px rgba(255,107,53,0.2); }
+        .btn-primary { font-family: Inter; font-size: 13px; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--orange), var(--orange2)); border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; box-shadow: 0 5px 15px rgba(255,107,53,0.2); }
         .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(255,107,53,0.3); }
         
-        .btn-secondary { font-family: Inter; font-size: 13px; font-weight: 600; color: #E5E5E5; background: transparent; border: 1px solid #3A3A3A; padding: 8px 18px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
-        .btn-secondary:hover { border-color: #ff6b35; color: #ff6b35; background: rgba(255,107,53,0.05); }
+        .btn-secondary { font-family: Inter; font-size: 13px; font-weight: 600; color: var(--text); background: transparent; border: 1px solid var(--border2); padding: 8px 18px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .btn-secondary:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
         
-        .profile-btn { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #ff6b35, #f7451d); display: flex; align-items: center; justify-content: center; font-family: Outfit, sans-serif; font-weight: 800; font-size: 13px; color: #fff; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
-        .profile-btn:hover { border-color: #ff6b35; }
+        .profile-btn { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), var(--orange2)); display: flex; align-items: center; justify-content: center; font-family: Outfit, sans-serif; font-weight: 800; font-size: 13px; color: #fff; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+        .profile-btn:hover { border-color: var(--orange); }
         .mobile-only { display: none; }
-        .menu-icon { color: #fff; font-size: 24px; cursor: pointer; }
-        .mobile-menu { position: fixed; top: 60px; left: 0; width: 100%; background: #0d0d0d; padding: 20px; display: flex; flex-direction: column; gap: 15px; border-bottom: 1px solid #1f1f1f; z-index: 99; }
+        .menu-icon { color: var(--text-main); font-size: 24px; cursor: pointer; }
+        .mobile-menu { position: fixed; top: 60px; left: 0; width: 100%; background: var(--bg); padding: 20px; display: flex; flex-direction: column; gap: 15px; border-bottom: 1px solid var(--border); z-index: 99; }
         
         @media (max-width: 768px) {
           .navbar { padding: 0 20px; }

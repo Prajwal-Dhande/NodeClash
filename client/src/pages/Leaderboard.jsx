@@ -79,7 +79,7 @@ export default function Leaderboard() {
 
       <nav className="glass-nav">
         <span className="logo" onClick={() => navigate('/')}>
-          <span style={{ color: '#ff6b35' }}>Code</span><span style={{ color: 'var(--text-main)' }}>Arena</span>
+          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span><span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
         </span>
         <div className="nav-divider desktop-only" />
         <span className="nav-subtitle desktop-only">Leaderboard</span>
@@ -105,8 +105,8 @@ export default function Leaderboard() {
           >
             <div className="drawer-header">
               <span className="logo" onClick={() => { setIsMobileMenuOpen(false); navigate('/') }}>
-                <span style={{ color: '#ff6b35', marginRight: '6px' }}>Code</span>
-                <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>Arena</span>
+                <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
+                <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
               </span>
               <button className="close-drawer-btn" onClick={() => setIsMobileMenuOpen(false)}>✕</button>
             </div>

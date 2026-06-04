@@ -6,8 +6,8 @@ export default function Footer() {
   return (
     <footer className="footer">
       <span onClick={() => navigate('/')} className="footer-logo">
-        <span style={{ color: '#ff6b35' }}>Code</span>
-        <span style={{ color: 'var(--text-main)', textShadow: '0 0 10px rgba(255,107,53,0.3)' }}>Arena</span>
+        <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
+        <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
       </span>
 
       <span className="footer-copyright">
@@ -32,13 +32,13 @@ export default function Footer() {
         .footer { 
           padding: 2.5rem 2.5rem; 
           border-top: 1px solid rgba(255,107,53,0.1); 
-          background: #0F0F0F; 
+          background: var(--bg-dark); 
           display: flex; 
           justify-content: space-between; 
           align-items: center; 
           gap: 20px; 
           font-family: Inter, sans-serif; 
-          box-shadow: 0 -15px 40px rgba(0,0,0,0.5); 
+          box-shadow: 0 -15px 40px rgba(0,0,0,0.15); 
         }
         
         .footer-logo { 
@@ -54,7 +54,7 @@ export default function Footer() {
         
         .footer-copyright { 
           font-size: 12px; 
-          color: #888; 
+          color: var(--text-dim); 
           font-weight: 500; 
           text-align: center;
           flex: 2; /* Takes up middle space */
@@ -70,14 +70,14 @@ export default function Footer() {
         
         .footer-link { 
           font-size: 12px; 
-          color: #A0A0A0; 
+          color: var(--text-secondary); 
           font-weight: 600; 
           cursor: pointer; 
           transition: all 0.2s; 
           border-bottom: 1px solid transparent; 
         }
         .footer-link:hover { 
-          color: #ff6b35; 
+          color: var(--orange); 
           border-color: rgba(255,107,53,0.5); 
           text-shadow: 0 0 10px rgba(255,107,53,0.3); 
         }

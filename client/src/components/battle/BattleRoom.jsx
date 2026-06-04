@@ -844,8 +844,8 @@ export default function BattleRoom() {
         <span className="logo" onClick={() => {
           if (battleStarted && !gameOver) { setShowLeaveModal(true) } else { navigate('/') }
         }}>
-          <span style={{ color: '#ff6b35' }}>Code</span>
-          <span style={{ color: 'var(--text-main)' }}>Arena</span>
+          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
+          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
         </span>
         <div className="divider" />
 

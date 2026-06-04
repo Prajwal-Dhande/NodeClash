@@ -69,8 +69,12 @@ body {
 
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #3a3a3a; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-hint); }
+
+/* Light mode: reduce background animation intensity */
+[data-theme="light"] body::before { opacity: 0.25; }
+[data-theme="light"] body::after { opacity: 0.15; }
 
 select { outline: none; }
 button { outline: none; }

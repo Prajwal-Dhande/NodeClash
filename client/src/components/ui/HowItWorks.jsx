@@ -38,30 +38,30 @@ export default function HowItWorks() {
       </div>
 
       <style>{`
-        .hiw-section { padding: 8rem 2.5rem; background: #050505; border-top: 1px solid #111; font-family: Inter, sans-serif; overflow: hidden; }
+        .hiw-section { padding: 8rem 2.5rem; background: var(--bg-dark); border-top: 1px solid var(--border); font-family: Inter, sans-serif; overflow: hidden; }
         .hiw-container { max-width: 1200px; margin: 0 auto; display: flex; gap: 4rem; align-items: center; }
         
         .hiw-left { flex: 1; position: sticky; top: 20vh; }
-        .hiw-tag { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: #555; letter-spacing: 4px; display: block; margin-bottom: 20px; }
-        .hiw-title { font-family: Outfit, sans-serif; font-weight: 900; font-size: clamp(3rem, 5vw, 4.5rem); color: #fff; line-height: 1; margin: 0 0 20px 0; letter-spacing: -2px; }
-        .hiw-desc { color: #888; font-size: 16px; line-height: 1.6; max-width: 300px; }
+        .hiw-tag { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--text-hint); letter-spacing: 4px; display: block; margin-bottom: 20px; }
+        .hiw-title { font-family: Outfit, sans-serif; font-weight: 900; font-size: clamp(3rem, 5vw, 4.5rem); color: var(--text-main); line-height: 1; margin: 0 0 20px 0; letter-spacing: -2px; }
+        .hiw-desc { color: var(--text-dim); font-size: 16px; line-height: 1.6; max-width: 300px; }
 
         .hiw-right { flex: 1.5; position: relative; padding-left: 40px; }
-        .timeline-line { position: absolute; top: 0; bottom: 0; left: 19px; width: 2px; background: linear-gradient(to bottom, transparent, #333 10%, #333 90%, transparent); }
+        .timeline-line { position: absolute; top: 0; bottom: 0; left: 19px; width: 2px; background: linear-gradient(to bottom, transparent, var(--border2) 10%, var(--border2) 90%, transparent); }
         
         .steps-wrapper { display: flex; flex-direction: column; gap: 3rem; }
         
-        .step-card { position: relative; background: rgba(20, 20, 20, 0.4); backdrop-filter: blur(10px); border: 1px solid #1a1a1a; border-radius: 16px; padding: 40px; transition: all 0.3s; overflow: hidden; cursor: default; }
-        .step-card:hover { transform: translateX(10px); border-color: rgba(255, 255, 255, 0.1); background: rgba(25, 25, 25, 0.6); }
+        .step-card { position: relative; background: var(--btn-bg); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 16px; padding: 40px; transition: all 0.3s; overflow: hidden; cursor: default; }
+        .step-card:hover { transform: translateX(10px); border-color: var(--border2); background: var(--card-bg); }
         
-        .bg-num { position: absolute; right: -10px; bottom: -30px; font-family: Outfit, sans-serif; font-weight: 900; font-size: 140px; color: rgba(255, 255, 255, 0.02); line-height: 1; z-index: 0; transition: color 0.3s; pointer-events: none; }
-        .step-card:hover .bg-num { color: rgba(255, 255, 255, 0.04); }
+        .bg-num { position: absolute; right: -10px; bottom: -30px; font-family: Outfit, sans-serif; font-weight: 900; font-size: 140px; color: var(--btn-bg); line-height: 1; z-index: 0; transition: color 0.3s; pointer-events: none; }
+        .step-card:hover .bg-num { opacity: 0.6; }
         
         .step-content { position: relative; z-index: 1; }
         .step-dot { position: absolute; left: -63px; top: 6px; width: 10px; height: 10px; border-radius: 50%; }
         
         .step-title { font-family: Outfit, sans-serif; font-weight: 800; font-size: 18px; margin: 0 0 12px 0; letter-spacing: 1px; }
-        .step-desc { color: #999; font-size: 15px; line-height: 1.7; margin: 0; max-width: 90%; }
+        .step-desc { color: var(--text-dim); font-size: 15px; line-height: 1.7; margin: 0; max-width: 90%; }
 
         @media (max-width: 900px) {
           .hiw-container { flex-direction: column; gap: 3rem; }

@@ -87,30 +87,30 @@ export default function Features() {
 
       <style>{`
         /* Styles exactly as you provided, slight tweaks for 3D parent */
-        .features-section { padding: 8rem 2.5rem; background: #0a0a0a; font-family: Inter, sans-serif; perspective: 1000px; }
+        .features-section { padding: 8rem 2.5rem; background: var(--bg-dark); font-family: Inter, sans-serif; perspective: 1000px; }
         .features-container { max-width: 1200px; margin: 0 auto; }
         .features-header { margin-bottom: 4rem; text-align: center; }
-        .features-subtitle { font-size: 12px; font-weight: 700; color: #555; letter-spacing: 3px; display: block; margin-bottom: 12px; }
-        .features-title { font-family: Outfit, sans-serif; font-weight: 800; font-size: clamp(2.5rem, 4vw, 3.5rem); color: #fff; line-height: 1.1; margin: 0; letter-spacing: -1px; }
-        .text-glow { color: #ff6b35; text-shadow: 0 0 30px rgba(255,107,53,0.4); }
+        .features-subtitle { font-size: 12px; font-weight: 700; color: var(--text-hint); letter-spacing: 3px; display: block; margin-bottom: 12px; }
+        .features-title { font-family: Outfit, sans-serif; font-weight: 800; font-size: clamp(2.5rem, 4vw, 3.5rem); color: var(--text-main); line-height: 1.1; margin: 0; letter-spacing: -1px; }
+        .text-glow { color: var(--orange); text-shadow: 0 0 30px rgba(255,107,53,0.4); }
         
         .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; transform-style: preserve-3d; }
         
-        .bento-card { position: relative; background: #121212; border: 1px solid #1f1f1f; border-radius: 20px; padding: 32px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; will-change: transform; cursor: default; }
+        .bento-card { position: relative; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 32px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; will-change: transform; cursor: default; }
         .bento-card.large { grid-column: span 2; min-height: 280px; }
         .bento-card.small { grid-column: span 1; min-height: 280px; }
         
-        .bento-card:hover { border-color: var(--hover-color); box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+        .bento-card:hover { border-color: var(--hover-color); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
         .card-glow { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 150px; filter: blur(80px); opacity: 0; transition: opacity 0.4s; z-index: -1; }
         .bento-card:hover .card-glow { opacity: 0.15; }
         
         .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: auto; transform: translateZ(30px); }
-        .feature-icon-wrapper { font-size: 32px; background: #1a1a1a; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 16px; border: 1px solid #2a2a2a; }
+        .feature-icon-wrapper { font-size: 32px; background: var(--bg3); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 16px; border: 1px solid var(--border2); }
         .feature-badge { font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 6px 12px; border-radius: 30px; border: 1px solid; }
         
         .card-content { transform-style: preserve-3d; }
-        .card-title { font-family: Outfit, sans-serif; font-weight: 700; font-size: 22px; color: #fff; margin: 30px 0 10px 0; transform: translateZ(40px); }
-        .card-desc { color: #888; font-size: 14px; line-height: 1.6; margin: 0; max-width: 90%; transform: translateZ(20px); }
+        .card-title { font-family: Outfit, sans-serif; font-weight: 700; font-size: 22px; color: var(--text-main); margin: 30px 0 10px 0; transform: translateZ(40px); }
+        .card-desc { color: var(--text-dim); font-size: 14px; line-height: 1.6; margin: 0; max-width: 90%; transform: translateZ(20px); }
         
         .bg-watermark { position: absolute; bottom: -20px; right: -20px; font-size: 150px; opacity: 0.02; z-index: 0; filter: grayscale(100%); transition: all 0.4s; transform: translateZ(-10px); }
         .bento-card:hover .bg-watermark { opacity: 0.05; transform: scale(1.1) translateZ(-10px); }
