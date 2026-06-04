@@ -96,7 +96,7 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
             onMatchFound(bot)
           }, 1500)
         }, 2000)
-      }, 10000)
+      }, 8000)
     })
 
     // ✅ CRITICAL BUG FIX: Socket disconnects and clears memory on unmount

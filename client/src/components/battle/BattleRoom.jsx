@@ -121,6 +121,10 @@ export default function BattleRoom() {
   const [problemLoading, setProblemLoading] = useState(true)
   
   const [language, setLanguage] = useState(() => {
+    const slug = new URLSearchParams(window.location.search).get('problem');
+    const solvedLang = localStorage.getItem(`codeArena_solvedLang_${slug}`);
+    if (solvedLang) return solvedLang;
+    
     const roomId = getRoomId();
     return localStorage.getItem(`codeArena_lang_${roomId}`) || 'javascript';
   })
@@ -136,7 +140,7 @@ export default function BattleRoom() {
     const roomId = getRoomId();
     const slug = getProblemSlug();
     
-    const solvedCode = localStorage.getItem(`codeArena_solvedCode_${slug}`);
+    const solvedCode = localStorage.getItem(`codeArena_solvedCode_${slug}_${language}`) || localStorage.getItem(`codeArena_solvedCode_${slug}`);
     if (solvedCode) return solvedCode;
 
     return localStorage.getItem(`codeArena_draft_${roomId}`) || DEFAULT_STARTER[language];
@@ -258,12 +262,25 @@ export default function BattleRoom() {
           });
 
           if (isProblemSolvedLocally) {
-            const solvedCode = localStorage.getItem(`codeArena_solvedCode_${slug}`);
-            if (solvedCode) setCode(solvedCode);
+            const solvedCode = localStorage.getItem(`codeArena_solvedCode_${slug}_${language}`) || localStorage.getItem(`codeArena_solvedCode_${slug}`);
+            if (solvedCode) {
+              setCode(solvedCode);
+            } else {
+              setCode(data.problem.starterCode?.[language] || DEFAULT_STARTER[language] || DEFAULT_STARTER.javascript);
+            }
           } else {
             const savedCode = localStorage.getItem(`codeArena_draft_${roomId}`);
             if (!savedCode) {
               setCode(data.problem.starterCode?.[language] || DEFAULT_STARTER[language] || DEFAULT_STARTER.javascript)
+            }
+          }
+          
+          // Start practice/premium matches immediately (don't wait for socket)
+          if (isPracticeMode() || isPremiumMode()) {
+            if (!battleStartedRef.current) {
+              battleStartedRef.current = true;
+              setBattleStarted(true);
+              startTimeRef.current = Date.now();
             }
           }
         }
@@ -447,7 +464,7 @@ export default function BattleRoom() {
 
   // Browser back button (popstate) + tab close (beforeunload) interception
   useEffect(() => {
-    if (!battleStarted || gameOver) return
+    if (!battleStarted || gameOver || isPracticeMode() || isViewOnlyMode()) return
 
     // Push a dummy state so there is "somewhere" to go back to (traps the user)
     window.history.pushState(null, null, window.location.pathname + window.location.search)
@@ -508,7 +525,14 @@ export default function BattleRoom() {
     setLanguage(lang)
     const roomId = getRoomId()
     localStorage.setItem(`codeArena_lang_${roomId}`, lang)
-    const newCode = problem?.starterCode?.[lang] || DEFAULT_STARTER[lang] || ''
+    
+    let newCode = problem?.starterCode?.[lang] || DEFAULT_STARTER[lang] || ''
+    if (isAlreadySolved) {
+      const slug = getProblemSlug();
+      const solvedCode = localStorage.getItem(`codeArena_solvedCode_${slug}_${lang}`);
+      if (solvedCode) newCode = solvedCode;
+    }
+    
     setCode(newCode)
     localStorage.setItem(`codeArena_draft_${roomId}`, newCode)
   }
@@ -540,9 +564,9 @@ export default function BattleRoom() {
 
   const handleCodeChange = (val) => {
     setCode(val)
-    if (!isAlreadySolved) {
-      const roomId = getRoomId()
-      localStorage.setItem(`codeArena_draft_${roomId}`, val)
+    const roomId = getRoomId()
+    localStorage.setItem(`codeArena_draft_${roomId}`, val)
+    if (!isPracticeMode() && !isViewOnlyMode()) {
       socketRef.current?.emit('code_change', { roomId, code: val })
     }
   }
@@ -767,7 +791,12 @@ export default function BattleRoom() {
           setCurrentUser(updatedUser);
         }
 
-        localStorage.setItem(`codeArena_solvedCode_${slug}`, code);
+        const currentCode = localStorage.getItem(`codeArena_draft_${roomId}`) || code;
+        const currentLang = localStorage.getItem(`codeArena_lang_${roomId}`) || language;
+
+        localStorage.setItem(`codeArena_solvedCode_${slug}_${currentLang}`, currentCode);
+        localStorage.setItem(`codeArena_solvedCode_${slug}`, currentCode); // Fallback for legacy
+        localStorage.setItem(`codeArena_solvedLang_${slug}`, currentLang);
 
         const savedEndTime = localStorage.getItem(`codeArena_endTime_${roomId}`);
         let secondsTaken = 0;
@@ -840,9 +869,9 @@ export default function BattleRoom() {
     <div className={`battle-container ${zenMode ? 'zen-active' : ''}`}>
       {premiumMode && <LofiRadio />}
 
-      <div className="battle-header" style={{ display: zenMode ? 'none' : 'flex' }}>
+      <div className="battle-header top-nav glass-panel" style={{ display: zenMode ? 'none' : 'flex' }}>
         <span className="logo" onClick={() => {
-          if (battleStarted && !gameOver) { setShowLeaveModal(true) } else { navigate('/') }
+          if (battleStarted && !gameOver && !isPracticeMode() && !isViewOnlyMode()) { setShowLeaveModal(true) } else { navigate(-1) }
         }}>
           <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
           <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
@@ -1338,7 +1367,7 @@ export default function BattleRoom() {
               <div style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', display: 'flex' }}>
                 <LanguageIcon lang={language} />
               </div>
-              <select value={language} onChange={e => handleLanguageChange(e.target.value)} className="pro-lang-select" disabled={isAlreadySolved}>
+              <select value={language} onChange={e => handleLanguageChange(e.target.value)} className="pro-lang-select" disabled={viewOnlyMode}>
                 <option value="javascript">JavaScript</option>
                 <option value="typescript">TypeScript</option>
                 <option value="python">Python</option>
@@ -1372,13 +1401,6 @@ export default function BattleRoom() {
               }}>
                 📋 Review Mode
               </button>
-            ) : isAlreadySolved ? (
-              <button disabled style={{ 
-                background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', color: '#22c55e',
-                padding: '6px 16px', borderRadius: 6, fontSize: 12, fontWeight: 700, fontFamily: 'Inter', cursor: 'not-allowed' 
-              }}>
-                ✓ ALREADY SOLVED
-              </button>
             ) : (
               <>
                 <button onClick={runCode} disabled={running || submitting || problemLoading}
@@ -1406,7 +1428,7 @@ export default function BattleRoom() {
               onMount={handleEditorMount}
               theme={zenMode ? 'synthwave' : 'vs-dark'}
               options={{
-                readOnly: isAlreadySolved || viewOnlyMode, // 🔥 Read-only if solved or review mode
+                readOnly: viewOnlyMode, // 🔥 Read-only if review mode
                 minimap: { enabled: false }, fontSize: 13.5,
                 fontFamily: 'JetBrains Mono', padding: { top: 14, bottom: 14 },
                 smoothScrolling: true, cursorBlinking: 'smooth',

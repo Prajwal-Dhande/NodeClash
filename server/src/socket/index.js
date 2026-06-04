@@ -85,6 +85,8 @@ function initSocket(server) {
     cors: { 
       origin: [
         'http://localhost:5173', 
+        'http://localhost:5174',
+        'http://localhost:5175',
         'https://code-arena-virid.vercel.app'
       ], 
       methods: ['GET', 'POST'] 

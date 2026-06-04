@@ -1,16 +1,33 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 export default function Timer({ initialSeconds = 600, onTimeUp }) { // ✅ Added onTimeUp prop
   const [seconds, setSeconds] = useState(initialSeconds)
 
+  const onTimeUpRef = React.useRef(onTimeUp)
+  
   useEffect(() => {
-    if (seconds <= 0) {
-      if (onTimeUp) onTimeUp(); // ✅ Trigger parent function when time is up!
+    onTimeUpRef.current = onTimeUp
+  }, [onTimeUp])
+
+  useEffect(() => {
+    if (initialSeconds <= 0) {
+      if (onTimeUpRef.current) onTimeUpRef.current();
       return;
     }
-    const t = setInterval(() => setSeconds(s => s - 1), 1000)
+    
+    const t = setInterval(() => {
+      setSeconds(s => {
+        if (s <= 1) {
+          clearInterval(t)
+          if (onTimeUpRef.current) onTimeUpRef.current()
+          return 0
+        }
+        return s - 1
+      })
+    }, 1000)
+    
     return () => clearInterval(t)
-  }, [seconds, onTimeUp]) // ✅ Added dependency
+  }, [initialSeconds])
 
   const mins = String(Math.floor(seconds / 60)).padStart(2, '0')
   const secs = String(seconds % 60).padStart(2, '0')
