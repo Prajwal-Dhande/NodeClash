@@ -139,6 +139,10 @@ exports.updateProfile = async (req, res) => {
     ).select('-password -otp -otpExpiry')
     res.json({ message: 'Profile updated', user })
   } catch (err) {
+    res.status(500).json({ message: 'Server error' })
+  }
+}
+
 // 🔥 DELETE Account
 exports.deleteAccount = async (req, res) => {
   try {
