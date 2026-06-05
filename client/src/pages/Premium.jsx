@@ -5,7 +5,7 @@ import Confetti from 'react-confetti'
 import { jsPDF } from 'jspdf'
 import API_URL from '../config/api'
 import { ThemeToggle } from '../context/ThemeContext'
-
+import { Bot, BarChart, Trophy, Lock, Zap, Map } from 'lucide-react'
 const CHECK = (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12" />
@@ -644,17 +644,25 @@ export default function Premium() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
             {[
-              { icon: '🤖', title: 'Clara AI Interviewer', desc: 'Practice with an AI trained to behave exactly like a MAANG interviewer. Get hints, feedback, and code review in real-time.' },
-              { icon: '📊', title: 'Deep Code Analytics', desc: 'After every submission, get time & space complexity analysis, edge case reports, and comparisons to optimal solutions.' },
-              { icon: '🏆', title: 'Exclusive Ranked Tournaments', desc: 'Enter weekly & monthly tournaments exclusively for Pro members. Top performers get certificates and shoutouts.' },
-              { icon: '🔐', title: 'FAANG Vault Problems', desc: 'Access 200+ exclusive problems tagged by company, difficulty, and interview round — real problems, real prep.' },
-              { icon: '⚡', title: 'Zero-Latency Servers', desc: 'Code executes on priority servers with 3x faster response times. Never lose a ranked battle to lag again.' },
-              { icon: '🗺️', title: 'Personalized Roadmap', desc: 'Your AI roadmap adapts to your ELO, weak topics, and target company. Know exactly what to practice next.' },
+              { icon: <Bot size={28} color="#ff6b35" />, color: '#ff6b35', title: 'Clara AI Interviewer', desc: 'Practice with an AI trained to behave exactly like a MAANG interviewer. Get hints, feedback, and code review in real-time.' },
+              { icon: <BarChart size={28} color="#3b82f6" />, color: '#3b82f6', title: 'Deep Code Analytics', desc: 'After every submission, get time & space complexity analysis, edge case reports, and comparisons to optimal solutions.' },
+              { icon: <Trophy size={28} color="#eab308" />, color: '#eab308', title: 'Exclusive Ranked Tournaments', desc: 'Enter weekly & monthly tournaments exclusively for Pro members. Top performers get certificates and shoutouts.' },
+              { icon: <Lock size={28} color="#a855f7" />, color: '#a855f7', title: 'FAANG Vault Problems', desc: 'Access 200+ exclusive problems tagged by company, difficulty, and interview round — real problems, real prep.' },
+              { icon: <Zap size={28} color="#facc15" />, color: '#facc15', title: 'Zero-Latency Servers', desc: 'Code executes on priority servers with 3x faster response times. Never lose a ranked battle to lag again.' },
+              { icon: <Map size={28} color="#22c55e" />, color: '#22c55e', title: 'Personalized Roadmap', desc: 'Your AI roadmap adapts to your ELO, weak topics, and target company. Know exactly what to practice next.' },
             ].map((item, i) => (
               <motion.div key={i}
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 + i * 0.08 }}
-                style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '24px' }}>
-                <div style={{ fontSize: 32, marginBottom: 12 }}>{item.icon}</div>
+                style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '24px', transition: 'all 0.3s' }}
+                whileHover={{ y: -5, boxShadow: `0 12px 40px ${item.color}15` }}>
+                <div style={{
+                  width: 56, height: 56, borderRadius: 16,
+                  background: `${item.color}15`, border: `1px solid ${item.color}30`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  marginBottom: 20, boxShadow: `0 4px 20px ${item.color}20`
+                }}>
+                  {item.icon}
+                </div>
                 <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-main)', margin: '0 0 8px 0' }}>{item.title}</h3>
                 <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>{item.desc}</p>
               </motion.div>

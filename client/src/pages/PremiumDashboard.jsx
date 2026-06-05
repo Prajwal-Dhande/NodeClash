@@ -7,6 +7,7 @@ import {
 import API_URL from '../config/api'
 import { ThemeToggle } from '../context/ThemeContext'
 import { motion } from 'framer-motion'
+import { Bot, Grid, Zap, Trophy, Skull, Flame, BookOpen, Target, TrendingUp, Calendar } from 'lucide-react'
 
 // ELO thresholds (Bronze to Master)
 const RANK_THRESHOLDS = [
@@ -248,7 +249,9 @@ export default function PremiumDashboard() {
             boxShadow: '0 0 30px rgba(168,85,247,0.1) inset', position: 'relative', display: 'flex', flexDirection: 'column'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-              <div style={{ width: 48, height: 48, borderRadius: 16, background: 'rgba(168,85,247,0.1)', color: '#a855f7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, border: '1px solid rgba(168,85,247,0.2)' }}>🤖</div>
+              <div style={{ width: 48, height: 48, borderRadius: 16, background: 'rgba(168,85,247,0.1)', color: '#a855f7', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(168,85,247,0.2)' }}>
+                <Bot size={24} />
+              </div>
               <div>
                 <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-main)', fontFamily: 'Outfit' }}>Clara AI</div>
                 <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Smart Insight</div>
@@ -261,19 +264,19 @@ export default function PremiumDashboard() {
           
           {/* Activity Heatmap */}
           <div className="heatmap-card card-padding" style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '32px', transition: 'all 0.3s' }}>
-            <SectionTitle>🟩 Contribution Graph</SectionTitle>
+            <SectionTitle><Grid size={18} color="#22c55e" /> Contribution Graph</SectionTitle>
             <GitHubHeatmap contributions={data.contributions || {}} />
           </div>
         </div>
 
         {/* Row 2: Stats Grid */}
         <div className="stats-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 24, marginBottom: 24 }}>
-          <StatCard icon="⚡" label="Peak ELO"       value={stats.peakElo}      sub={`Current: ${stats.elo}`}         color="#a855f7" />
-          <StatCard icon="🏆" label="Total Wins"     value={stats.wins}         sub={`${stats.winRate}% win rate`}    color="#22c55e" />
-          <StatCard icon="💀" label="Losses"         value={stats.losses}       sub={`${stats.totalBattles} battles`} color="#ef4444" />
-          <StatCard icon="🔥" label="Win Streak"     value={stats.streak}       sub={`Best: ${stats.maxStreak}`}      color="#f97316" />
-          <StatCard icon="📚" label="Solved"         value={stats.solvedCount}  sub="DSA problems"                    color="#60a5fa" />
-          <StatCard icon="🎯" label="Win Rate"       value={`${stats.winRate}%`} sub={`${stats.totalBattles} played`} color="#fbbf24" />
+          <StatCard icon={<Zap size={20} />} label="Peak ELO"       value={stats.peakElo}      sub={`Current: ${stats.elo}`}         color="#a855f7" />
+          <StatCard icon={<Trophy size={20} />} label="Total Wins"     value={stats.wins}         sub={`${stats.winRate}% win rate`}    color="#22c55e" />
+          <StatCard icon={<Skull size={20} />} label="Losses"         value={stats.losses}       sub={`${stats.totalBattles} battles`} color="#ef4444" />
+          <StatCard icon={<Flame size={20} />} label="Win Streak"     value={stats.streak}       sub={`Best: ${stats.maxStreak}`}      color="#f97316" />
+          <StatCard icon={<BookOpen size={20} />} label="Solved"         value={stats.solvedCount}  sub="DSA problems"                    color="#60a5fa" />
+          <StatCard icon={<Target size={20} />} label="Win Rate"       value={`${stats.winRate}%`} sub={`${stats.totalBattles} played`} color="#fbbf24" />
         </div>
 
         {/* Row 3: Charts */}
@@ -282,7 +285,7 @@ export default function PremiumDashboard() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {/* ELO History */}
             <div className="card-padding" style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '32px', transition: 'all 0.3s' }}>
-              <SectionTitle>📈 ELO History (30 days)</SectionTitle>
+              <SectionTitle><TrendingUp size={18} color="#a855f7" /> ELO History (30 days)</SectionTitle>
               {eloHistory.length < 2 ? (
                 <div style={{ height: 240, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 14 }}>Play more battles to see your ELO trend!</div>
               ) : (
@@ -307,7 +310,7 @@ export default function PremiumDashboard() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {/* Weekly Performance */}
             <div className="card-padding" style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 24, padding: '32px', transition: 'all 0.3s' }}>
-              <SectionTitle>📅 Weekly Performance</SectionTitle>
+              <SectionTitle><Calendar size={18} color="#f97316" /> Weekly Performance</SectionTitle>
               {weeklyData.every(d => d.wins === 0 && d.losses === 0) ? (
                 <div style={{ height: 240, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 14 }}>No battles this week</div>
               ) : (
