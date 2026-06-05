@@ -192,8 +192,10 @@ export default function Premium() {
     doc.setFontSize(10)
     doc.text(date, pw - 16, 36, { align: 'right' })
 
-    // ── Billed To ──
+    // ── Billed To & Billed From ──
     let y = 64
+    
+    // Left side: Billed To
     doc.setTextColor(120, 120, 130)
     doc.setFontSize(9)
     doc.setFont('helvetica', 'bold')
@@ -201,16 +203,36 @@ export default function Premium() {
     y += 10
     doc.setTextColor(30, 30, 35)
     doc.setFontSize(13)
-    doc.setFont('helvetica', 'bold')
     doc.text(username || 'CodeArena User', 16, y)
-    y += 7
+    y += 6
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(10)
     doc.setTextColor(100, 100, 110)
     doc.text(email || 'N/A', 16, y)
+    
+    // Right side: Billed From
+    let yFrom = 64
+    doc.setTextColor(120, 120, 130)
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'bold')
+    doc.text('BILLED FROM', pw - 16, yFrom, { align: 'right' })
+    yFrom += 10
+    doc.setTextColor(30, 30, 35)
+    doc.setFontSize(13)
+    doc.text('CodeArena Tech', pw - 16, yFrom, { align: 'right' })
+    yFrom += 6
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(10)
+    doc.setTextColor(100, 100, 110)
+    doc.text('123 Innovation Drive', pw - 16, yFrom, { align: 'right' })
+    yFrom += 5
+    doc.text('Tech Park, CA 94043', pw - 16, yFrom, { align: 'right' })
+    yFrom += 5
+    doc.text('GSTIN: 27AABCU9603R1ZM', pw - 16, yFrom, { align: 'right' })
+
+    y = Math.max(y, yFrom) + 16
 
     // ── Table ──
-    y += 20
     const colX = [16, 90, 140, pw - 16]
     const headers = ['Description', 'Duration', 'Amount']
 
@@ -232,7 +254,7 @@ export default function Premium() {
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(11)
     doc.setTextColor(30, 30, 35)
-    doc.text(`CodeArena Pro — ${planName}`, colX[0] + 4, y)
+    doc.text(`CodeArena Pro \u2014 ${planName}`, colX[0] + 4, y)
     const dur = planName.toLowerCase().includes('6') ? '6 Months + 7-Day Trial' : '1 Month'
     doc.text(dur, colX[1] + 4, y)
     doc.setFont('helvetica', 'bold')
@@ -241,38 +263,78 @@ export default function Premium() {
     doc.setDrawColor(230, 230, 235)
     doc.line(16, y, pw - 16, y)
 
-    // Total
+    // Total Calculation
+    const tax = amount * 0.18;
+    const subtotal = amount - tax;
+
     y += 14
-    doc.setFontSize(10)
+    doc.setFontSize(9)
     doc.setTextColor(100, 100, 110)
     doc.setFont('helvetica', 'normal')
-    doc.text('Total Paid', colX[1] + 4, y)
-    doc.setFontSize(14)
+    doc.text('Subtotal:', colX[1] + 4, y)
+    doc.text(`\u20B9${Number(subtotal).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, colX[2] + 4, y)
+    
+    y += 6
+    doc.text('GST (18%):', colX[1] + 4, y)
+    doc.text(`\u20B9${Number(tax).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, colX[2] + 4, y)
+    
+    y += 12
+    doc.setFontSize(11)
+    doc.setTextColor(30, 30, 35)
     doc.setFont('helvetica', 'bold')
+    doc.text('Total Paid:', colX[1] + 4, y)
+    doc.setFontSize(14)
     doc.setTextColor(255, 107, 53)
     doc.text(`\u20B9${Number(amount).toLocaleString('en-IN')}`, colX[2] + 4, y)
 
-    // Validity
-    y += 16
+    // PAID Stamp
+    doc.setDrawColor(34, 197, 94)
+    doc.setTextColor(34, 197, 94)
+    doc.setLineWidth(1)
+    doc.setFontSize(16)
+    doc.setFont('helvetica', 'bold')
+    doc.rect(pw - 50, y - 24, 34, 14)
+    doc.text('PAID', pw - 33, y - 14, { align: 'center' })
+
+    // Validity & Signature Block
+    y += 24
+    
+    // Validity Tag
     doc.setFillColor(240, 253, 244)
-    doc.roundedRect(16, y - 6, pw - 32, 18, 3, 3, 'F')
+    doc.setDrawColor(34, 197, 94)
+    doc.setLineWidth(0.5)
+    doc.roundedRect(16, y - 6, 110, 18, 3, 3, 'F')
+    doc.roundedRect(16, y - 6, 110, 18, 3, 3, 'S')
     doc.setFontSize(10)
     doc.setTextColor(34, 197, 94)
     doc.setFont('helvetica', 'bold')
     doc.text(`\u2713  Valid Until: ${expiry}`, 24, y + 5)
+    
+    // Authorized Signature
+    doc.setDrawColor(200, 200, 200)
+    doc.setLineWidth(0.5)
+    doc.line(pw - 60, y + 10, pw - 16, y + 10)
+    doc.setFontSize(18)
+    doc.setFont('times', 'italic')
+    doc.setTextColor(30, 30, 60)
+    doc.text('Prajwal Dhande', pw - 38, y + 6, { align: 'center' })
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(9)
+    doc.setTextColor(120, 120, 130)
+    doc.text('Authorized Signatory', pw - 38, y + 15, { align: 'center' })
 
     // ── Footer ──
     y += 36
     doc.setDrawColor(230, 230, 235)
     doc.line(16, y, pw - 16, y)
-    y += 12
+    y += 10
     doc.setFontSize(9)
     doc.setTextColor(160, 160, 170)
     doc.setFont('helvetica', 'normal')
-    doc.text('This is an auto-generated receipt. No signature required.', 16, y)
-    y += 7
+    doc.text('This is an auto-generated receipt.', 16, y)
+    y += 6
     doc.text('CodeArena \u2022 support@codearena.dev \u2022 codearena.dev', 16, y)
-    y += 7
+    y += 6
     doc.text('Secure payment processed via Razorpay.', 16, y)
 
     doc.save(`CodeArena_Receipt_${invoiceNo}.pdf`)
@@ -467,7 +529,20 @@ export default function Premium() {
               {/* Download Receipt */}
               <button onClick={() => {
                 const receipt = lastPurchase || JSON.parse(localStorage.getItem('ca_last_receipt') || 'null')
-                if (receipt) generateReceipt(receipt)
+                if (receipt) {
+                  generateReceipt(receipt)
+                } else {
+                  const planName = activePlanId?.includes('6') ? 'PRO — 6 Months' : 'PRO — 1 Month'
+                  const amount = activePlanId?.includes('6') ? 4999 : 999
+                  generateReceipt({
+                    planName,
+                    amount,
+                    date: startFormatted,
+                    expiry: expireFormatted,
+                    username: user?.username,
+                    email: user?.email,
+                  })
+                }
               }} style={{
                 marginTop: 8, background: 'none', border: `1px solid ${accentColor}44`,
                 color: accentColor, fontSize: 12, fontWeight: 700, padding: '6px 14px',
