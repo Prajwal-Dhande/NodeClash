@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Confetti from 'react-confetti'
-import { jsPDF } from 'jspdf'
 import API_URL from '../config/api'
 import { ThemeToggle } from '../context/ThemeContext'
 import { Bot, BarChart, Trophy, Lock, Zap, Map } from 'lucide-react'
@@ -161,183 +160,166 @@ export default function Premium() {
   // Trust backend if available, fallback to local storage
   const isPremiumUser = premiumStatus ? premiumStatus.isPremium : user?.isPremium;
 
-  // ── Professional PDF Receipt Generator ──
+  // ── Professional HTML/Tailwind Receipt Generator ──
   const generateReceipt = (purchaseInfo) => {
-    const doc = new jsPDF()
     const { planName, amount, date, expiry, username, email } = purchaseInfo
     const invoiceNo = `CA-${Date.now().toString(36).toUpperCase()}`
-    const pw = 210 // page width
 
-    // ── Header ──
-    doc.setFillColor(15, 15, 20)
-    doc.rect(0, 0, pw, 48, 'F')
-    // Logo text
-    doc.setTextColor(255, 107, 53)
-    doc.setFontSize(22)
-    doc.setFont('helvetica', 'bold')
-    doc.text('{C}', 16, 22)
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(18)
-    doc.text('CodeArena', 36, 22)
-    // Invoice label
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(160, 160, 170)
-    doc.text('SUBSCRIPTION RECEIPT', 16, 36)
-    // Invoice number on right
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(11)
-    doc.text(`Invoice: ${invoiceNo}`, pw - 16, 22, { align: 'right' })
-    doc.setTextColor(160, 160, 170)
-    doc.setFontSize(10)
-    doc.text(date, pw - 16, 36, { align: 'right' })
+    const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeArena Receipt - ${invoiceNo}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { orange: { 500: '#FF5722' }, dark: '#111111' },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], signature: ['Playfair Display', 'serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: white; margin: 0; padding: 0; display: flex; justify-content: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .a4-page { width: 100%; max-width: 210mm; min-height: 297mm; background: white; position: relative; display: flex; flex-direction: column; }
+        @media print { 
+            @page { margin: 0; size: A4; }
+            body { background-color: white; padding: 0; margin: 0; } 
+            .a4-page { box-shadow: none; width: 100%; min-height: 100vh; page-break-after: avoid; } 
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+    <div class="a4-page">
+        <!-- 1. Header Section -->
+        <div class="bg-dark text-white px-12 py-10 flex justify-between items-center" style="background-color: #111111; color: white;">
+            <div class="flex flex-col">
+                <div class="flex items-center gap-3">
+                    <span class="text-orange-500 font-bold text-3xl" style="color: #FF5722;">{C}</span>
+                    <span class="font-bold text-2xl tracking-wide">CodeArena</span>
+                </div>
+                <div class="text-gray-400 text-xs font-semibold tracking-widest mt-2" style="color: #9ca3af;">
+                    SUBSCRIPTION RECEIPT
+                </div>
+            </div>
+            <div class="text-right flex flex-col gap-1">
+                <div class="text-sm font-medium" style="color: #e5e7eb;">Invoice: ${invoiceNo}</div>
+                <div class="text-sm" style="color: #9ca3af;">${date}</div>
+            </div>
+        </div>
 
-    // ── Billed To & Billed From ──
-    let y = 64
-    
-    // Left side: Billed To
-    doc.setTextColor(120, 120, 130)
-    doc.setFontSize(9)
-    doc.setFont('helvetica', 'bold')
-    doc.text('BILLED TO', 16, y)
-    y += 10
-    doc.setTextColor(30, 30, 35)
-    doc.setFontSize(13)
-    doc.text(username || 'CodeArena User', 16, y)
-    y += 6
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(10)
-    doc.setTextColor(100, 100, 110)
-    doc.text(email || 'N/A', 16, y)
-    
-    // Right side: Billed From
-    let yFrom = 64
-    doc.setTextColor(120, 120, 130)
-    doc.setFontSize(9)
-    doc.setFont('helvetica', 'bold')
-    doc.text('BILLED FROM', pw - 16, yFrom, { align: 'right' })
-    yFrom += 10
-    doc.setTextColor(30, 30, 35)
-    doc.setFontSize(13)
-    doc.text('CodeArena Tech', pw - 16, yFrom, { align: 'right' })
-    yFrom += 6
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(10)
-    doc.setTextColor(100, 100, 110)
-    doc.text('123 Innovation Drive', pw - 16, yFrom, { align: 'right' })
-    yFrom += 5
-    doc.text('Tech Park, CA 94043', pw - 16, yFrom, { align: 'right' })
-    yFrom += 5
-    doc.text('GSTIN: 27AABCU9603R1ZM', pw - 16, yFrom, { align: 'right' })
+        <div class="flex-grow px-12 py-12 flex flex-col">
+            <!-- 2. Billing Details Section -->
+            <div class="flex justify-between items-start mb-12">
+                <div class="flex flex-col">
+                    <div class="text-xs font-bold tracking-widest mb-3" style="color: #9ca3af;">BILLED TO</div>
+                    <div class="text-lg font-bold mb-1" style="color: #111827;">${username || 'CodeArena User'}</div>
+                    <div class="text-sm mb-1" style="color: #6b7280;">${email || 'N/A'}</div>
+                    <div class="text-sm w-48 leading-relaxed" style="color: #6b7280;">
+                        123, User Billing Address,<br>City, State
+                    </div>
+                </div>
 
-    y = Math.max(y, yFrom) + 16
+                <div class="flex flex-col text-right">
+                    <div class="text-xs font-bold tracking-widest mb-3" style="color: #9ca3af;">BILLED FROM</div>
+                    <div class="text-lg font-bold mb-1" style="color: #111827;">CodeArena Tech</div>
+                    <div class="text-sm w-48 ml-auto leading-relaxed" style="color: #6b7280;">
+                        IT Park, Nagpur,<br>Maharashtra 440022, India
+                    </div>
+                </div>
+            </div>
 
-    // ── Table ──
-    const colX = [16, 90, 140, pw - 16]
-    const headers = ['Description', 'Duration', 'Amount']
+            <!-- 3. Line Items Table -->
+            <div class="mb-10">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-xs uppercase tracking-wider" style="background-color: #f9fafb; color: #6b7280;">
+                            <th class="py-4 px-4 font-semibold rounded-l-lg w-1/2">Description</th>
+                            <th class="py-4 px-4 font-semibold text-center w-1/4">Duration</th>
+                            <th class="py-4 px-4 font-semibold text-right rounded-r-lg w-1/4">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b" style="border-color: #f3f4f6;">
+                            <td class="py-6 px-4 text-sm font-medium" style="color: #1f2937;">CodeArena Pro &mdash; ${planName.replace('PRO &mdash; ', '').replace('PRO \u2014 ', '')}</td>
+                            <td class="py-6 px-4 text-sm text-center" style="color: #4b5563;">${planName.toLowerCase().includes('6') ? '6 Months + Trial' : '1 Month'}</td>
+                            <td class="py-6 px-4 text-sm font-bold text-right" style="color: #111827;">&#8377;${Number(amount).toLocaleString('en-IN')}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-    // Table header
-    doc.setFillColor(245, 245, 248)
-    doc.rect(16, y - 6, pw - 32, 14, 'F')
-    doc.setFontSize(9)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(80, 80, 90)
-    doc.text(headers[0], colX[0] + 4, y + 3)
-    doc.text(headers[1], colX[1] + 4, y + 3)
-    doc.text(headers[2], colX[2] + 4, y + 3)
-    y += 14
+            <!-- 4. Totals & PAID Badge Section -->
+            <div class="flex justify-end items-center mb-16 gap-12 border-b pb-8" style="border-color: #f3f4f6;">
+                <div class="flex items-center gap-6">
+                    <div class="text-sm font-bold" style="color: #374151;">Total Paid:</div>
+                    <div class="text-2xl font-bold" style="color: #FF5722;">&#8377;${Number(amount).toLocaleString('en-IN')}</div>
+                </div>
+                <div class="border-2 font-bold text-lg px-6 py-2 rounded uppercase tracking-widest transform -rotate-2" style="border-color: #22c55e; color: #22c55e; background-color: #f0fdf4;">
+                    PAID
+                </div>
+            </div>
 
-    // Table row
-    doc.setDrawColor(230, 230, 235)
-    doc.line(16, y, pw - 16, y)
-    y += 10
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(11)
-    doc.setTextColor(30, 30, 35)
-    doc.text(`CodeArena Pro \u2014 ${planName}`, colX[0] + 4, y)
-    const dur = planName.toLowerCase().includes('6') ? '6 Months + 7-Day Trial' : '1 Month'
-    doc.text(dur, colX[1] + 4, y)
-    doc.setFont('helvetica', 'bold')
-    doc.text(`\u20B9${Number(amount).toLocaleString('en-IN')}`, colX[2] + 4, y)
-    y += 8
-    doc.setDrawColor(230, 230, 235)
-    doc.line(16, y, pw - 16, y)
+            <!-- 5. Validation & Signature Section -->
+            <div class="flex justify-between items-end mt-auto mb-8">
+                <div class="border rounded-xl px-5 py-3" style="background-color: #f0fdf4; border-color: #bbf7d0;">
+                    <div class="flex items-center gap-2" style="color: #16a34a;">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-bold text-sm">Valid Until: ${expiry}</span>
+                    </div>
+                </div>
 
-    // Total Calculation
-    const tax = amount * 0.18;
-    const subtotal = amount - tax;
+                <div class="flex flex-col items-center">
+                    <div class="font-signature text-3xl mb-2" style="color: #1f2937;">Prajwal Dhande</div>
+                    <div class="w-48 h-px mb-2" style="background-color: #d1d5db;"></div>
+                    <div class="text-xs" style="color: #9ca3af;">Authorized Signatory</div>
+                </div>
+            </div>
+        </div>
 
-    y += 14
-    doc.setFontSize(9)
-    doc.setTextColor(100, 100, 110)
-    doc.setFont('helvetica', 'normal')
-    doc.text('Subtotal:', colX[1] + 4, y)
-    doc.text(`\u20B9${Number(subtotal).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, colX[2] + 4, y)
-    
-    y += 6
-    doc.text('GST (18%):', colX[1] + 4, y)
-    doc.text(`\u20B9${Number(tax).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, colX[2] + 4, y)
-    
-    y += 12
-    doc.setFontSize(11)
-    doc.setTextColor(30, 30, 35)
-    doc.setFont('helvetica', 'bold')
-    doc.text('Total Paid:', colX[1] + 4, y)
-    doc.setFontSize(14)
-    doc.setTextColor(255, 107, 53)
-    doc.text(`\u20B9${Number(amount).toLocaleString('en-IN')}`, colX[2] + 4, y)
+        <!-- 6. Footer -->
+        <div class="border-t px-12 py-8 mt-auto" style="border-color: #f3f4f6;">
+            <div class="flex flex-col gap-1.5 text-xs" style="color: #9ca3af;">
+                <p>This is an auto-generated receipt.</p>
+                <p>CodeArena &bull; support@codearena.dev &bull; codearena.dev</p>
+                <p>Secure payment processed via Razorpay.</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Wait for Tailwind to render
+        setTimeout(() => {
+            window.print();
+        }, 800);
+    </script>
+</body>
+</html>
+    `;
 
-    // PAID Stamp
-    doc.setDrawColor(34, 197, 94)
-    doc.setTextColor(34, 197, 94)
-    doc.setLineWidth(1)
-    doc.setFontSize(16)
-    doc.setFont('helvetica', 'bold')
-    doc.rect(pw - 50, y - 24, 34, 14)
-    doc.text('PAID', pw - 33, y - 14, { align: 'center' })
-
-    // Validity & Signature Block
-    y += 24
-    
-    // Validity Tag
-    doc.setFillColor(240, 253, 244)
-    doc.setDrawColor(34, 197, 94)
-    doc.setLineWidth(0.5)
-    doc.roundedRect(16, y - 6, 110, 18, 3, 3, 'F')
-    doc.roundedRect(16, y - 6, 110, 18, 3, 3, 'S')
-    doc.setFontSize(10)
-    doc.setTextColor(34, 197, 94)
-    doc.setFont('helvetica', 'bold')
-    doc.text(`\u2713  Valid Until: ${expiry}`, 24, y + 5)
-    
-    // Authorized Signature
-    doc.setDrawColor(200, 200, 200)
-    doc.setLineWidth(0.5)
-    doc.line(pw - 60, y + 10, pw - 16, y + 10)
-    doc.setFontSize(18)
-    doc.setFont('times', 'italic')
-    doc.setTextColor(30, 30, 60)
-    doc.text('Prajwal Dhande', pw - 38, y + 6, { align: 'center' })
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(9)
-    doc.setTextColor(120, 120, 130)
-    doc.text('Authorized Signatory', pw - 38, y + 15, { align: 'center' })
-
-    // ── Footer ──
-    y += 36
-    doc.setDrawColor(230, 230, 235)
-    doc.line(16, y, pw - 16, y)
-    y += 10
-    doc.setFontSize(9)
-    doc.setTextColor(160, 160, 170)
-    doc.setFont('helvetica', 'normal')
-    doc.text('This is an auto-generated receipt.', 16, y)
-    y += 6
-    doc.text('CodeArena \u2022 support@codearena.dev \u2022 codearena.dev', 16, y)
-    y += 6
-    doc.text('Secure payment processed via Razorpay.', 16, y)
-
-    doc.save(`CodeArena_Receipt_${invoiceNo}.pdf`)
+    const printWin = window.open('', '_blank');
+    if (printWin) {
+      printWin.document.open();
+      printWin.document.write(htmlContent);
+      printWin.document.close();
+    } else {
+      // Fallback if popup blocked
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `CodeArena_Receipt_${invoiceNo}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
   }
 
   const handlePayment = async (plan) => {
