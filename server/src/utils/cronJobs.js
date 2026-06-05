@@ -1,0 +1,97 @@
+const cron = require('node-cron')
+const User = require('../models/User')
+const Notification = require('../models/Notification')
+const { sendExpiryEmail } = require('../services/emailService')
+
+/**
+ * Premium Expiry Cron Job
+ * Runs daily at 9:00 AM IST (3:30 AM UTC) to check for expiring plans.
+ * Sends email + in-app notification when:
+ *  - Plan expires in exactly 4 days
+ *  - Plan expires in exactly 1 day (24 hours)
+ */
+const startExpiryCheckCron = () => {
+  // Run every day at 3:30 AM UTC (9:00 AM IST)
+  cron.schedule('30 3 * * *', async () => {
+    console.log('🔔 [Cron] Running premium expiry check...')
+
+    try {
+      const now = new Date()
+
+      // Find all premium users with a valid expiry date
+      const premiumUsers = await User.find({
+        isPremium: true,
+        premiumExpiry: { $exists: true, $ne: null }
+      }).select('username email premiumExpiry')
+
+      let emailsSent = 0
+      let notificationsCreated = 0
+
+      for (const user of premiumUsers) {
+        const expiry = new Date(user.premiumExpiry)
+        const msRemaining = expiry.getTime() - now.getTime()
+        const daysRemaining = Math.ceil(msRemaining / (1000 * 60 * 60 * 24))
+
+        // Check if exactly 4 days or exactly 1 day (24hrs) remaining
+        if (daysRemaining === 4 || daysRemaining === 1) {
+          // Send email
+          try {
+            await sendExpiryEmail(user.email, user.username, daysRemaining)
+            emailsSent++
+          } catch (emailErr) {
+            console.error(`❌ [Cron] Failed to send expiry email to ${user.email}:`, emailErr.message)
+          }
+
+          // Create in-app notification
+          try {
+            const isUrgent = daysRemaining === 1
+            await Notification.create({
+              user: user._id,
+              title: isUrgent ? '⚠️ PRO Expires Tomorrow!' : `🔔 PRO Expires in ${daysRemaining} Days`,
+              message: isUrgent
+                ? 'Your CodeArena PRO plan expires tomorrow! Renew now to keep access to FAANG Vault, Clara AI, and all premium features.'
+                : `Your CodeArena PRO plan expires in ${daysRemaining} days. Renew to continue your competitive edge.`,
+              type: isUrgent ? 'error' : 'warning',
+              link: '/premium'
+            })
+            notificationsCreated++
+          } catch (notifErr) {
+            console.error(`❌ [Cron] Failed to create notification for ${user.username}:`, notifErr.message)
+          }
+        }
+
+        // Also handle already-expired plans — deactivate them
+        if (daysRemaining <= 0) {
+          try {
+            await User.findByIdAndUpdate(user._id, {
+              isPremium: false,
+              premiumPlan: 'free'
+            })
+
+            await Notification.create({
+              user: user._id,
+              title: '❌ PRO Plan Expired',
+              message: 'Your CodeArena PRO plan has expired. You are now on the Free tier. Upgrade anytime to regain access.',
+              type: 'error',
+              link: '/premium'
+            })
+
+            console.log(`🔄 [Cron] Deactivated expired plan for ${user.username}`)
+          } catch (deactivateErr) {
+            console.error(`❌ [Cron] Failed to deactivate plan for ${user.username}:`, deactivateErr.message)
+          }
+        }
+      }
+
+      console.log(`✅ [Cron] Expiry check complete. Emails sent: ${emailsSent}, Notifications: ${notificationsCreated}, Total premium users scanned: ${premiumUsers.length}`)
+    } catch (err) {
+      console.error('❌ [Cron] Expiry check failed:', err)
+    }
+  }, {
+    timezone: 'Asia/Kolkata'
+  })
+
+  console.log('✅ [Cron] Premium expiry checker scheduled (daily at 9:00 AM IST)')
+}
+
+module.exports = { startExpiryCheckCron }

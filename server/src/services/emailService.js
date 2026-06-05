@@ -157,4 +157,86 @@ const sendWelcomeEmail = async (toEmail, username) => {
   }
 }
 
-module.exports = { sendOtpEmail, sendWelcomeEmail }
+// 🔥 Premium Expiry Warning Email
+const sendExpiryEmail = async (toEmail, username, daysLeft) => {
+  const isUrgent = daysLeft <= 1
+  const subject = isUrgent
+    ? `⚠️ ${username}, your CodeArena PRO expires TODAY!`
+    : `🔔 ${username}, your CodeArena PRO expires in ${daysLeft} days`
+
+  const mailOptions = {
+    from: `"CodeArena" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin:0; padding:0; background:#09090b; font-family: Inter, Arial, sans-serif;">
+        <div style="max-width:520px; margin:40px auto; background:#111111; border:1px solid ${isUrgent ? 'rgba(239,68,68,0.4)' : '#1f1f1f'}; border-radius:16px; overflow:hidden;">
+
+          <!-- Header -->
+          <div style="background:linear-gradient(135deg, ${isUrgent ? 'rgba(239,68,68,0.15)' : 'rgba(255,107,53,0.15)'}, rgba(15,15,20,1)); padding:40px 40px 32px; text-align:center; border-bottom:1px solid #1f1f1f;">
+            <div style="font-size:48px; margin-bottom:16px;">${isUrgent ? '⏰' : '🔔'}</div>
+            <div style="font-weight:900; font-size:28px; letter-spacing:-0.5px; margin-bottom:8px;">
+              <span style="color:#ff6b35;">Code</span><span style="color:#ffffff;">Arena</span>
+            </div>
+            <p style="color:#555; font-size:13px; margin:0;">Premium Membership Alert</p>
+          </div>
+
+          <!-- Body -->
+          <div style="padding:40px;">
+            <h2 style="color:#ffffff; font-size:22px; font-weight:700; margin:0 0 8px 0;">
+              ${isUrgent ? 'Your PRO expires today!' : `Your PRO expires in ${daysLeft} days`}
+            </h2>
+            <p style="color:#888; font-size:14px; line-height:1.6; margin:0 0 32px 0;">
+              Hey <strong style="color:#e5e5e5;">${username}</strong>! ${isUrgent
+                ? 'This is your final reminder. After today, you will lose access to FAANG Vault, Clara AI interviews, and all premium features.'
+                : `Your CodeArena PRO membership is expiring in <strong style="color:${isUrgent ? '#ef4444' : '#ff6b35'};">${daysLeft} days</strong>. Renew now to keep your competitive edge.`}
+            </p>
+
+            <!-- Features at risk -->
+            <div style="background:#0d0d0d; border:1px solid ${isUrgent ? 'rgba(239,68,68,0.3)' : 'rgba(255,107,53,0.3)'}; border-radius:12px; padding:20px; margin-bottom:32px;">
+              <p style="color:#555; font-size:11px; font-weight:700; letter-spacing:2px; margin:0 0 16px 0;">FEATURES YOU'LL LOSE</p>
+              ${[
+                '🤖 Clara AI Mock Interviews',
+                '📊 Deep Code Analytics',
+                '🔐 FAANG Vault (200+ Problems)',
+                '⚡ Priority Matchmaking Servers',
+                '🏆 Ranked Tournaments Access'
+              ].map(f => `<div style="color:#aaa; font-size:13px; padding:6px 0; border-bottom:1px solid #1a1a1a;">${f}</div>`).join('')}
+            </div>
+
+            <!-- CTA Button -->
+            <a href="${process.env.CLIENT_URL || 'https://code-arena-virid.vercel.app'}/premium"
+              style="display:block; background:linear-gradient(135deg, #ff6b35, #f7451d); color:#fff; text-align:center; padding:16px; border-radius:10px; font-weight:700; font-size:15px; text-decoration:none; box-shadow:0 4px 20px rgba(255,107,53,0.3);">
+              🔄 Renew PRO Now
+            </a>
+
+            <p style="color:#555; font-size:12px; line-height:1.6; margin:16px 0 0 0; text-align:center;">
+              Don't lose your streak. Stay ahead of the competition.
+            </p>
+          </div>
+
+          <!-- Footer -->
+          <div style="padding:20px 40px; border-top:1px solid #1f1f1f; text-align:center;">
+            <p style="color:#333; font-size:11px; margin:0;">© 2025 CodeArena. Code smarter. Battle harder.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `
+  }
+
+  try {
+    await transporter.sendMail(mailOptions)
+    console.log(`✅ Expiry warning email sent to ${toEmail} (${daysLeft} days left)`)
+  } catch (error) {
+    console.error('❌ Expiry email failed:', error.message)
+  }
+}
+
+module.exports = { sendOtpEmail, sendWelcomeEmail, sendExpiryEmail }

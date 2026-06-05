@@ -43,6 +43,7 @@ app.use('/api/puzzles', require('./routes/puzzleRoutes'));
 
 app.use('/api/payment', paymentRoutes);
 app.use('/api/tournaments', require('./routes/tournamentRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
 
 
 app.get('/api/health', (req, res) => {

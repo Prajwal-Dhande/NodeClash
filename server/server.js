@@ -2,6 +2,7 @@ require('dotenv').config();
 const http = require("http");
 const app = require("./src/app");
 const { initSocket } = require("./src/socket/index");
+const { startExpiryCheckCron } = require("./src/utils/cronJobs");
 
 const PORT = process.env.PORT || 5000;
 
@@ -30,4 +31,5 @@ const keepAlive = () => {
 server.listen(PORT, () => {
   console.log(`🚀 Server successfully running on port ${PORT}`);
   keepAlive(); // Server start hote hi ping cycle shuru kar do
+  startExpiryCheckCron(); // Premium expiry checker start karo
 });
