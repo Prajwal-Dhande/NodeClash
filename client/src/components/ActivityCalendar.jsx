@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Flame, Zap } from 'lucide-react'
 import API_URL from '../config/api'
 
 const DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
@@ -161,7 +162,7 @@ export default function ActivityCalendar() {
       <div style={{ display: 'flex', gap: 12, marginTop: 14, padding: '12px 0 0', borderTop: '1px solid var(--border, rgba(255,255,255,0.04))' }}>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-            <span style={{ fontSize: 14 }}>🔥</span>
+            <Flame size={16} color="#ff6b35" />
             <span style={{ fontSize: 18, fontWeight: 900, color: '#ff6b35', fontFamily: 'Outfit' }}>{streak}</span>
           </div>
           <div style={{ fontSize: 10, color: 'var(--text-muted, #555)', fontWeight: 600 }}>Current Streak</div>
@@ -169,7 +170,7 @@ export default function ActivityCalendar() {
         <div style={{ width: 1, background: 'var(--border, rgba(255,255,255,0.06))' }} />
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-            <span style={{ fontSize: 14 }}>⚡</span>
+            <Zap size={16} color="#fbbf24" />
             <span style={{ fontSize: 18, fontWeight: 900, color: '#fbbf24', fontFamily: 'Outfit' }}>{maxStreak}</span>
           </div>
           <div style={{ fontSize: 10, color: 'var(--text-muted, #555)', fontWeight: 600 }}>Max Streak</div>

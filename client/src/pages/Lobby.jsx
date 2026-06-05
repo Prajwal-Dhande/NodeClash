@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import Matchmaking from '../components/battle/Matchmaking'
 import ActivityCalendar from '../components/ActivityCalendar'
-import { Crown, Diamond, Medal, Zap, Target, Dumbbell, Brain, ShieldCheck, Moon, Swords, Rocket, MapPin, GraduationCap, Briefcase, Calendar, Award, Search, X, Flame, SearchIcon, Lightbulb, Bot, Puzzle, Eye } from 'lucide-react'
+import { Crown, Diamond, Medal, Zap, Target, Dumbbell, Brain, ShieldCheck, Moon, Swords, Rocket, MapPin, GraduationCap, Briefcase, Calendar, Award, Search, X, Flame, SearchIcon, Lightbulb, Bot, Puzzle, Eye, Plus, Link2, Lock, Activity, Terminal, Timer, Bug, Database } from 'lucide-react'
 import { ThemeToggle } from '../context/ThemeContext'
 import API_URL from '../config/api'
 
@@ -493,7 +493,6 @@ export default function Lobby() {
           <span onClick={() => user?.isPremium ? navigate('/interview-dsa') : navigate('/premium')}>FAANG Vault</span>
           <span onClick={() => navigate('/tournaments')}>Tournaments</span>
           <span onClick={() => navigate('/leaderboard')}>Leaderboard</span>
-          <span onClick={() => navigate('/profile')}>Profile</span>
         </div>
         <div style={{ flex: 1 }} className="desktop-only" />
 
@@ -549,11 +548,13 @@ export default function Lobby() {
 
         <div className="desktop-only"><ThemeToggle /></div>
         <div className="online-badge desktop-only">
-          <div className={`status-dot ${pulse ? 'pulse-anim' : ''}`} />
-          <span><span className="text-green">{onlineCount}</span> online</span>
+          <div className="live-dot-wrapper">
+            <div className="live-dot-ring" />
+            <div className="live-dot-core" />
+          </div>
+          <span><span className="text-online">{onlineCount}</span> online</span>
         </div>
         <div className="user-chip desktop-only" onClick={() => navigate('/profile')}>
-          <div className="rank-icon">{getRankFromElo(user?.elo || 0)}</div>
           <div className="avatar">{initials}</div>
           <span className="username">{user?.username || 'Player_01'}</span>
         </div>
@@ -602,9 +603,10 @@ export default function Lobby() {
                 {!user?.isPremium && (
                   <button onClick={() => { setIsMobileMenuOpen(false); navigate('/premium') }} style={{
                     background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', border: 'none', color: '#fff', borderRadius: 8,
-                    padding: '12px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter', width: '100%'
+                    padding: '12px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter', width: '100%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
                   }}>
-                    💎 Get Premium
+                    <Diamond size={16} /> Get Premium
                   </button>
                 )}
               </div>
@@ -622,11 +624,11 @@ export default function Lobby() {
         <div className="tab-wrapper">
           <div className="tab-container">
             {[
-              { id: 'quickplay', label: '⚡ Quick Play' },
-              { id: 'puzzles', label: '🧩 Puzzles' },
-              { id: 'create', label: '+ Create Room' },
-              { id: 'join', label: '🔗 Join Room' },
-              { id: 'live', label: '👁 Watch Live' },
+              { id: 'quickplay', label: <span style={{display: 'flex', alignItems: 'center', gap: '6px'}}><Zap size={16} /> Quick Play</span> },
+              { id: 'puzzles', label: <span style={{display: 'flex', alignItems: 'center', gap: '6px'}}><Puzzle size={16} /> Puzzles</span> },
+              { id: 'create', label: <span style={{display: 'flex', alignItems: 'center', gap: '6px'}}><Plus size={16} /> Create Room</span> },
+              { id: 'join', label: <span style={{display: 'flex', alignItems: 'center', gap: '6px'}}><Link2 size={16} /> Join Room</span> },
+              { id: 'live', label: <span style={{display: 'flex', alignItems: 'center', gap: '6px'}}><Eye size={16} /> Watch Live</span> },
             ].map(t => (
               <button key={t.id} onClick={() => setTab(t.id)} className={`tab-btn ${tab === t.id ? 'active' : ''}`}>
                 {t.label}
@@ -676,7 +678,7 @@ export default function Lobby() {
                   padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter',
                   boxShadow: '0 4px 14px rgba(255,107,53,0.3)', width: 'fit-content', marginBottom: 24
                 }}>
-                  {user?.isPremium ? '⚡ Access Pro Vault' : '💎 Unlock Pro Vault'}
+                  {user?.isPremium ? <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Zap size={16}/> Access Pro Vault</span> : <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Diamond size={16}/> Unlock Pro Vault</span>}
                 </button>
 
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 'auto' }}>
@@ -688,7 +690,7 @@ export default function Lobby() {
 
               {!user?.isPremium && (
                 <div style={{ position: 'absolute', top: 28, right: 28, background: 'var(--glass-overlay)', padding: '6px 12px', borderRadius: 8, border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ fontSize: 16 }}>🔒</span> <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>PREMIUM</span>
+                  <span style={{ display: 'flex', alignItems: 'center' }}><Lock size={16} /></span> <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>PREMIUM</span>
                 </div>
               )}
             </motion.div>
@@ -701,7 +703,7 @@ export default function Lobby() {
               style={{ display: 'flex', flexDirection: 'column' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                <div className="mode-icon" style={{ background: 'rgba(255,107,53,0.1)', color: '#ff6b35', border: '1px solid rgba(255,107,53,0.2)' }}>⚡</div>
+                <div className="mode-icon" style={{ background: 'rgba(255,107,53,0.1)', color: '#ff6b35', border: '1px solid rgba(255,107,53,0.2)' }}><Zap size={24} /></div>
                 <h3 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-main)', margin: 0 }}>Random Match</h3>
               </div>
               <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0, lineHeight: 1.5, marginBottom: 16 }}>
@@ -717,7 +719,7 @@ export default function Lobby() {
               }} />
 
               <button className="mode-btn" style={{ background: 'rgba(255,107,53,0.1)', border: '1px solid rgba(255,107,53,0.2)', color: '#ff6b35' }}>
-                ⚡ Start Quick Play
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><Zap size={16} /> Start Quick Play</span>
               </button>
             </motion.div>
 
@@ -729,7 +731,7 @@ export default function Lobby() {
               style={{ display: 'flex', flexDirection: 'column' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                <div className="mode-icon" style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}>🎯</div>
+                <div className="mode-icon" style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}><Target size={24} /></div>
                 <h3 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-main)', margin: 0 }}>Ranked Match</h3>
               </div>
               <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0, lineHeight: 1.5, marginBottom: 16 }}>
@@ -745,7 +747,7 @@ export default function Lobby() {
               }} />
 
               <button className="mode-btn" style={{ background: 'rgba(168,85,247,0.1)', border: '1px solid rgba(168,85,247,0.2)', color: '#a855f7' }}>
-                🎯 Join Ranked Queue
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><Target size={16} /> Join Ranked Queue</span>
               </button>
             </motion.div>
 
@@ -798,7 +800,7 @@ export default function Lobby() {
             {!puzzlesLoading && dailyPuzzles.length > 0 && (
               <div className="sprint-progress-bar">
                 <div className="sprint-progress-info">
-                  <span className="sprint-label">🏃 Sprint Progress</span>
+                  <span className="sprint-label"><Activity size={16} style={{ display: 'inline', verticalAlign: 'text-bottom' }} /> Sprint Progress</span>
                   <span className="sprint-count">{solvedCount}/{totalPuzzles}</span>
                 </div>
                 <div className="sprint-track">
@@ -822,9 +824,9 @@ export default function Lobby() {
                   const pid = String(p._id || p.id);
                   const isSolved = user?.solvedPuzzles?.some(id => String(id) === pid);
                   const catIcons = {
-                    'Code Output': '💻', 'Complexity Analysis': '⏱️', 'Bug Hunt': '🐛',
-                    'Data Structure': '🗂️', 'Algorithm ID': '🎯', 'Logic Puzzle': '🧠',
-                    'Pattern Recognition': '🔍'
+                    'Code Output': <Terminal size={16} />, 'Complexity Analysis': <Timer size={16} />, 'Bug Hunt': <Bug size={16} />,
+                    'Data Structure': <Database size={16} />, 'Algorithm ID': <Target size={16} />, 'Logic Puzzle': <Brain size={16} />,
+                    'Pattern Recognition': <Search size={16} />
                   };
                   const catColors = {
                     'Code Output': { color: '#0ea5e9', bg: 'rgba(14,165,233,0.1)', border: 'rgba(14,165,233,0.3)' },
@@ -836,7 +838,7 @@ export default function Lobby() {
                     'Pattern Recognition': { color: '#facc15', bg: 'rgba(250,204,21,0.1)', border: 'rgba(250,204,21,0.3)' },
                   };
                   const cc = catColors[p.category] || { color: '#0ea5e9', bg: 'rgba(14,165,233,0.1)', border: 'rgba(14,165,233,0.3)' };
-                  const icon = catIcons[p.category] || '🧩';
+                  const icon = catIcons[p.category] || <Puzzle size={16} />;
                   const diffStyle = p.difficulty === 'Easy'
                     ? { color: '#22c55e', bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.3)' }
                     : p.difficulty === 'Hard'
@@ -1100,10 +1102,19 @@ export default function Lobby() {
         .nav-links span:hover { color: var(--text-main); }
         .nav-links span.active { color: #ff6b35; }
         .nav-links span.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: #ff6b35; }
-        .online-badge { display: flex; align-items: center; gap: 8px; background: var(--glass-overlay); border: 1px solid var(--glass-border); border-radius: 20px; padding: 6px 14px; font-size: 12px; margin-right: 12px; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); transition: transform 0.2s; }
-        .pulse-anim { transform: scale(1.4); }
-        .text-green { color: var(--green); font-weight: 700; }
+        .online-badge { display: flex; align-items: center; gap: 10px; background: rgba(255,107,53,0.06); border: 1px solid rgba(255,107,53,0.15); border-radius: 20px; padding: 6px 16px 6px 12px; font-size: 12px; margin-right: 12px; font-weight: 600; color: var(--text-muted); }
+        .live-dot-wrapper { position: relative; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
+        .live-dot-core { width: 8px; height: 8px; border-radius: 50%; background: #ff6b35; position: absolute; box-shadow: 0 0 8px rgba(255,107,53,0.6); animation: dotBreathe 2.5s ease-in-out infinite; }
+        .live-dot-ring { position: absolute; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid rgba(255,107,53,0.4); animation: ringBreathe 2.5s ease-in-out infinite; }
+        @keyframes dotBreathe {
+          0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 6px rgba(255,107,53,0.4); }
+          50% { transform: scale(1.35); opacity: 0.85; box-shadow: 0 0 16px rgba(255,107,53,0.7); }
+        }
+        @keyframes ringBreathe {
+          0%, 100% { transform: scale(1); opacity: 0.6; }
+          50% { transform: scale(1.5); opacity: 0; }
+        }
+        .text-online { color: var(--text-main); font-weight: 700; }
         .user-chip { display: flex; align-items: center; gap: 8px; background: var(--glass-overlay); border: 1px solid var(--glass-border); border-radius: 20px; padding: 4px 14px 4px 10px; cursor: pointer; transition: background 0.2s; }
         .user-chip:hover { background: rgba(128,128,128,0.1); }
         .rank-icon { font-size: 11px; color: #d97706; font-weight: 600; padding-right: 8px; border-right: 1px solid var(--glass-border); }
