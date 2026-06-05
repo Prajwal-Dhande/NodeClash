@@ -334,7 +334,7 @@ export default function WinnerScreen({ result, problem, myTests, totalTests, tim
       }}>
         <div className="action-buttons-container" style={{ display: 'flex', gap: 16, maxWidth: 500, width: '100%' }}>
           <button 
-            onClick={() => navigate('/')} 
+            onClick={() => navigate('/', { replace: true })} 
             style={{ flex: 1, background: 'var(--card-bg, rgba(255,255,255,0.05))', border: '1px solid var(--glass-border, rgba(255,255,255,0.1))', color: 'var(--text-muted, #a1a1aa)', borderRadius: 100, padding: '16px', fontSize: 16, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif', backdropFilter: 'blur(12px)', transition: 'all 0.2s' }} 
             onMouseOver={e => e.target.style.background = 'rgba(255,255,255,0.1)'} 
             onMouseOut={e => e.target.style.background = 'var(--card-bg, rgba(255,255,255,0.05))'}
@@ -342,7 +342,7 @@ export default function WinnerScreen({ result, problem, myTests, totalTests, tim
             Dashboard
           </button>
           <button 
-            onClick={() => premiumMode ? navigate('/interview-dsa') : navigate('/lobby?tab=quickplay')} 
+            onClick={() => premiumMode ? navigate('/interview-dsa', { replace: true }) : navigate('/lobby?tab=quickplay', { replace: true })} 
             style={{ flex: 1, background: 'linear-gradient(135deg, #ff6b35, #f7451d)', border: 'none', color: '#fff', borderRadius: 100, padding: '16px', fontSize: 16, fontWeight: 800, cursor: 'pointer', fontFamily: 'Inter, sans-serif', boxShadow: '0 8px 32px rgba(249,115,22,0.4)', transition: 'transform 0.2s' }} 
             onMouseOver={e => e.target.style.transform = 'translateY(-2px)'} 
             onMouseOut={e => e.target.style.transform = 'none'}

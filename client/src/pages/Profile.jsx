@@ -341,14 +341,27 @@ export default function Profile() {
     { icon: <Crown size={20} color="#f97316" />, title: 'Grandmaster', desc: 'Reach 2000 ELO', unlocked: elo >= 2000 },
   ]
 
-  const masteryData = [
-    { label: 'Arrays', val: 85 },
-    { label: 'Strings', val: 70 },
-    { label: 'Graphs', val: 40 },
-    { label: 'DP', val: 55 },
-    { label: 'Trees', val: 65 },
-    { label: 'Math', val: 90 },
-  ];
+  const calculateMasteryData = (userWins, userLosses, userElo) => {
+    if (userWins + userLosses === 0) {
+      return [
+        { label: 'Arrays', val: 10 }, { label: 'Strings', val: 10 }, { label: 'Graphs', val: 10 },
+        { label: 'DP', val: 10 }, { label: 'Trees', val: 10 }, { label: 'Math', val: 10 },
+      ];
+    }
+    const seed = (userWins * 13 + userLosses * 7 + userElo);
+    const getVal = (base, multiplier) => Math.min(100, Math.max(15, base + (seed % multiplier) * 2));
+    
+    return [
+      { label: 'Arrays', val: getVal(40, 20) },
+      { label: 'Strings', val: getVal(45, 15) },
+      { label: 'Graphs', val: getVal(30, 25) },
+      { label: 'DP', val: getVal(25, 30) },
+      { label: 'Trees', val: getVal(35, 20) },
+      { label: 'Math', val: getVal(50, 10) },
+    ];
+  };
+
+  const masteryData = calculateMasteryData(wins, losses, elo);
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 20, fontFamily: 'Inter' }}>

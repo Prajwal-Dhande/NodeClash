@@ -538,7 +538,7 @@ export default function BattleRoom() {
       setGameResult('loss')
       setGameOver(true)
     }
-    setTimeout(() => navigate('/lobby'), 300)
+    setTimeout(() => navigate('/lobby', { replace: true }), 300)
   }
 
   const handleLanguageChange = (lang) => {
@@ -1734,7 +1734,7 @@ export default function BattleRoom() {
           timeComplexity={complexity?.time || (problem?.slug ? PROBLEM_COMPLEXITY[problem.slug] : 'O(N)')}
           complexity={complexity}
           onRematch={handleRematch}
-          onLobby={() => navigate('/lobby')}
+          onLobby={() => navigate('/lobby', { replace: true })}
         />
       )}
 
