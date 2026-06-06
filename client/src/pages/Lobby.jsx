@@ -536,15 +536,7 @@ export default function Lobby() {
           )}
         </div>
 
-        {!user?.isPremium && (
-          <button onClick={() => navigate('/premium')} className="desktop-only" style={{
-            background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', border: 'none', color: '#fff', borderRadius: 8,
-            padding: '6px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter', marginRight: 16,
-            boxShadow: '0 4px 14px rgba(255,107,53,0.3)', transition: 'all 0.2s'
-          }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
-            💎 Premium
-          </button>
-        )}
+
 
         <div className="desktop-only"><ThemeToggle /></div>
         <div className="online-badge desktop-only">
@@ -600,15 +592,7 @@ export default function Lobby() {
               
               <div className="drawer-footer">
                 <ThemeToggle />
-                {!user?.isPremium && (
-                  <button onClick={() => { setIsMobileMenuOpen(false); navigate('/premium') }} style={{
-                    background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', border: 'none', color: '#fff', borderRadius: 8,
-                    padding: '12px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter', width: '100%',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-                  }}>
-                    <Diamond size={16} /> Get Premium
-                  </button>
-                )}
+
               </div>
             </div>
           </motion.div>
@@ -616,6 +600,44 @@ export default function Lobby() {
       </AnimatePresence>
 
       <div className="lobby-container">
+        {!user?.isPremium && (
+          <div style={{
+            background: 'var(--card-bg, rgba(20,20,20,0.6))',
+            border: '1px solid var(--glass-border, rgba(255,255,255,0.05))',
+            borderRadius: '12px',
+            padding: '20px 24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: '32px',
+            flexWrap: 'wrap',
+            gap: '16px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <Crown size={28} color="var(--text-muted, #a1a1aa)" style={{ opacity: 0.8 }} />
+              <div>
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: 'var(--text-main, #fff)', fontFamily: 'Inter' }}>Subscription</h3>
+                <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted, #a1a1aa)', marginTop: '4px' }}>Upgrade to Pro for unlimited AI analysis and premium features</p>
+              </div>
+            </div>
+            <button onClick={() => navigate('/premium')} style={{
+              background: '#ff5722',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '10px 20px',
+              color: '#fff',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'transform 0.2s, box-shadow 0.2s',
+            }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'} onMouseLeave={e => e.currentTarget.style.transform = 'none'}>
+              <Crown size={16} /> Upgrade to Pro
+            </button>
+          </div>
+        )}
         <div className="lobby-header">
           <h1 className="page-title">Battle Arena</h1>
           <p className="page-subtitle">Choose your training mode. Master algorithms with structured tracks or test your speed with live coding battles.</p>
