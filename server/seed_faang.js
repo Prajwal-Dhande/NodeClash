@@ -475,6 +475,37 @@ const seedData = [
     isFaang: true,
     topCompany: 'Facebook',
     order: 30
+  },
+  {
+    slug: 'top-k-frequent-elements-faang',
+    title: 'Top K Frequent Elements',
+    difficulty: 'Medium',
+    category: 'Hash Map / Bucket Sort',
+    description: 'Given an integer array nums and an integer k, return the k most frequent elements. You may return the answer in any order. Your algorithm\'s time complexity must be better than O(n log n), where n is the array\'s size.',
+    examples: [
+      { input: 'nums = [1,1,1,2,2,3], k = 2', output: '[1,2]', explain: '1 appears 3 times, 2 appears 2 times. These are the 2 most frequent elements.' },
+      { input: 'nums = [1], k = 1', output: '[1]', explain: 'Only one element exists, so it is the most frequent.' },
+      { input: 'nums = [4,4,4,6,6,2,2,2,2], k = 2', output: '[2,4]', explain: '2 appears 4 times, 4 appears 3 times. These are the top 2 most frequent.' }
+    ],
+    constraints: [
+      '1 <= nums.length <= 10^5',
+      '-10^4 <= nums[i] <= 10^4',
+      'k is in the range [1, the number of unique elements in the array]',
+      'It is guaranteed that the answer is unique.'
+    ],
+    hints: [
+      'Use a hash map to count the frequency of each element.',
+      'Instead of sorting, use bucket sort where the index represents frequency.',
+      'Iterate from the highest frequency bucket downward to collect the top k elements.',
+      'This gives you O(N) time complexity instead of O(N log N) with a heap or sorting.'
+    ],
+    companies: ['Amazon', 'Facebook', 'Google', 'Microsoft', 'Apple', 'Bloomberg', 'Uber'],
+    acceptance: 62.7,
+    tier: 'free',
+    faangFrequency: 1680,
+    isFaang: true,
+    topCompany: 'Amazon',
+    order: 31
   }
 ];
 

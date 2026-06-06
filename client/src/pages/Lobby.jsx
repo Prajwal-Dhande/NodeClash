@@ -1102,13 +1102,13 @@ export default function Lobby() {
         .nav-links span:hover { color: var(--text-main); }
         .nav-links span.active { color: #ff6b35; }
         .nav-links span.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: #ff6b35; }
-        .online-badge { display: flex; align-items: center; gap: 10px; background: rgba(255,107,53,0.06); border: 1px solid rgba(255,107,53,0.15); border-radius: 20px; padding: 6px 16px 6px 12px; font-size: 12px; margin-right: 12px; font-weight: 600; color: var(--text-muted); }
+        .online-badge { display: flex; align-items: center; gap: 10px; background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.15); border-radius: 20px; padding: 6px 16px 6px 12px; font-size: 12px; margin-right: 12px; font-weight: 600; color: var(--text-muted); }
         .live-dot-wrapper { position: relative; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
-        .live-dot-core { width: 8px; height: 8px; border-radius: 50%; background: #ff6b35; position: absolute; box-shadow: 0 0 8px rgba(255,107,53,0.6); animation: dotBreathe 2.5s ease-in-out infinite; }
-        .live-dot-ring { position: absolute; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid rgba(255,107,53,0.4); animation: ringBreathe 2.5s ease-in-out infinite; }
+        .live-dot-core { width: 8px; height: 8px; border-radius: 50%; background: #10b981; position: absolute; box-shadow: 0 0 8px rgba(16,185,129,0.6); animation: dotBreathe 2.5s ease-in-out infinite; }
+        .live-dot-ring { position: absolute; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid rgba(16,185,129,0.4); animation: ringBreathe 2.5s ease-in-out infinite; }
         @keyframes dotBreathe {
-          0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 6px rgba(255,107,53,0.4); }
-          50% { transform: scale(1.35); opacity: 0.85; box-shadow: 0 0 16px rgba(255,107,53,0.7); }
+          0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 6px rgba(16,185,129,0.4); }
+          50% { transform: scale(1.35); opacity: 0.85; box-shadow: 0 0 16px rgba(16,185,129,0.7); }
         }
         @keyframes ringBreathe {
           0%, 100% { transform: scale(1); opacity: 0.6; }

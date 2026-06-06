@@ -243,6 +243,15 @@ FALLBACK_PROBLEMS['median-of-two-sorted-arrays'] = {
     { input: { nums1: [1,2], nums2: [3,4] }, expected: 2.5, functionCall: 'findMedianSortedArrays([1,2], [3,4])' },
   ]
 }
+FALLBACK_PROBLEMS['top-k-frequent-elements'] = {
+  title: 'Top K Frequent Elements',
+  testCases: [
+    { input: { nums: [1,1,1,2,2,3], k: 2 }, expected: [1,2], functionCall: 'topKFrequent([1,1,1,2,2,3], 2)' },
+    { input: { nums: [1], k: 1 }, expected: [1], functionCall: 'topKFrequent([1], 1)' },
+    { input: { nums: [4,4,4,6,6,2,2,2,2], k: 2 }, expected: [2,4], functionCall: 'topKFrequent([4,4,4,6,6,2,2,2,2], 2)' },
+    { input: { nums: [1,2], k: 2 }, expected: [1,2], functionCall: 'topKFrequent([1,2], 2)' },
+  ]
+}
 
 // DB se problem fetch karo, fallback to hardcoded
 // Handles FAANG vault problems that may have dummy/placeholder test cases
