@@ -8,15 +8,21 @@ const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID || ''
 export default function Auth() {
   const [mode, setMode] = useState('login')
   const [step, setStep] = useState('form')
-  const [form, setForm] = useState({ username: '', email: '', password: '' })
+  const [form, setForm] = useState({ username: '', email: '', password: '', confirmPassword: '' })
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [timer, setTimer] = useState(60)
   const [canResend, setCanResend] = useState(false)
   const [showPass, setShowPass] = useState(false)
+  const [showConfirmPass, setShowConfirmPass] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
   const [oauthLoading, setOauthLoading] = useState('')
+  const [forgotStep, setForgotStep] = useState('')
+  const [forgotEmail, setForgotEmail] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmNewPassword, setConfirmNewPassword] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
   const otpRefs = useRef([])
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -140,6 +146,7 @@ export default function Auth() {
     if (!form.email || !form.password) return setError('Please fill all fields')
     if (mode === 'signup' && !form.username) return setError('Username is required')
     if (form.password.length < 8) return setError('Password must be at least 8 characters')
+    if (mode === 'signup' && form.password !== form.confirmPassword) return setError('Passwords do not match')
 
     setLoading(true)
     setError('')
@@ -255,6 +262,44 @@ export default function Auth() {
     }, 1000)
   }
 
+  // ── Forgot Password Handlers ──
+  const handleForgotSubmit = async () => {
+    if (!forgotEmail) return setError('Please enter your email')
+    setLoading(true); setError('')
+    try {
+      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: forgotEmail })
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.message || 'Something went wrong'); setLoading(false); return }
+      setEmailSent(data.emailSent || false); setForgotStep('otp'); setLoading(false)
+    } catch { setError('Server not reachable'); setLoading(false) }
+  }
+
+  const handleForgotOtpVerify = () => {
+    const code = otp.join('')
+    if (code.length < 6) return setError('Enter complete 6-digit OTP')
+    setError(''); setForgotStep('newpass')
+  }
+
+  const handleResetPassword = async () => {
+    if (!newPassword || newPassword.length < 8) return setError('Password must be at least 8 characters')
+    if (newPassword !== confirmNewPassword) return setError('Passwords do not match')
+    setLoading(true); setError('')
+    try {
+      const res = await fetch(`${API_URL}/api/auth/reset-password`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: forgotEmail, otp: otp.join(''), newPassword })
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.message || 'Something went wrong'); setLoading(false); return }
+      setSuccessMsg('Password reset successfully! You can now login.')
+      setForgotStep(''); setForgotEmail(''); setOtp(['','','','','',''])
+      setNewPassword(''); setConfirmNewPassword(''); setMode('login'); setLoading(false)
+    } catch { setError('Server not reachable'); setLoading(false) }
+  }
+
   // Show loading overlay for OAuth
   if (oauthLoading) {
     return (
@@ -335,12 +380,102 @@ export default function Auth() {
       {/* Right Panel — Glass Card */}
       <div className="auth-right">
         <div className="glass-card">
-          {step === 'form' ? (
+          {forgotStep ? (
+            /* ═══════ FORGOT PASSWORD FLOW ═══════ */
+            <>
+              <button onClick={() => { setForgotStep(''); setError(''); setOtp(['','','','','','']); setNewPassword(''); setConfirmNewPassword('') }}
+                className="back-btn">← Back to Login</button>
+
+              {forgotStep === 'email' && (
+                <>
+                  <div className="otp-icon-box orange">🔑</div>
+                  <h2 className="card-title">Forgot Password</h2>
+                  <p className="card-subtitle">Enter your email to receive a reset code</p>
+                  <div className="field">
+                    <label className="field-label">EMAIL</label>
+                    <input type="email" placeholder="you@example.com" value={forgotEmail}
+                      onChange={e => { setForgotEmail(e.target.value); setError('') }}
+                      className={`glass-input ${forgotEmail ? 'has-value' : ''}`}
+                      onKeyDown={e => e.key === 'Enter' && handleForgotSubmit()}/>
+                  </div>
+                  {error && <div className="error-box">⚠ {error}</div>}
+                  <button onClick={handleForgotSubmit} disabled={loading} className={`submit-btn ${loading ? 'disabled' : ''}`}>
+                    {loading ? '⟳  Sending OTP...' : '📧  Send Reset Code'}
+                  </button>
+                </>
+              )}
+
+              {forgotStep === 'otp' && (
+                <>
+                  <div className={`otp-icon-box ${emailSent ? 'green' : 'orange'}`}>
+                    {emailSent ? '✉️' : '📧'}
+                  </div>
+                  <h2 className="card-title">Check your email</h2>
+                  <p className="card-subtitle" style={{ marginBottom: 4 }}>
+                    {emailSent ? 'We sent a 6-digit OTP to' : 'OTP generated for'}
+                  </p>
+                  <p style={{ fontSize: 14, color: '#ff6b35', fontWeight: 600, marginBottom: 16 }}>{forgotEmail}</p>
+                  {emailSent ? (
+                    <div className="info-box green">✓ Email sent! Check your inbox and spam folder.</div>
+                  ) : (
+                    <div className="info-box orange">⚡ Email service unavailable. Check server terminal for OTP.</div>
+                  )}
+                  <div className="otp-row" onPaste={handleOtpPaste}>
+                    {otp.map((digit, i) => (
+                      <input key={i} ref={el => otpRefs.current[i] = el} type="text" inputMode="numeric" maxLength={1}
+                        value={digit} onChange={e => handleOtpChange(e.target.value, i)} onKeyDown={e => handleOtpKeyDown(e, i)}
+                        className={`otp-input ${digit ? 'filled' : ''}`}/>
+                    ))}
+                  </div>
+                  {error && <div className="error-box">⚠ {error}</div>}
+                  <button onClick={handleForgotOtpVerify} disabled={otp.join('').length < 6}
+                    className={`submit-btn ${otp.join('').length < 6 ? 'disabled' : ''}`}>
+                    ✓  Verify Code
+                  </button>
+                </>
+              )}
+
+              {forgotStep === 'newpass' && (
+                <>
+                  <div className="otp-icon-box green">🔒</div>
+                  <h2 className="card-title">Set New Password</h2>
+                  <p className="card-subtitle">Create a strong new password for your account</p>
+                  <div className="field">
+                    <label className="field-label">NEW PASSWORD</label>
+                    <div style={{ position: 'relative' }}>
+                      <input type={showPass ? 'text' : 'password'} placeholder="Min. 8 characters"
+                        value={newPassword} onChange={e => { setNewPassword(e.target.value); setError('') }}
+                        className={`glass-input ${newPassword ? 'has-value' : ''}`} style={{ paddingRight: 44 }}/>
+                      <button onClick={() => setShowPass(s => !s)} className="toggle-pass">
+                        {showPass ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg> : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="field">
+                    <label className="field-label">CONFIRM NEW PASSWORD</label>
+                    <div style={{ position: 'relative' }}>
+                      <input type={showConfirmPass ? 'text' : 'password'} placeholder="Re-enter new password"
+                        value={confirmNewPassword} onChange={e => { setConfirmNewPassword(e.target.value); setError('') }}
+                        className={`glass-input ${confirmNewPassword ? 'has-value' : ''}`} style={{ paddingRight: 44 }}
+                        onKeyDown={e => e.key === 'Enter' && handleResetPassword()}/>
+                      <button onClick={() => setShowConfirmPass(s => !s)} className="toggle-pass">
+                        {showConfirmPass ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg> : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>}
+                      </button>
+                    </div>
+                  </div>
+                  {error && <div className="error-box">⚠ {error}</div>}
+                  <button onClick={handleResetPassword} disabled={loading} className={`submit-btn ${loading ? 'disabled' : ''}`}>
+                    {loading ? '⟳  Resetting...' : '🔐  Reset Password'}
+                  </button>
+                </>
+              )}
+            </>
+          ) : step === 'form' ? (
             <>
               {/* Mode Toggle */}
               <div className="mode-toggle">
                 {['login', 'signup'].map(m => (
-                  <button key={m} onClick={() => { setMode(m); setError('') }}
+                  <button key={m} onClick={() => { setMode(m); setError(''); setSuccessMsg('') }}
                     className={`mode-btn ${mode === m ? 'active' : ''}`}>
                     {m === 'login' ? 'Log In' : 'Sign Up'}
                   </button>
@@ -353,6 +488,8 @@ export default function Auth() {
               <p className="card-subtitle">
                 {mode === 'login' ? 'Enter your credentials to continue' : 'Fill in your details to get started'}
               </p>
+
+              {successMsg && <div className="info-box green" style={{ marginBottom: 20 }}>✓ {successMsg}</div>}
 
               {/* OAuth Buttons */}
               <div className="oauth-buttons">
@@ -405,7 +542,7 @@ export default function Auth() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                   <label className="field-label" style={{ margin: 0 }}>PASSWORD</label>
                   {mode === 'login' && (
-                    <span className="forgot-link">Forgot password?</span>
+                    <span className="forgot-link" onClick={() => { setForgotStep('email'); setError(''); setSuccessMsg('') }}>Forgot password?</span>
                   )}
                 </div>
                 <div style={{ position: 'relative' }}>
@@ -414,23 +551,47 @@ export default function Auth() {
                     value={form.password} onChange={handleChange}
                     className={`glass-input ${form.password ? 'has-value' : ''}`}
                     style={{ paddingRight: 44 }}
-                    onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+                    onKeyDown={e => e.key === 'Enter' && (mode === 'login' ? handleSubmit() : null)}
                   />
                   <button onClick={() => setShowPass(s => !s)} className="toggle-pass">
-                    {showPass ? '🙈' : '👁️'}
+                    {showPass ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg> : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>}
                   </button>
                 </div>
               </div>
 
+              {mode === 'signup' && (
+                <div className="field">
+                  <label className="field-label">CONFIRM PASSWORD</label>
+                  <div style={{ position: 'relative' }}>
+                    <input name="confirmPassword" type={showConfirmPass ? 'text' : 'password'}
+                      placeholder="Re-enter password"
+                      value={form.confirmPassword} onChange={handleChange}
+                      className={`glass-input ${form.confirmPassword ? 'has-value' : ''}`}
+                      style={{ paddingRight: 44 }}
+                      onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+                    />
+                    <button onClick={() => setShowConfirmPass(s => !s)} className="toggle-pass">
+                      {showConfirmPass ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg> : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>}
+                    </button>
+                  </div>
+                  {form.confirmPassword && form.password !== form.confirmPassword && (
+                    <p style={{ color: '#fca5a5', fontSize: 12, marginTop: 6 }}>Passwords do not match</p>
+                  )}
+                  {form.confirmPassword && form.password === form.confirmPassword && form.confirmPassword.length >= 8 && (
+                    <p style={{ color: '#4ade80', fontSize: 12, marginTop: 6 }}>✓ Passwords match</p>
+                  )}
+                </div>
+              )}
+
               {error && <div className="error-box">⚠ {error}</div>}
 
               <button onClick={handleSubmit} disabled={loading} className={`submit-btn ${loading ? 'disabled' : ''}`}>
-                {loading ? '⟳  Sending OTP...' : mode === 'login' ? '⚡  Continue' : '🚀  Create Account'}
+                {loading ? (mode === 'login' ? '⟳  Logging in...' : '⟳  Sending OTP...') : mode === 'login' ? '⚡  Log In' : '🚀  Create Account'}
               </button>
 
               <p className="switch-text">
                 {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-                <span onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError('') }}
+                <span onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(''); setSuccessMsg('') }}
                   className="switch-link">
                   {mode === 'login' ? 'Sign up free' : 'Log in'}
                 </span>

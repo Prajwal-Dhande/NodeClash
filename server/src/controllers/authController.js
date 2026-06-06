@@ -438,4 +438,74 @@ const verifyPasswordChange = async (req, res) => {
   }
 }
 
-module.exports = { signup, login, verifyOtp, resendOtp, getMe, googleAuth, githubAuth, requestPasswordChange, verifyPasswordChange }
+// 🔥 FORGOT PASSWORD (send OTP to email)
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body
+    if (!email) return res.status(400).json({ message: 'Email is required' })
+
+    const user = await User.findOne({ email })
+    if (!user) return res.status(404).json({ message: 'No account found with this email' })
+    if (!user.isVerified) return res.status(400).json({ message: 'Email not verified. Please signup again.' })
+
+    const otp = generateOtp()
+    user.otp = otp
+    user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000)
+    await user.save()
+
+    console.log(`🔑 Password Reset OTP for ${email}: ${otp}`)
+
+    let emailSent = false
+    try {
+      await sendOtpEmail(email, user.username, otp)
+      emailSent = true
+      console.log(`📧 Password reset OTP sent to ${email}`)
+    } catch (emailErr) {
+      console.error('Password reset email failed:', emailErr.message)
+    }
+
+    res.json({
+      message: emailSent ? 'OTP sent to your email' : 'OTP generated — check server terminal',
+      emailSent,
+    })
+  } catch (err) {
+    console.error('forgotPassword error:', err)
+    res.status(500).json({ message: 'Server error' })
+  }
+}
+
+// 🔥 RESET PASSWORD (verify OTP + set new password)
+const resetPassword = async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ message: 'All fields are required' })
+    }
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: 'Password must be at least 8 characters' })
+    }
+
+    const user = await User.findOne({ email }).select('+otp +otpExpiry')
+    if (!user) return res.status(404).json({ message: 'User not found' })
+
+    if (String(user.otp).trim() !== String(otp).trim()) {
+      return res.status(400).json({ message: 'Invalid OTP' })
+    }
+    if (new Date() > user.otpExpiry) {
+      return res.status(400).json({ message: 'OTP expired. Please request a new one.' })
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12)
+    user.password = hashedPassword
+    user.otp = undefined
+    user.otpExpiry = undefined
+    await user.save()
+
+    res.json({ success: true, message: 'Password reset successfully! You can now login.' })
+  } catch (err) {
+    console.error('resetPassword error:', err)
+    res.status(500).json({ message: 'Server error' })
+  }
+}
+
+module.exports = { signup, login, verifyOtp, resendOtp, getMe, googleAuth, githubAuth, requestPasswordChange, verifyPasswordChange, forgotPassword, resetPassword }

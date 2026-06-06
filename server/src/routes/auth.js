@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { signup, login, verifyOtp, resendOtp, getMe, googleAuth, githubAuth, requestPasswordChange, verifyPasswordChange } = require('../controllers/authController')
+const { signup, login, verifyOtp, resendOtp, getMe, googleAuth, githubAuth, requestPasswordChange, verifyPasswordChange, forgotPassword, resetPassword } = require('../controllers/authController')
 const authMiddleware = require('../middleware/authmiddleware')
 
 router.post('/signup', signup)
@@ -13,8 +13,12 @@ router.get('/me', authMiddleware, getMe)
 router.post('/google', googleAuth)
 router.post('/github', githubAuth)
 
-// 🔥 Password Change
+// 🔥 Password Change (logged-in)
 router.post('/change-password/request', authMiddleware, requestPasswordChange)
 router.post('/change-password/verify', authMiddleware, verifyPasswordChange)
+
+// 🔥 Forgot Password (not logged-in)
+router.post('/forgot-password', forgotPassword)
+router.post('/reset-password', resetPassword)
 
 module.exports = router
