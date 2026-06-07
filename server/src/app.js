@@ -42,7 +42,7 @@ app.use('/api/ai', require('./routes/aiRoutes'))
 app.use('/api/puzzles', require('./routes/puzzleRoutes'));
 
 app.use('/api/payment', paymentRoutes);
-app.use('/api/tournaments', require('./routes/tournamentRoutes'));
+app.use('/api/daily-quest', require('./routes/dailyQuestRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 
 

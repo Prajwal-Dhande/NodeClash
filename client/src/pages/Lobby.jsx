@@ -436,7 +436,7 @@ export default function Lobby() {
 
       {showMatchmaking && <Matchmaking user={user} onMatchFound={handleMatchFound} onCancel={() => setShowMatchmaking(false)} selectedProblem={matchmakingMode === 'ranked' ? rankedSelected : null} mode={matchmakingMode} />}
 
-      {showRankedList && <ProblemModal user={user} title={<><Target size={20}/> Ranked Arena</>} subtitle="Choose your battlefield wisely. Higher difficulty = more ELO." borderColor="var(--purple)" accentColor="#a855f7" selectedP={rankedSelected} onSelect={setRankedSelected} diff={rankedDiff} setDiff={setRankedDiff} topic={rankedTopic} setTopic={setRankedTopic} status={rankedStatus} setStatus={setRankedStatus} onPlay={handleRankedPlay} onClose={() => setShowRankedList(false)} btnLabel={<span style={{display: 'flex', alignItems: 'center', gap: '6px'}}><Swords size={16}/> Enter Ranked Arena</span>} problems={problems} isRanked={true} />}
+      {showRankedList && <ProblemModal user={user} title={<><Swords size={20}/> Ranked Arena</>} subtitle="Choose your battlefield wisely. Higher difficulty = more ELO." borderColor="var(--purple)" accentColor="#a855f7" selectedP={rankedSelected} onSelect={setRankedSelected} diff={rankedDiff} setDiff={setRankedDiff} topic={rankedTopic} setTopic={setRankedTopic} status={rankedStatus} setStatus={setRankedStatus} onPlay={handleRankedPlay} onClose={() => setShowRankedList(false)} btnLabel={<span style={{display: 'flex', alignItems: 'center', gap: '6px'}}><Swords size={16}/> Enter Ranked Arena</span>} problems={problems} isRanked={true} />}
 
       {showPracticeList && <ProblemModal user={user} title={<><Brain size={20}/> Practice Mode</>} subtitle="Solo training against an AI bot. No ELO at stake." borderColor="var(--green)" accentColor="#22c55e" selectedP={practiceSelected} onSelect={setPracticeSelected} diff={practiceDiff} setDiff={setPracticeDiff} topic={practiceTopic} setTopic={setPracticeTopic} status={practiceStatus} setStatus={setPracticeStatus} onPlay={handlePracticePlay} onClose={() => setShowPracticeList(false)} btnLabel={<span style={{display: 'flex', alignItems: 'center', gap: '6px'}}><Brain size={16}/> Start Practice</span>} problems={problems} isRanked={false} />}
 
@@ -491,7 +491,7 @@ export default function Lobby() {
           </span>
           <span className="active">Practice</span>
           <span onClick={() => user?.isPremium ? navigate('/interview-dsa') : navigate('/premium')}>FAANG Vault</span>
-          <span onClick={() => navigate('/tournaments')}>Tournaments</span>
+          <span onClick={() => navigate('/daily-quest')}>Daily Quest</span>
           <span onClick={() => navigate('/leaderboard')}>Leaderboard</span>
         </div>
         <div style={{ flex: 1 }} className="desktop-only" />
@@ -586,7 +586,7 @@ export default function Lobby() {
                 <span onClick={() => { setIsMobileMenuOpen(false); navigate('/dashboard') }} style={{ color: user?.isPremium ? '#a855f7' : undefined }}>Dashboard</span>
                 <span className="active" onClick={() => setIsMobileMenuOpen(false)}>Practice</span>
                 <span onClick={() => { setIsMobileMenuOpen(false); user?.isPremium ? navigate('/interview-dsa') : navigate('/premium') }}>FAANG Vault</span>
-                <span onClick={() => { setIsMobileMenuOpen(false); navigate('/tournaments') }}>Tournaments</span>
+                <span onClick={() => { setIsMobileMenuOpen(false); navigate('/daily-quest') }}>Daily Quest</span>
                 <span onClick={() => { setIsMobileMenuOpen(false); navigate('/leaderboard') }}>Leaderboard</span>
               </div>
               
@@ -753,7 +753,7 @@ export default function Lobby() {
               style={{ display: 'flex', flexDirection: 'column' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                <div className="mode-icon" style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}><Target size={24} /></div>
+                <div className="mode-icon" style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)' }}><Swords size={24} /></div>
                 <h3 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-main)', margin: 0 }}>Ranked Match</h3>
               </div>
               <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0, lineHeight: 1.5, marginBottom: 16 }}>
@@ -769,7 +769,7 @@ export default function Lobby() {
               }} />
 
               <button className="mode-btn" style={{ background: 'rgba(168,85,247,0.1)', border: '1px solid rgba(168,85,247,0.2)', color: '#a855f7' }}>
-                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><Target size={16} /> Join Ranked Queue</span>
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><Swords size={16} /> Join Ranked Queue</span>
               </button>
             </motion.div>
 

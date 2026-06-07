@@ -3,35 +3,7 @@ const router = express.Router()
 const auth = require('../middleware/authmiddleware')
 const mongoose = require('mongoose')
 
-// ── Tournament Schema (in-memory model) ───────────────────────────────────────
-const tournamentSchema = new mongoose.Schema({
-  title:       { type: String, required: true },
-  description: { type: String, default: '' },
-  status:      { type: String, enum: ['upcoming', 'active', 'completed'], default: 'upcoming' },
-  tier:        { type: String, enum: ['pro', 'pro-plus', 'open'], default: 'pro' },
-  prizePool:   { type: String, default: '🏆 Premium Badge + 500 ELO Boost' },
-  maxSlots:    { type: Number, default: 16 },
-  startsAt:    { type: Date, required: true },
-  endsAt:      { type: Date },
-  problem:     { type: String, default: 'Random MAANG Problem' },
-  difficulty:  { type: String, default: 'Hard' },
-  participants: [{
-    userId:    { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    username:  String,
-    rank:      String,
-    elo:       Number,
-    score:     { type: Number, default: 0 },
-    timeTaken: { type: Number, default: 0 },
-    joinedAt:  { type: Date, default: Date.now }
-  }],
-  leaderboard: [{
-    position: Number, username: String, score: Number,
-    timeTaken: Number, elo: Number, rank: String
-  }],
-  createdAt: { type: Date, default: Date.now }
-})
-
-const Tournament = mongoose.models.Tournament || mongoose.model('Tournament', tournamentSchema)
+const Tournament = require('../models/Tournament')
 
 // ── GET /api/tournaments — List all tournaments ───────────────────────────────
 router.get('/', async (req, res) => {
@@ -61,7 +33,7 @@ router.get('/:id', async (req, res) => {
 router.post('/join/:id', auth, async (req, res) => {
   try {
     const User = require('../models/User')
-    const user = await User.findById(req.user.id).select('username rank elo isPremium')
+    const user = await User.findById(req.userId).select('username rank elo isPremium')
     if (!user) return res.status(404).json({ success: false, message: 'User not found' })
 
     const t = await Tournament.findById(req.params.id)
@@ -73,7 +45,7 @@ router.post('/join/:id', auth, async (req, res) => {
     }
 
     // Already joined?
-    if (t.participants.some(p => p.userId?.toString() === req.user.id)) {
+    if (t.participants.some(p => p.userId?.toString() === req.userId)) {
       return res.status(400).json({ success: false, message: 'You are already registered!' })
     }
 
@@ -82,7 +54,7 @@ router.post('/join/:id', auth, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Tournament is full!' })
     }
 
-    t.participants.push({ userId: req.user.id, username: user.username, rank: user.rank, elo: user.elo })
+    t.participants.push({ userId: req.userId, username: user.username, rank: user.rank, elo: user.elo })
     await t.save()
 
     res.json({ success: true, message: 'Registered successfully!', slotsFilled: t.participants.length, maxSlots: t.maxSlots })
@@ -94,10 +66,11 @@ router.post('/join/:id', auth, async (req, res) => {
 // ── POST /api/tournaments (admin) — Create tournament ────────────────────────
 router.post('/', auth, async (req, res) => {
   try {
-    const { title, description, tier, prizePool, maxSlots, startsAt, problem, difficulty } = req.body
+    const { title, description, tier, prizePool, maxSlots, duration, startsAt, problem, difficulty } = req.body
     const t = await Tournament.create({
       title, description, tier, prizePool,
       maxSlots: maxSlots || 16,
+      duration: duration || 30,
       startsAt: new Date(startsAt),
       problem, difficulty
     })
@@ -115,33 +88,33 @@ router.post('/seed', async (req, res) => {
       {
         title: '⚡ MAANG Sprint — Weekly #1',
         description: 'Top 16 premium coders battle on a surprise Hard problem. Winner gets 500 ELO boost!',
-        tier: 'pro', difficulty: 'Hard', problem: 'Median of Two Sorted Arrays',
+        tier: 'pro', difficulty: 'Hard', problem: 'Median of Two Sorted Arrays', problemSlug: 'median-of-two-sorted-arrays-faang',
         prizePool: '🏆 500 ELO Boost + Exclusive "MAANG Slayer" Badge',
-        maxSlots: 16, status: 'upcoming',
+        maxSlots: 16, duration: 30, status: 'upcoming',
         startsAt: new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000) // 2 days from now
       },
       {
         title: '🔥 Open Clash — Beginner Cup',
         description: 'Open to all! Best time on Easy problem wins. No premium required.',
-        tier: 'open', difficulty: 'Easy', problem: 'Two Sum',
+        tier: 'open', difficulty: 'Easy', problem: 'Two Sum', problemSlug: 'two-sum-faang',
         prizePool: '🥇 Gold Badge + 200 ELO Boost',
-        maxSlots: 32, status: 'active',
-        startsAt: new Date(now.getTime() - 1 * 60 * 60 * 1000) // started 1h ago
+        maxSlots: 32, duration: 15, status: 'upcoming',
+        startsAt: new Date(now.getTime() + 2 * 60 * 1000) // starts in 2 minutes for testing!
       },
       {
         title: '💎 Diamond Gauntlet',
         description: 'Exclusive Pro+ tournament. Medium problem, fastest correct solution wins.',
-        tier: 'pro-plus', difficulty: 'Medium', problem: 'LRU Cache',
+        tier: 'pro-plus', difficulty: 'Medium', problem: 'LRU Cache', problemSlug: 'lru-cache-faang',
         prizePool: '💎 Diamond Badge + 300 ELO + Platform Spotlight',
-        maxSlots: 8, status: 'upcoming',
+        maxSlots: 8, duration: 20, status: 'upcoming',
         startsAt: new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000) // 5 days from now
       },
       {
         title: '🏆 Grand Prix — Season Finale',
         description: 'The ultimate CodeArena tournament. Last season winner: @champion99',
-        tier: 'pro', difficulty: 'Hard', problem: 'Merge K Sorted Lists',
+        tier: 'pro', difficulty: 'Hard', problem: 'Merge K Sorted Lists', problemSlug: 'merge-k-sorted-lists-faang',
         prizePool: '👑 Grandmaster Badge + 1000 ELO + Hall of Fame',
-        maxSlots: 16, status: 'completed',
+        maxSlots: 16, duration: 30, status: 'completed',
         startsAt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000) // ended a week ago
       }
     ]

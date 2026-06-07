@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-export default function Timer({ initialSeconds = 600, onTimeUp }) { // ✅ Added onTimeUp prop
+export default function Timer({ initialSeconds = 600, onTimeUp, roomId }) { 
   const [seconds, setSeconds] = useState(initialSeconds)
 
   const onTimeUpRef = React.useRef(onTimeUp)
@@ -19,9 +19,11 @@ export default function Timer({ initialSeconds = 600, onTimeUp }) { // ✅ Added
       setSeconds(s => {
         if (s <= 1) {
           clearInterval(t)
+          if (roomId) localStorage.removeItem(`codeArena_remainingTime_${roomId}`)
           if (onTimeUpRef.current) onTimeUpRef.current()
           return 0
         }
+        if (roomId) localStorage.setItem(`codeArena_remainingTime_${roomId}`, s - 1)
         return s - 1
       })
     }, 1000)

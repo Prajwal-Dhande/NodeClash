@@ -74,7 +74,7 @@ const fadeUp = {
   visible: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.15, duration: 0.6, ease: [0.22, 1, 0.36, 1] } })
 }
 
-export default function WinnerScreen({ result, problem, myTests, totalTests, timeTaken, onRematch, onLobby, opponentName, difficulty, language, premiumMode, userCode, timeComplexity, complexity }) {
+export default function WinnerScreen({ result, problem, myTests, totalTests, timeTaken, onRematch, onLobby, opponentName, difficulty, language, premiumMode, userCode, timeComplexity, complexity, isDailyQuest }) {
   const navigate = useNavigate()
   const [eloData, setEloData] = useState(null)
   const [rankUp, setRankUp] = useState(false)
@@ -100,22 +100,34 @@ export default function WinnerScreen({ result, problem, myTests, totalTests, tim
     // ELO Update
     const updateElo = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/users/match-result`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({
+        let endpoint = `${API_URL}/api/users/match-result`;
+        let payload = {
             opponentName: opponentName || 'Unknown', result,
             difficulty: difficulty || problem?.difficulty || 'Medium',
             timeTaken: timeTaken || 0, problem: problem?.title || 'Unknown',
             language: language || 'javascript'
-          })
+        };
+
+        if (isDailyQuest && result === 'win') {
+            endpoint = `${API_URL}/api/daily-quest/complete`;
+            payload = { timeTaken: timeTaken || 0 };
+        } else if (isDailyQuest && result !== 'win') {
+            return; // No penalty for failing daily quest practice
+        }
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify(payload)
         })
         const data = await res.json()
         if (data.success) {
-          setEloData(data)
+          const eloChangeAmt = isDailyQuest ? data.eloGained : data.eloChange;
+          setEloData({ ...data, eloChange: eloChangeAmt, newRank: data.newRank || JSON.parse(localStorage.getItem('user') || '{}').rank })
           if (data.rankChanged) setRankUp(true)
           const user = JSON.parse(localStorage.getItem('user') || '{}')
-          user.elo = data.newElo; user.rank = data.newRank
+          user.elo = data.newElo; 
+          if (!isDailyQuest) user.rank = data.newRank
           user.stats = user.stats || {}
           if (result === 'win') user.stats.wins = (user.stats.wins || 0) + 1
           else user.stats.losses = (user.stats.losses || 0) + 1

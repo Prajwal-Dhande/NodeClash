@@ -200,7 +200,7 @@ export default function InterviewDSA() {
           <span onClick={() => navigate('/dashboard')}>Dashboard</span>
           <span onClick={() => navigate('/lobby')}>Practice</span>
           <span className="active" onClick={() => navigate('/interview-dsa')}>FAANG Vault</span>
-          <span onClick={() => navigate('/tournaments')}>Tournaments</span>
+          <span onClick={() => navigate('/daily-quest')}>Daily Quest</span>
           <span onClick={() => navigate('/leaderboard')}>Leaderboard</span>
           <span onClick={() => navigate('/profile')}>Profile</span>
         </div>

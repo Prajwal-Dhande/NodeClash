@@ -24,8 +24,8 @@ import Premium from './pages/Premium'
 // 📊 PREMIUM DASHBOARD
 import PremiumDashboard from './pages/PremiumDashboard'
 
-// 🏆 TOURNAMENTS PAGE
-import Tournaments from './pages/Tournaments'
+// 🎯 DAILY QUEST PAGE
+import DailyQuest from './pages/DailyQuest'
 
 // ⚙️ SETTINGS PAGE
 import Settings from './pages/Settings'
@@ -68,8 +68,8 @@ export default function App() {
           {/* 📊 PREMIUM DASHBOARD */}
           <Route path="/dashboard" element={<PremiumDashboard />} />
 
-          {/* 🏆 TOURNAMENTS */}
-          <Route path="/tournaments" element={<Tournaments />} />
+          {/* 🎯 DAILY QUEST */}
+          <Route path="/daily-quest" element={<DailyQuest />} />
 
           {/* ⚙️ SETTINGS */}
           <Route path="/settings" element={<Settings />} />

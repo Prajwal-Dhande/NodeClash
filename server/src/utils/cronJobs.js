@@ -2,6 +2,8 @@ const cron = require('node-cron')
 const User = require('../models/User')
 const Notification = require('../models/Notification')
 const { sendExpiryEmail } = require('../services/emailService')
+const DailyQuest = require('../models/DailyQuest')
+const Problem = require('../models/Problem')
 
 /**
  * Premium Expiry Cron Job
@@ -92,6 +94,56 @@ const startExpiryCheckCron = () => {
   })
 
   console.log('✅ [Cron] Premium expiry checker scheduled (daily at 9:00 AM IST)')
+
+  // ── Daily Quest Cron ──
+  // Runs at midnight IST (6:30 PM UTC previous day) to create next day's quest
+  cron.schedule('30 18 * * *', async () => {
+    try {
+      const tomorrow = new Date()
+      const istOffset = 5.5 * 60 * 60 * 1000
+      const istDate = new Date(tomorrow.getTime() + istOffset + 24 * 60 * 60 * 1000)
+      const dateStr = istDate.toISOString().split('T')[0]
+
+      // Check if already created
+      const existing = await DailyQuest.findOne({ date: dateStr })
+      if (existing) {
+        console.log(`🎯 [Cron] Daily Quest already exists for ${dateStr}`)
+        return
+      }
+
+      // Get recently used slugs
+      const recentQuests = await DailyQuest.find().sort({ date: -1 }).limit(14).select('problemSlug')
+      const recentSlugs = recentQuests.map(q => q.problemSlug)
+
+      // Pick random unused problem
+      let problem = await Problem.aggregate([
+        { $match: { isActive: true, 'testCases.0': { $exists: true }, slug: { $nin: recentSlugs } } },
+        { $sample: { size: 1 } }
+      ])
+
+      if (!problem || problem.length === 0) {
+        problem = await Problem.aggregate([
+          { $match: { isActive: true, 'testCases.0': { $exists: true } } },
+          { $sample: { size: 1 } }
+        ])
+      }
+
+      if (problem && problem.length > 0) {
+        const p = problem[0]
+        await DailyQuest.create({
+          date: dateStr,
+          problemSlug: p.slug,
+          problemTitle: p.title,
+          difficulty: p.difficulty,
+          category: p.category || ''
+        })
+        console.log(`🎯 [Cron] Created Daily Quest for ${dateStr}: ${p.title} (${p.difficulty})`)
+      }
+    } catch (err) {
+      console.error('❌ [Cron] Daily Quest creation failed:', err)
+    }
+  })
+  console.log('✅ [Cron] Daily Quest scheduler active (pre-generates at 6:30 PM UTC)')
 }
 
 module.exports = { startExpiryCheckCron }

@@ -117,9 +117,15 @@ function TournamentCard({ t, user, onJoin, joining }) {
           Tournament Ended
         </button>
       ) : alreadyJoined ? (
-        <button disabled style={{ width: '100%', padding: '11px', borderRadius: 10, border: `1px solid ${tier.color}44`, background: tier.bg, color: tier.color, fontSize: 13, fontWeight: 800, cursor: 'not-allowed' }}>
-          ✅ Registered
-        </button>
+        t.status === 'active' ? (
+          <button onClick={() => window.location.href = `/battle?tournamentId=${t._id}&problem=${t.problemSlug || t.problem.toLowerCase().replace(/ /g, '-')}`} style={{ width: '100%', padding: '11px', borderRadius: 10, border: 'none', background: 'linear-gradient(90deg, #ef4444, #f97316)', color: '#fff', fontSize: 13, fontWeight: 800, cursor: 'pointer', display: 'flex', justifyContent: 'center', gap: 8, boxShadow: '0 4px 14px rgba(239,68,68,0.4)', animation: 'pulse 2s infinite' }}>
+            🔥 Enter Arena
+          </button>
+        ) : (
+          <button disabled style={{ width: '100%', padding: '11px', borderRadius: 10, border: `1px solid ${tier.color}44`, background: tier.bg, color: tier.color, fontSize: 13, fontWeight: 800, cursor: 'not-allowed' }}>
+            ✅ Registered (Starts Soon)
+          </button>
+        )
       ) : isPremiumRequired ? (
         <button onClick={() => window.location.href = '/premium'} style={{ width: '100%', padding: '11px', borderRadius: 10, border: 'none', background: 'linear-gradient(90deg, #f97316, #ec4899)', color: 'var(--text-main)', fontSize: 13, fontWeight: 800, cursor: 'pointer' }}>
           🔒 Upgrade to Join
@@ -128,6 +134,10 @@ function TournamentCard({ t, user, onJoin, joining }) {
         <button disabled style={{ width: '100%', padding: '11px', borderRadius: 10, border: '1px solid #333', background: 'transparent', color: 'var(--text-muted)', fontSize: 13, fontWeight: 700, cursor: 'not-allowed' }}>
           Tournament Full
         </button>
+      ) : t.status === 'active' ? (
+        <button disabled style={{ width: '100%', padding: '11px', borderRadius: 10, border: '1px solid #333', background: 'transparent', color: 'var(--text-muted)', fontSize: 13, fontWeight: 700, cursor: 'not-allowed' }}>
+          Registration Closed
+        </button>
       ) : (
         <button
           onClick={() => onJoin(t._id)}
@@ -135,7 +145,7 @@ function TournamentCard({ t, user, onJoin, joining }) {
           style={{ width: '100%', padding: '11px', borderRadius: 10, border: 'none', background: joining === t._id ? 'rgba(168,85,247,0.3)' : `linear-gradient(90deg, ${tier.color}cc, ${tier.color})`, color: 'var(--text-main)', fontSize: 13, fontWeight: 800, cursor: joining === t._id ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s' }}>
           {joining === t._id
             ? <><span style={{ width: 12, height: 12, border: '2px solid rgba(255,255,255,0.3)', borderTopcolor: 'var(--text-main)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', display: 'inline-block' }} /> Registering...</>
-            : `${tier.icon} Join Tournament`}
+            : `${tier.icon} Join Tournament (${t.duration} mins)`}
         </button>
       )}
     </div>

@@ -7,6 +7,7 @@ const matchmakingQueue = []
 // Disconnect grace period timers
 const disconnectTimers = new Map()
 
+
 // ELO rank calculation (mirrors userController logic)
 const RANKS = [
   { name: 'Bronze',   minElo: 0,    maxElo: 399 },
@@ -224,6 +225,8 @@ function initSocket(server) {
 
       rooms.delete(roomId)
     })
+
+
 
     // ✅ DISCONNECT — unexpected connection loss (tab close, network drop)
     socket.on('disconnect', () => {

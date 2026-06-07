@@ -15,6 +15,12 @@ const userSchema = new mongoose.Schema({
   solvedPuzzles: [{ type: String }],
   // ---------------------------
 
+  // 🎯 DAILY QUEST FIELDS
+  dailyStreak: { type: Number, default: 0 },
+  bestDailyStreak: { type: Number, default: 0 },
+  lastDailyQuestDate: { type: String, default: '' }, // 'YYYY-MM-DD'
+  // ---------------------------
+
   // 🔥 SOLVED DSA PROBLEMS 🔥
   solvedProblems: [{ type: String }],
   // ---------------------------

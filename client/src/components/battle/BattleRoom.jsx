@@ -111,6 +111,7 @@ const isPracticeMode = () => new URLSearchParams(window.location.search).get('pr
 const isRealMatch = () => new URLSearchParams(window.location.search).get('real') === 'true'
 const isPremiumMode = () => new URLSearchParams(window.location.search).get('premium') === 'true' || new URLSearchParams(window.location.search).get('bot') === 'InterviewerBot'
 const isViewOnlyMode = () => new URLSearchParams(window.location.search).get('viewOnly') === 'true'
+const getTournamentId = () => new URLSearchParams(window.location.search).get('tournamentId')
 
 export default function BattleRoom() {
   const [searchParams] = useSearchParams()
@@ -178,6 +179,9 @@ export default function BattleRoom() {
   const [allProblems, setAllProblems] = useState([])
   const [showLeaveModal, setShowLeaveModal] = useState(false)
   const [opponentForfeitToast, setOpponentForfeitToast] = useState(null)
+  
+  // TOURNAMENT STATE
+  const [tournamentLeaderboard, setTournamentLeaderboard] = useState([])
 
   // Clara AI Interview State
   const [claraMessages, setClaraMessages] = useState([])
@@ -193,12 +197,11 @@ export default function BattleRoom() {
   const [timerKey, setTimerKey] = useState(0) 
   const [remainingTime, setRemainingTime] = useState(() => {
     const roomId = getRoomId();
-    const savedEndTime = localStorage.getItem(`codeArena_endTime_${roomId}`);
-    if (savedEndTime) {
-      const timeLeft = Math.floor((parseInt(savedEndTime, 10) - Date.now()) / 1000);
-      return timeLeft > 0 ? timeLeft : 0;
+    const savedRemaining = localStorage.getItem(`codeArena_remainingTime_${roomId}`);
+    if (savedRemaining) {
+      return parseInt(savedRemaining, 10);
     }
-    return 600;
+    return 900;
   })
 
   const socketRef = useRef(null)
@@ -211,7 +214,7 @@ export default function BattleRoom() {
 
   const mode = searchParams.get('mode')
   const isMatchmakingMode = mode === 'random' || mode === 'ranked'
-  const isProblemLocked = battleStarted || isMatchmakingMode || isRealMatch() || isPracticeMode() || isPremiumMode()
+  const isProblemLocked = battleStarted || isMatchmakingMode || isRealMatch() || isPracticeMode() || isPremiumMode() || !!getTournamentId()
 
   useEffect(() => {
     if (battleStarted) {
@@ -222,10 +225,10 @@ export default function BattleRoom() {
       if (isPremiumMode()) return;
 
       const roomId = getRoomId();
-      const savedEndTime = localStorage.getItem(`codeArena_endTime_${roomId}`);
+      const savedRemaining = localStorage.getItem(`codeArena_remainingTime_${roomId}`);
       
-      if (savedEndTime) {
-        const timeLeft = Math.floor((parseInt(savedEndTime, 10) - Date.now()) / 1000);
+      if (savedRemaining) {
+        const timeLeft = parseInt(savedRemaining, 10);
         if (timeLeft > 0) {
           setRemainingTime(timeLeft);
           setTimerKey(prev => prev + 1); 
@@ -234,9 +237,8 @@ export default function BattleRoom() {
           handleTimeUp();
         }
       } else {
-        const newEndTime = Date.now() + 600 * 1000;
-        localStorage.setItem(`codeArena_endTime_${roomId}`, newEndTime.toString());
-        setRemainingTime(600);
+        localStorage.setItem(`codeArena_remainingTime_${roomId}`, '900');
+        setRemainingTime(900);
         setTimerKey(prev => prev + 1);
       }
     }
@@ -295,14 +297,17 @@ export default function BattleRoom() {
             }
           }
           
-          // Start practice/premium matches immediately (don't wait for socket)
-          if (isPracticeMode() || isPremiumMode()) {
+          // Start practice/premium/tournament matches immediately (don't wait for socket)
+          if (isPracticeMode() || isPremiumMode() || getTournamentId()) {
             if (!battleStartedRef.current) {
               battleStartedRef.current = true;
               setBattleStarted(true);
               startTimeRef.current = Date.now();
             }
           }
+        } else {
+          console.error("Problem not found in API");
+          navigate('/lobby');
         }
       } catch (err) {
         console.error("Failed to load problem", err);
@@ -380,7 +385,17 @@ export default function BattleRoom() {
         battleStartedRef.current = true
       }
       
-      socket.emit('join_room', { roomId, username: currentUser?.username || `Player_${socket.id?.slice(0, 4)}` })
+      const tId = getTournamentId()
+      if (tId) {
+        socket.emit('join_tournament', { 
+          tournamentId: tId, 
+          username: currentUser?.username || `Player_${socket.id?.slice(0, 4)}`,
+          elo: currentUser?.elo,
+          rank: currentUser?.rank
+        })
+      } else {
+        socket.emit('join_room', { roomId, username: currentUser?.username || `Player_${socket.id?.slice(0, 4)}` })
+      }
     })
 
     socket.on('disconnect', () => setConnected(false))
@@ -443,6 +458,25 @@ export default function BattleRoom() {
         setTimeTaken(Math.round((Date.now() - startTimeRef.current) / 1000))
         setGameResult('loss'); setGameOver(true)
       }
+    })
+
+    socket.on('tournament_player_joined', ({ username, elo, rank }) => {
+      setTournamentLeaderboard(prev => {
+        if (prev.find(p => p.username === username)) return prev
+        return [...prev, { username, elo, rank, passed: 0, total: 0, finished: false }]
+      })
+    })
+
+    socket.on('tournament_leaderboard_update', ({ username, passed, total }) => {
+      setTournamentLeaderboard(prev => prev.map(p => 
+        p.username === username ? { ...p, passed, total } : p
+      ).sort((a, b) => (b.passed || 0) - (a.passed || 0)))
+    })
+
+    socket.on('tournament_player_finished', ({ username, timeTaken, position }) => {
+      setTournamentLeaderboard(prev => prev.map(p => 
+        p.username === username ? { ...p, finished: true, timeTaken, position } : p
+      ))
     })
     
     socket.on('opponent_left_win', ({ message }) => {
@@ -770,6 +804,13 @@ export default function BattleRoom() {
       setMyTests(data.passed)
       if (data.complexity) setComplexity(data.complexity)
       socketRef.current?.emit('tests_update', { roomId, passed: data.passed, total: data.total })
+      
+      const tId = getTournamentId()
+      if (tId) {
+        socketRef.current?.emit('tournament_progress', { 
+           tournamentId: tId, username: currentUser?.username, passed: data.passed, total: data.total 
+        })
+      }
       setResults(resultsArray.map(r => ({
         i: r.testCase, ok: r.passed, result: r.result,
         expected: r.expected, input: JSON.stringify(r.input),
@@ -781,6 +822,14 @@ export default function BattleRoom() {
       if (isSuccess && !gameOverRef.current) {
         gameOverRef.current = true
         setSubmitStatus('success')
+        
+        if (tId) {
+          socketRef.current?.emit('tournament_complete', {
+            tournamentId: tId, username: currentUser?.username,
+            timeTaken: Math.round((Date.now() - startTimeRef.current) / 1000),
+            elo: currentUser?.elo, rank: currentUser?.rank
+          })
+        }
         
         try {
            const solveRes = await fetch(`${API_URL}/api/users/solve`, {
@@ -825,11 +874,10 @@ export default function BattleRoom() {
         localStorage.setItem(`codeArena_solvedCode_${slug}`, currentCode); // Fallback for legacy
         localStorage.setItem(`codeArena_solvedLang_${slug}`, currentLang);
 
-        const savedEndTime = localStorage.getItem(`codeArena_endTime_${roomId}`);
+        const savedRemaining = localStorage.getItem(`codeArena_remainingTime_${roomId}`);
         let secondsTaken = 0;
-        if (savedEndTime) {
-           const initialStart = parseInt(savedEndTime, 10) - (600 * 1000);
-           secondsTaken = Math.round((Date.now() - initialStart) / 1000);
+        if (savedRemaining) {
+           secondsTaken = 900 - parseInt(savedRemaining, 10);
         } else {
            secondsTaken = Math.round((Date.now() - startTimeRef.current) / 1000);
         }
@@ -857,7 +905,7 @@ export default function BattleRoom() {
       let finalResult = 'draw';
       if (myTests > oppTests) finalResult = 'win';
       else if (oppTests > myTests) finalResult = 'loss';
-      setTimeTaken(600);
+      setTimeTaken(900);
       setGameResult(finalResult);
       setGameOver(true);
     }
@@ -997,8 +1045,8 @@ export default function BattleRoom() {
           <div className="timer-box">
             <span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 1 }}>TIME</span>
             {battleStarted
-              ? <Timer key={timerKey} initialSeconds={remainingTime} onTimeUp={handleTimeUp} />
-              : <span style={{ fontFamily: 'monospace', fontSize: 16, fontWeight: 700, color: 'var(--text-muted)' }}>10:00</span>
+              ? <Timer key={timerKey} initialSeconds={remainingTime} roomId={getRoomId()} onTimeUp={handleTimeUp} />
+              : <span style={{ fontFamily: 'monospace', fontSize: 16, fontWeight: 700, color: 'var(--text-muted)' }}>15:00</span>
             }
           </div>
         )}
@@ -1014,6 +1062,7 @@ export default function BattleRoom() {
       </div>
 
       <PanelGroup direction="horizontal" orientation="horizontal" className="main-grid" style={{ flex: 1 }}>
+
 
         {!battleStarted && !new URLSearchParams(window.location.search).get('bot') && (
           <div style={{
@@ -1717,6 +1766,9 @@ export default function BattleRoom() {
           </div>
         </Panel>
         )}
+
+
+
       </PanelGroup>
 
       {gameOver && (
@@ -1733,6 +1785,7 @@ export default function BattleRoom() {
           userCode={code}
           timeComplexity={complexity?.time || (problem?.slug ? PROBLEM_COMPLEXITY[problem.slug] : 'O(N)')}
           complexity={complexity}
+          isDailyQuest={getRoomId()?.startsWith('daily_quest')}
           onRematch={handleRematch}
           onLobby={() => navigate('/lobby', { replace: true })}
         />
