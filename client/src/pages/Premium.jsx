@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import Confetti from 'react-confetti'
 import API_URL from '../config/api'
 import { ThemeToggle } from '../context/ThemeContext'
-import { Bot, BarChart, Trophy, Lock, Zap, Map } from 'lucide-react'
+import { Bot, BarChart, Trophy, Lock, Zap, Map, Puzzle } from 'lucide-react'
 const CHECK = (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12" />
@@ -56,6 +56,7 @@ const PLANS = [
       { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
       { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
       { label: 'Daily Quests Access', included: true },
+      { label: 'Daily Algorithmic Puzzles', included: true },
       { label: 'Priority Matchmaking Servers', included: true },
       { label: 'Premium Discord Community', included: true },
     ],
@@ -82,6 +83,7 @@ const PLANS = [
       { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
       { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
       { label: 'Daily Quests Access', included: true },
+      { label: 'Daily Algorithmic Puzzles', included: true },
       { label: 'Priority Matchmaking Servers', included: true },
       { label: 'Premium Discord Community', included: true },
       { label: 'Early Access to New Features', included: true },
@@ -451,7 +453,7 @@ export default function Premium() {
         </span>
         <div style={{ display: 'flex', gap: 24, flex: 1 }}>
           {[
-            { label: 'Dashboard', path: '/' },
+            { label: 'Dashboard', path: '/dashboard' },
             { label: 'Practice', path: '/lobby' },
             { label: 'Leaderboard', path: '/leaderboard' },
             { label: 'Profile', path: '/profile' },
@@ -571,10 +573,9 @@ export default function Premium() {
                   flexDirection: 'column',
                   transform: plan.popular ? 'scale(1.03)' : 'scale(1)',
                   boxShadow: plan.popular ? `0 24px 60px ${plan.glow}, 0 0 0 1px ${plan.border}` : 'none',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                   cursor: 'default',
                 }}
-                whileHover={!isDisabled ? { scale: plan.popular ? 1.05 : 1.02, transition: { duration: 0.2 } } : {}}
+                whileHover={!isDisabled ? { scale: plan.popular ? 1.05 : 1.02, transition: { type: 'tween', duration: 0.05 } } : {}}
               >
                 {plan.popular && (
                   <div style={{
@@ -707,11 +708,12 @@ export default function Premium() {
               { icon: <Lock size={28} color="#a855f7" />, color: '#a855f7', title: 'FAANG Vault Problems', desc: 'Access 200+ exclusive problems tagged by company, difficulty, and interview round — real problems, real prep.' },
               { icon: <Zap size={28} color="#facc15" />, color: '#facc15', title: 'Zero-Latency Servers', desc: 'Code executes on priority servers with 3x faster response times. Never lose a ranked battle to lag again.' },
               { icon: <Map size={28} color="#22c55e" />, color: '#22c55e', title: 'Personalized Roadmap', desc: 'Your AI roadmap adapts to your ELO, weak topics, and target company. Know exactly what to practice next.' },
+              { icon: <Puzzle size={28} color="#ec4899" />, color: '#ec4899', title: 'Daily Algorithmic Puzzles', desc: 'Sharpen your problem-solving skills with curated daily coding challenges. Build consistency and earn massive ELO bonuses.' },
             ].map((item, i) => (
               <motion.div key={i}
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 + i * 0.08 }}
-                style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '24px', transition: 'all 0.3s' }}
-                whileHover={{ y: -5, boxShadow: `0 12px 40px ${item.color}15` }}>
+                style={{ background: 'var(--card-bg)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '24px', cursor: 'pointer' }}
+                whileHover={{ y: -5, boxShadow: `0 12px 40px ${item.color}15`, transition: { type: 'tween', duration: 0.05 } }}>
                 <div style={{
                   width: 56, height: 56, borderRadius: 16,
                   background: `${item.color}15`, border: `1px solid ${item.color}30`,

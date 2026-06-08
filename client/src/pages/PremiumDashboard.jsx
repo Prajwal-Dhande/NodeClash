@@ -255,7 +255,7 @@ export default function PremiumDashboard() {
                 <span style={{ color: 'var(--text-muted)' }}>Progress to {nextRank ? nextRank.name : 'Max Rank'}</span>
                 {nextRank && <span style={{ color: 'var(--text-main)' }}>{toNext} ELO remaining</span>}
               </div>
-              <div style={{ height: 8, background: 'rgba(255,255,255,0.05)', borderRadius: 4, overflow: 'hidden' }}>
+              <div style={{ height: 8, background: 'var(--border)', borderRadius: 4, overflow: 'hidden' }}>
                 <motion.div 
                   initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 1, ease: 'easeOut' }}
                   style={{ height: '100%', background: rank.color, borderRadius: 4 }} 
