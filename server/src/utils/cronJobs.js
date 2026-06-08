@@ -34,8 +34,8 @@ const startExpiryCheckCron = () => {
         const msRemaining = expiry.getTime() - now.getTime()
         const daysRemaining = Math.ceil(msRemaining / (1000 * 60 * 60 * 24))
 
-        // Check if exactly 4 days or exactly 1 day (24hrs) remaining
-        if (daysRemaining === 4 || daysRemaining === 1) {
+        // Check if 5 days or less remaining
+        if (daysRemaining <= 5 && daysRemaining > 0) {
           // Send email
           try {
             await sendExpiryEmail(user.email, user.username, daysRemaining)
@@ -51,7 +51,7 @@ const startExpiryCheckCron = () => {
               user: user._id,
               title: isUrgent ? '⚠️ PRO Expires Tomorrow!' : `🔔 PRO Expires in ${daysRemaining} Days`,
               message: isUrgent
-                ? 'Your CodeArena PRO plan expires tomorrow! Renew now to keep access to FAANG Vault, Clara AI, and all premium features.'
+                ? 'Your CodeArena PRO plan expires tomorrow! Renew now to keep access to The Elite Archive, Clara AI, and all premium features.'
                 : `Your CodeArena PRO plan expires in ${daysRemaining} days. Renew to continue your competitive edge.`,
               type: isUrgent ? 'error' : 'warning',
               link: '/premium'

@@ -194,7 +194,7 @@ const sendExpiryEmail = async (toEmail, username, daysLeft) => {
             </h2>
             <p style="color:#888; font-size:14px; line-height:1.6; margin:0 0 32px 0;">
               Hey <strong style="color:#e5e5e5;">${username}</strong>! ${isUrgent
-                ? 'This is your final reminder. After today, you will lose access to FAANG Vault, Clara AI interviews, and all premium features.'
+                ? 'This is your final reminder. After today, you will lose access to The Elite Archive, Clara AI interviews, and all premium features.'
                 : `Your CodeArena PRO membership is expiring in <strong style="color:${isUrgent ? '#ef4444' : '#ff6b35'};">${daysLeft} days</strong>. Renew now to keep your competitive edge.`}
             </p>
 
@@ -204,7 +204,7 @@ const sendExpiryEmail = async (toEmail, username, daysLeft) => {
               ${[
                 '🤖 Clara AI Mock Interviews',
                 '📊 Deep Code Analytics',
-                '🔐 FAANG Vault (200+ Problems)',
+                '🔐 The Elite Archive (200+ Problems)',
                 '⚡ Priority Matchmaking Servers',
                 '🏆 Ranked Tournaments Access'
               ].map(f => `<div style="color:#aaa; font-size:13px; padding:6px 0; border-bottom:1px solid #1a1a1a;">${f}</div>`).join('')}

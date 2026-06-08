@@ -32,7 +32,7 @@ const PLANS = [
       { label: 'Practice AI Bot', included: true },
       { label: 'Global Leaderboard', included: true },
       { label: 'Create Private Rooms', included: true },
-      { label: 'Exclusive FAANG Vault', included: false },
+      { label: 'Exclusive The Elite Archive', included: false },
       { label: 'Live AI Interviews (Clara)', included: false },
       { label: 'AI Code Review & Analytics', included: false },
     ],
@@ -52,7 +52,7 @@ const PLANS = [
     border: 'rgba(96,165,250,0.35)',
     features: [
       { label: 'Cancel Anytime', included: true },
-      { label: 'Exclusive FAANG Vault Problems', included: true },
+      { label: 'Exclusive The Elite Archive Problems', included: true },
       { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
       { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
       { label: 'Daily Quests Access', included: true },
@@ -79,7 +79,7 @@ const PLANS = [
     border: 'rgba(255,107,53,0.5)',
     features: [
       { label: 'Cancel Anytime', included: true },
-      { label: 'Exclusive FAANG Vault Problems', included: true },
+      { label: 'Exclusive The Elite Archive Problems', included: true },
       { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
       { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
       { label: 'Daily Quests Access', included: true },
@@ -500,7 +500,7 @@ export default function Premium() {
                 </div>
                 <div style={{ fontSize: 13, color: accentColor, opacity: 0.9, marginBottom: 8 }}>
                   {isExpiring
-                    ? <>Renew now to avoid losing access to FAANG Vault. <span style={{ fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.scrollTo({ top: document.querySelector('[data-pricing]')?.offsetTop - 80 || 600, behavior: 'smooth' })}>Renew →</span></>
+                    ? <>Renew now to avoid losing access to The Elite Archive. <span style={{ fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.scrollTo({ top: document.querySelector('[data-pricing]')?.offsetTop - 80 || 600, behavior: 'smooth' })}>Renew →</span></>
                     : <>{daysLeft > 0 ? `${daysLeft} days remaining.` : 'Your PRO access is active.'} <span style={{ fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => navigate('/interview-dsa')}>Go to AI Interview →</span></>
                   }
                 </div>
@@ -543,7 +543,7 @@ export default function Premium() {
           </div>
           <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 56, fontWeight: 900, color: 'var(--text-main)', margin: '0 0 20px 0', letterSpacing: '-2px', lineHeight: 1.1 }}>
             The fastest path to<br />
-            <span style={{ background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>crack FAANG</span>
+            <span style={{ background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>crack MAANG</span>
           </h1>
           <p style={{ fontSize: 18, color: 'var(--text-muted)', maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
             AI-powered mock interviews, structured analytics, and MAANG-level feedback — one plan, full access.
@@ -704,8 +704,8 @@ export default function Premium() {
             {[
               { icon: <Bot size={28} color="#ff6b35" />, color: '#ff6b35', title: 'Clara AI Interviewer', desc: 'Practice with an AI trained to behave exactly like a MAANG interviewer. Get hints, feedback, and code review in real-time.' },
               { icon: <BarChart size={28} color="#3b82f6" />, color: '#3b82f6', title: 'Deep Code Analytics', desc: 'After every submission, get time & space complexity analysis, edge case reports, and comparisons to optimal solutions.' },
-              { icon: <Trophy size={28} color="#eab308" />, color: '#eab308', title: 'Exclusive Daily Quests', desc: 'Get access to unique daily challenges. Build your streak, crack curated FAANG problems, and earn massive ELO bonuses.' },
-              { icon: <Lock size={28} color="#a855f7" />, color: '#a855f7', title: 'FAANG Vault Problems', desc: 'Access 200+ exclusive problems tagged by company, difficulty, and interview round — real problems, real prep.' },
+              { icon: <Trophy size={28} color="#eab308" />, color: '#eab308', title: 'Exclusive Daily Quests', desc: 'Get access to unique daily challenges. Build your streak, crack curated MAANG problems, and earn massive ELO bonuses.' },
+              { icon: <Lock size={28} color="#a855f7" />, color: '#a855f7', title: 'The Elite Archive Problems', desc: 'Access 200+ exclusive problems tagged by company, difficulty, and interview round — real problems, real prep.' },
               { icon: <Zap size={28} color="#facc15" />, color: '#facc15', title: 'Zero-Latency Servers', desc: 'Code executes on priority servers with 3x faster response times. Never lose a ranked battle to lag again.' },
               { icon: <Map size={28} color="#22c55e" />, color: '#22c55e', title: 'Personalized Roadmap', desc: 'Your AI roadmap adapts to your ELO, weak topics, and target company. Know exactly what to practice next.' },
               { icon: <Puzzle size={28} color="#ec4899" />, color: '#ec4899', title: 'Daily Algorithmic Puzzles', desc: 'Sharpen your problem-solving skills with curated daily coding challenges. Build consistency and earn massive ELO bonuses.' },
@@ -734,7 +734,7 @@ export default function Premium() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
             style={{ textAlign: 'center', marginTop: 80, padding: '48px', background: 'linear-gradient(135deg, rgba(255,107,53,0.08), rgba(96,165,250,0.05))', border: '1px solid rgba(255,107,53,0.2)', borderRadius: 24 }}>
             <div style={{ fontSize: 40, marginBottom: 16 }}>🚀</div>
-            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 28, fontWeight: 900, color: 'var(--text-main)', margin: '0 0 12px 0' }}>Start your FAANG journey today</h2>
+            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 28, fontWeight: 900, color: 'var(--text-main)', margin: '0 0 12px 0' }}>Start your MAANG journey today</h2>
             <p style={{ color: 'var(--text-muted)', marginBottom: 28, fontSize: 15 }}>Join hundreds of coders who cracked their dream companies using CodeArena Pro.</p>
             <button onClick={() => handlePayment(PLANS[2])} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none', borderRadius: 12, padding: '16px 40px', fontSize: 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 8px 30px rgba(255,107,53,0.35)', fontFamily: 'Inter, sans-serif', transition: 'all 0.2s' }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 14px 40px rgba(255,107,53,0.5)' }}

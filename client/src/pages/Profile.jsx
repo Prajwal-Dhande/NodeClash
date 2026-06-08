@@ -462,14 +462,14 @@ export default function Profile() {
         <div style={{ flex: 1 }} />
         <div className="desktop-only"><ThemeToggle /></div>
         <div className="desktop-only" style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-          {[{ label: 'Lobby', path: '/lobby' }, { label: 'Leaderboard', path: '/leaderboard' }].map(({ label, path }) => (
+          {[{ label: 'Leaderboard', path: '/leaderboard' }].map(({ label, path }) => (
             <span key={label} onClick={() => navigate(path)} style={{ fontSize: 13, color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500 }}>{label}</span>
           ))}
           <button onClick={handleShare} style={{ background: copied ? 'rgba(34,197,94,0.1)' : 'transparent', border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : 'var(--glass-border)'}`, color: copied ? '#22c55e' : 'var(--text-muted)', borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter', transition: 'all 0.2s' }}>
             {copied ? '✓ Copied!' : '↗ Share'}
           </button>
           {isOwnProfile && <button onClick={() => navigate('/settings')} style={{ background: 'transparent', border: '1px solid var(--glass-border)', color: 'var(--text-muted)', borderRadius: 8, padding: '6px 12px', fontSize: 15, cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e=>e.currentTarget.style.color='var(--text-main)'} onMouseLeave={e=>e.currentTarget.style.color='var(--text-muted)'}>⚙️</button>}
-          <button onClick={() => navigate('/lobby')} style={{ background: '#ff6b35', color: '#fff', border: 'none', padding: '6px 18px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter' }}>⚡ Battle</button>
+          <button onClick={() => navigate('/lobby')} style={{ background: '#ff6b35', color: '#fff', border: 'none', padding: '6px 18px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter', display: 'flex', alignItems: 'center', gap: '6px' }}><Zap size={14} fill="currentColor" /> Battle</button>
         </div>
         
         {/* Mobile Hamburger Button */}
@@ -498,7 +498,6 @@ export default function Profile() {
             
             <div className="drawer-content">
               <div className="drawer-links">
-                <span onClick={() => { setIsMobileMenuOpen(false); navigate('/lobby') }}>Lobby</span>
                 <span onClick={() => { setIsMobileMenuOpen(false); navigate('/leaderboard') }}>Leaderboard</span>
                 {isOwnProfile && <span onClick={() => { setIsMobileMenuOpen(false); navigate('/settings') }}>⚙️ Settings</span>}
               </div>
@@ -512,7 +511,7 @@ export default function Profile() {
                   background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', border: 'none', color: '#fff', borderRadius: 8,
                   padding: '12px', fontSize: 14, fontWeight: 700, cursor: 'pointer', width: '100%'
                 }}>
-                  ⚡ Battle Now
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><Zap size={18} fill="currentColor" /> Battle Now</span>
                 </button>
               </div>
             </div>
@@ -854,7 +853,7 @@ export default function Profile() {
                   <div style={{ fontSize: 48, marginBottom: 16, color: 'var(--text-muted)' }}><Swords size={48} /></div>
                   <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8, color: 'var(--text-muted)' }}>No battles yet!</div>
                   <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>Enter the arena and start your coding combat journey</div>
-                  {isOwnProfile && <button onClick={() => navigate('/lobby')} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 28px', cursor: 'pointer', fontWeight: 700, fontFamily: 'Inter', fontSize: 14, boxShadow: '0 8px 24px rgba(255,107,53,0.3)', transition: 'all 0.3s' }}>⚡ Enter Arena</button>}
+                  {isOwnProfile && <button onClick={() => navigate('/lobby')} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 28px', cursor: 'pointer', fontWeight: 700, fontFamily: 'Inter', fontSize: 14, boxShadow: '0 8px 24px rgba(255,107,53,0.3)', transition: 'all 0.3s', display: 'flex', alignItems: 'center', gap: '8px' }}><Zap size={18} fill="currentColor" /> Enter Arena</button>}
                 </div>
               ) : battles.slice(0, visibleCount).map((b, i) => (
                 <div key={i} style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 90px 70px 90px', padding: '16px 24px', alignItems: 'center', borderTop: '1px solid var(--glass-border)' }}>
@@ -869,7 +868,7 @@ export default function Profile() {
                       const isBot = b.opponent === 'PracticeBot' || b.opponent === 'AI_Bot'
                       const isPrivate = b.room && (b.room.includes('room_') || b.room.includes('private'))
                       const mode = isPremiumMatch
-                        ? { label: 'FAANG Vault', bg: 'rgba(168,85,247,0.1)', color: '#a855f7', border: 'rgba(168,85,247,0.25)' }
+                        ? { label: 'The Elite Archive', bg: 'rgba(168,85,247,0.1)', color: '#a855f7', border: 'rgba(168,85,247,0.25)' }
                         : isBot
                         ? { label: 'Practice', bg: 'rgba(96,165,250,0.1)', color: '#60a5fa', border: 'rgba(96,165,250,0.25)' }
                         : isPrivate

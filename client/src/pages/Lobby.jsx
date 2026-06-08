@@ -469,7 +469,7 @@ export default function Lobby() {
 
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={() => setCreatedRoomCode(null)} style={{ flex: 1, background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', color: 'var(--text-muted)', borderRadius: 10, padding: '12px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter' }}>Cancel</button>
-              <button onClick={handleStartCreatedRoom} style={{ flex: 1, background: 'linear-gradient(135deg, #ff6b35, #f7451d)', border: 'none', color: '#fff', borderRadius: 10, padding: '12px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter' }}>⚡ Enter Room</button>
+              <button onClick={handleStartCreatedRoom} style={{ flex: 1, background: 'linear-gradient(135deg, #ff6b35, #f7451d)', border: 'none', color: '#fff', borderRadius: 10, padding: '12px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}><Zap size={16} fill="currentColor" /> Enter Room</button>
             </div>
 
             <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 14, display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}><Lightbulb size={12}/> Your opponent enters this code in the "Join Room" tab</div>
@@ -490,7 +490,7 @@ export default function Lobby() {
             Dashboard
           </span>
           <span className="active">Practice</span>
-          <span onClick={() => user?.isPremium ? navigate('/interview-dsa') : navigate('/premium')}>FAANG Vault</span>
+          <span onClick={() => user?.isPremium ? navigate('/interview-dsa') : navigate('/premium')}>The Elite Archive</span>
           <span onClick={() => navigate('/daily-quest')}>Daily Quest</span>
           <span onClick={() => navigate('/leaderboard')}>Leaderboard</span>
         </div>
@@ -585,7 +585,7 @@ export default function Lobby() {
               <div className="drawer-links">
                 <span onClick={() => { setIsMobileMenuOpen(false); navigate('/dashboard') }} style={{ color: user?.isPremium ? '#a855f7' : undefined }}>Dashboard</span>
                 <span className="active" onClick={() => setIsMobileMenuOpen(false)}>Practice</span>
-                <span onClick={() => { setIsMobileMenuOpen(false); user?.isPremium ? navigate('/interview-dsa') : navigate('/premium') }}>FAANG Vault</span>
+                <span onClick={() => { setIsMobileMenuOpen(false); user?.isPremium ? navigate('/interview-dsa') : navigate('/premium') }}>The Elite Archive</span>
                 <span onClick={() => { setIsMobileMenuOpen(false); navigate('/daily-quest') }}>Daily Quest</span>
                 <span onClick={() => { setIsMobileMenuOpen(false); navigate('/leaderboard') }}>Leaderboard</span>
               </div>
@@ -681,7 +681,7 @@ export default function Lobby() {
                   MAANG EXCLUSIVE
                 </div>
                 <h3 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-main)', marginBottom: 12 }}>
-                  Interview Pro Vault {user?.isPremium && <span style={{ fontSize: 16, color: '#22c55e' }}>✓ Unlocked</span>}
+                  The Elite Archive {user?.isPremium && <span style={{ fontSize: 16, color: '#22c55e' }}>✓ Unlocked</span>}
                 </h3>
                 <p style={{ color: 'var(--text-muted)', fontSize: 14, lineHeight: 1.6, marginBottom: 16 }}>
                   Master the exact algorithms asked by top tech companies. Train with precision, zero distractions, and our integrated AI interviewer.
@@ -700,7 +700,7 @@ export default function Lobby() {
                   padding: '12px 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter',
                   boxShadow: '0 4px 14px rgba(255,107,53,0.3)', width: 'fit-content', marginBottom: 24
                 }}>
-                  {user?.isPremium ? <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Zap size={16}/> Access Pro Vault</span> : <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Diamond size={16}/> Unlock Pro Vault</span>}
+                  {user?.isPremium ? <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Zap size={16}/> Access The Elite Archive</span> : <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Diamond size={16}/> Unlock The Elite Archive</span>}
                 </button>
 
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 'auto' }}>
@@ -980,7 +980,7 @@ export default function Lobby() {
                 <div className="toggle-group">{[{ id: 'public', label: '🌐 Public' }, { id: 'private', label: '🔒 Private' }].map(({ id, label }) => <button key={id} onClick={() => setRoomType(id)} className={`toggle-btn ${roomType === id ? 'active-orange' : ''}`}>{label}</button>)}</div>
               </div>
               <button onClick={handleCreateRoom} disabled={!selectedProblem || creating} className={`btn-primary-full ${(!selectedProblem || creating) ? 'disabled' : ''}`}>
-                {creating ? '⟳ Creating room...' : !selectedProblem ? 'Select a problem first' : '⚡ Create Battle Room'}
+                {creating ? '⟳ Creating room...' : !selectedProblem ? 'Select a problem first' : <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}><Zap size={16} fill="currentColor" /> Create Battle Room</span>}
               </button>
             </div>
           </div>

@@ -123,7 +123,7 @@ router.post('/verify', authMiddleware, async (req, res) => {
                     Hey <strong style="color: #fff;">${user.username || 'Champion'}</strong>,
                   </p>
                   <p style="color: #d1d5db; font-size: 14px; line-height: 1.7;">
-                    You now have full access to the <strong style="color: #ff6b35;">FAANG Vault</strong>, 
+                    You now have full access to the <strong style="color: #ff6b35;">The Elite Archive</strong>, 
                     <strong style="color: #60a5fa;">Clara AI Interviews</strong>, ranked tournaments, and all Pro features.
                   </p>
                   <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; margin: 24px 0;">

@@ -27,7 +27,7 @@ const problemSchema = new mongoose.Schema({
   isActive:   { type: Boolean, default: true },
   isPremium:  { type: Boolean, default: false },  // 🔒 locked behind paywall
 
-  // 🔥 NEW FAANG VAULT FIELDS
+  // 🔥 NEW The Elite Archive FIELDS
   tier:            { type: String, enum: ['free', 'premium'], default: 'free' }, // 'free' | 'premium'
   faangFrequency:  { type: Number, default: 0 },  // how many times asked (display number)
   isFaang:         { type: Boolean, default: false },

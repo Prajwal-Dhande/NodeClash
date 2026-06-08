@@ -3,18 +3,18 @@ import { useNavigate } from 'react-router-dom'
 import { Zap, Trophy, Bot } from 'lucide-react'
 
 const TESTIMONIALS = [
-  { name: 'Arjun K.', role: 'SDE @ Amazon', stars: 5, color: '#ff6b35', text: 'The free tier gave me a solid foundation, but the PRO FAANG Vault is what actually got me my Amazon offer. The curated problems are scarily accurate.' },
+  { name: 'Arjun K.', role: 'SDE @ Amazon', stars: 5, color: '#ff6b35', text: 'The free tier gave me a solid foundation, but the PRO The Elite Archive is what actually got me my Amazon offer. The curated problems are scarily accurate.' },
   { name: 'Priya S.', role: 'CS Senior, IIT Delhi', stars: 5, color: '#60a5fa', text: 'I practiced on the free tier for months. Once I upgraded to PRO, Clara AI literally changed how I think about interviews. Absolute game-changer.' },
   { name: 'Rahul M.', role: 'SDE-2 @ Google', stars: 5, color: '#a855f7', text: 'Free tier is honestly better than most paid platforms. But the PRO analytics showed me my weak spots I never knew existed. Cracked Google L4.' },
   { name: 'Sneha D.', role: 'Intern @ Microsoft', stars: 5, color: '#22c55e', text: 'Started with free random matches — loved it. PRO Vault problems were literally the same patterns asked in my Microsoft interview. Worth every rupee.' },
   { name: 'Karthik R.', role: 'SDE @ Flipkart', stars: 5, color: '#f59e0b', text: 'The free practice bot is unreal for daily warmups. But PRO tier with Clara AI mock interviews? That\u2019s the closest thing to a real FAANG interview I\u2019ve seen.' },
-  { name: 'Ananya P.', role: 'CS Junior, BITS', stars: 5, color: '#ec4899', text: 'I used the free tier all semester for competitive coding. Upgrading to PRO during placement season was the best decision — the FAANG Vault is top-notch.' },
+  { name: 'Ananya P.', role: 'CS Junior, BITS', stars: 5, color: '#ec4899', text: 'I used the free tier all semester for competitive coding. Upgrading to PRO during placement season was the best decision — the The Elite Archive is top-notch.' },
   { name: 'Vikram T.', role: 'SDE @ Uber', stars: 5, color: '#14b8a6', text: 'Free tier random matches kept me sharp daily. The PRO code review feature caught edge cases I always missed. Cracked Uber\u2019s system design round too.' },
   { name: 'Meera J.', role: 'CS Student, NIT', stars: 5, color: '#8b5cf6', text: 'Honestly the free leaderboard competition alone is addictive. But PRO unlocked a whole new level — Clara\u2019s AI hints taught me patterns I never learned in class.' },
-  { name: 'Aditya N.', role: 'SDE @ Meta', stars: 5, color: '#ef4444', text: 'The free tier is genuinely generous. I only went PRO because friends said the FAANG Vault problems are exact matches from real interviews. They were right.' },
+  { name: 'Aditya N.', role: 'SDE @ Meta', stars: 5, color: '#ef4444', text: 'The free tier is genuinely generous. I only went PRO because friends said the The Elite Archive problems are exact matches from real interviews. They were right.' },
   { name: 'Ishita G.', role: 'Incoming SDE @ Apple', stars: 5, color: '#06b6d4', text: 'Practiced 200+ free problems before placements. The PRO tier analytics dashboard showed me exactly what to focus on. Got Apple on my first attempt.' },
   { name: 'Rohan B.', role: 'Backend Dev @ Razorpay', stars: 5, color: '#f97316', text: 'Free tier private rooms are perfect for practicing with friends. PRO took it further — the AI code review after every match is like having a personal mentor.' },
-  { name: 'Divya L.', role: 'CS Senior, VIT', stars: 5, color: '#84cc16', text: 'I was skeptical about PRO, but the 7-day free trial convinced me instantly. The FAANG Vault problems are exactly what you\u2019d face in a real placement drive.' },
+  { name: 'Divya L.', role: 'CS Senior, VIT', stars: 5, color: '#84cc16', text: 'I was skeptical about PRO, but the 7-day free trial convinced me instantly. The The Elite Archive problems are exactly what you\u2019d face in a real placement drive.' },
   { name: 'Saurabh W.', role: 'SDE @ Goldman Sachs', stars: 5, color: '#eab308', text: 'Used free tier for 6 months before going PRO. The ranked tournaments alone are worth it — but Clara AI interviews are what truly prepared me for GS.' },
   { name: 'Nisha K.', role: 'ML Engineer @ Nvidia', stars: 5, color: '#d946ef', text: 'The free tier practice bot is surprisingly good for daily grinding. PRO is for when you\u2019re serious about placements — the analytics are incredibly detailed.' },
 ]

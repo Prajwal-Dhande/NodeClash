@@ -151,7 +151,7 @@ function generateClaraInsight(stats, difficultyMap, eloHistory) {
   }
 
   if (stats.losses > stats.wins + 5) {
-    return "You've faced some tough opponents recently. Consider spending some time in the FAANG Vault to practice targeted data structures before your next live battle."
+    return "You've faced some tough opponents recently. Consider spending some time in the The Elite Archive to practice targeted data structures before your next live battle."
   }
 
   if (difficultyMap.Hard > 0) {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async' 
+import { Zap } from 'lucide-react'
 import API_URL from '../config/api'
 import { ThemeToggle } from '../context/ThemeContext'
 
@@ -86,7 +87,7 @@ export default function Leaderboard() {
         <div style={{ flex: 1 }} />
         <div className="desktop-only"><ThemeToggle /></div>
         <button onClick={() => navigate('/lobby')} className="btn-battle-now desktop-only">
-          ⚡ Battle Now
+          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><Zap size={18} fill="currentColor" /> Battle Now</span>
         </button>
         <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
           ☰
@@ -124,7 +125,7 @@ export default function Leaderboard() {
                   background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', border: 'none', color: '#fff', borderRadius: 8,
                   padding: '12px', fontSize: 14, fontWeight: 700, cursor: 'pointer', width: '100%', marginTop: 12
                 }}>
-                  ⚡ Battle Now
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><Zap size={18} fill="currentColor" /> Battle Now</span>
                 </button>
               </div>
             </div>
@@ -295,7 +296,7 @@ export default function Leaderboard() {
                   </div>
                 </div>
                 <button onClick={() => navigate('/lobby')} className="btn-climb">
-                  ⚡ Battle to Climb
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><Zap size={18} fill="currentColor" /> Battle to Climb</span>
                 </button>
               </div>
             )}

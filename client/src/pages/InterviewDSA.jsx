@@ -96,7 +96,7 @@ export default function InterviewDSA() {
         amount: order.order?.amount || order.amount,
         currency: order.order?.currency || "INR",
         name: "Code Arena Pro",
-        description: "Unlock Premium FAANG Vault",
+        description: "Unlock Premium The Elite Archive",
         image: "/favicon.svg",
         order_id: order.order?.id || order.id,
         handler: async function (response) {
@@ -199,7 +199,7 @@ export default function InterviewDSA() {
         <div className="nav-links">
           <span onClick={() => navigate('/dashboard')}>Dashboard</span>
           <span onClick={() => navigate('/lobby')}>Practice</span>
-          <span className="active" onClick={() => navigate('/interview-dsa')}>FAANG Vault</span>
+          <span className="active" onClick={() => navigate('/interview-dsa')}>The Elite Archive</span>
           <span onClick={() => navigate('/daily-quest')}>Daily Quest</span>
           <span onClick={() => navigate('/leaderboard')}>Leaderboard</span>
           <span onClick={() => navigate('/profile')}>Profile</span>
@@ -232,7 +232,7 @@ export default function InterviewDSA() {
           >
             <div className="hero-text-content">
               <h1 className="hero-title">
-                The FAANG Vault
+                The The Elite Archive
                 <span className="pro-badge-glow">PRO</span>
               </h1>
               <p className="hero-subtitle">

@@ -254,7 +254,7 @@ FALLBACK_PROBLEMS['top-k-frequent-elements'] = {
 }
 
 // DB se problem fetch karo, fallback to hardcoded
-// Handles FAANG vault problems that may have dummy/placeholder test cases
+// Handles The Elite Archive problems that may have dummy/placeholder test cases
 const getProblem = async (problemId) => {
   try {
     const Problem = require('../models/Problem')
@@ -310,7 +310,7 @@ router.post('/run', authMiddleware, async (req, res) => {
 
     if (!problem.testCases || problem.testCases.length === 0) {
       return res.status(400).json({
-        message: '⚠️ Test cases for this Premium problem are not yet available. The problem was loaded from the FAANG Vault but has no executable test data. Please try a different problem or contact support.',
+        message: '⚠️ Test cases for this Premium problem are not yet available. The problem was loaded from the The Elite Archive but has no executable test data. Please try a different problem or contact support.',
         results: []
       })
     }
