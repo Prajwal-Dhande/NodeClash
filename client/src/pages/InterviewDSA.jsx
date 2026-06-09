@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import API_URL from "../config/api";
@@ -31,6 +31,51 @@ const PlayIcon = () => (
   </svg>
 );
 
+const CustomDropdown = ({ options, value, onChange, placeholder, width = 180 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setIsOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="custom-dropdown" ref={dropdownRef} style={{ width }}>
+      <div className="cd-header" onClick={() => setIsOpen(!isOpen)}>
+        <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {value === 'All' ? placeholder : value}
+        </span>
+        <svg style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', flexShrink: 0 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10, scale: 0.95 }} 
+            animate={{ opacity: 1, y: 0, scale: 1 }} 
+            exit={{ opacity: 0, y: -10, scale: 0.95 }} 
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="cd-menu"
+          >
+            {options.map(opt => (
+              <div 
+                key={opt} 
+                className={`cd-item ${value === opt ? 'active' : ''}`}
+                onClick={() => { onChange(opt); setIsOpen(false); }}
+              >
+                {opt}
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 export default function InterviewDSA() {
   const [isPremium, setIsPremium] = useState(false);
   const [problems, setProblems] = useState([]);
@@ -39,6 +84,8 @@ export default function InterviewDSA() {
   // Filters
   const [diffFilter, setDiffFilter] = useState('All');
   const [topicFilter, setTopicFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('All Status');
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Modal states
   const [showPaywall, setShowPaywall] = useState(false);
@@ -156,7 +203,17 @@ export default function InterviewDSA() {
   const filteredProblems = problems.filter(p => {
     const diffMatch = diffFilter === 'All' || p.difficulty === diffFilter;
     const topicMatch = topicFilter === 'All' || p.category === topicFilter;
-    return diffMatch && topicMatch;
+    
+    let statusMatch = true;
+    if (statusFilter !== 'All Status') {
+      const isSolved = user?.solvedProblems?.includes(p._id) || user?.solvedProblems?.includes(p.slug);
+      if (statusFilter === 'Solved') statusMatch = isSolved;
+      if (statusFilter === 'Unsolved') statusMatch = !isSolved;
+    }
+    
+    const searchMatch = !searchQuery || p.title.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return diffMatch && topicMatch && statusMatch && searchMatch;
   });
 
   const getCompanyColor = (company) => {
@@ -207,7 +264,7 @@ export default function InterviewDSA() {
         <div style={{ flex: 1 }} />
         <ThemeToggle />
         <div className="user-chip" onClick={() => navigate('/profile')} style={{ marginLeft: 16 }}>
-          <div className="rank-icon">🥇 PRO</div>
+          <div className="rank-icon">PRO</div>
           <div className="avatar">{initials}</div>
           <span className="username">{user?.username || 'Player_01'}</span>
         </div>
@@ -232,7 +289,7 @@ export default function InterviewDSA() {
           >
             <div className="hero-text-content">
               <h1 className="hero-title">
-                The The Elite Archive
+                The Elite Archive
                 <span className="pro-badge-glow">PRO</span>
               </h1>
               <p className="hero-subtitle">
@@ -264,15 +321,37 @@ export default function InterviewDSA() {
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
             className="vault-container premium-glass-panel"
           >
-            <div className="vault-header">
-              <div className="filters-group">
-                <select value={diffFilter} onChange={e => setDiffFilter(e.target.value)} className="vault-select">
-                  {DIFFICULTIES.map(d => <option key={d} value={d}>{d} Difficulty</option>)}
-                </select>
-                <select value={topicFilter} onChange={e => setTopicFilter(e.target.value)} className="vault-select">
-                  {TOPICS.map(t => <option key={t} value={t}>{t === 'All' ? 'All Topics' : t}</option>)}
-                </select>
-
+            <div className="vault-header" style={{ flexWrap: 'wrap', gap: '16px' }}>
+              <div className="filters-group" style={{ flexWrap: 'wrap' }}>
+                <input 
+                  type="text" 
+                  placeholder="Search problems..." 
+                  value={searchQuery} 
+                  onChange={e => setSearchQuery(e.target.value)} 
+                  className="vault-search"
+                  style={{ minWidth: '220px' }}
+                />
+                <CustomDropdown 
+                  options={['All Status', 'Solved', 'Unsolved']} 
+                  value={statusFilter} 
+                  onChange={setStatusFilter} 
+                  placeholder="All Status"
+                  width={150}
+                />
+                <CustomDropdown 
+                  options={DIFFICULTIES} 
+                  value={diffFilter} 
+                  onChange={setDiffFilter} 
+                  placeholder={diffFilter === 'All' ? 'All Difficulty' : `${diffFilter} Difficulty`}
+                  width={150}
+                />
+                <CustomDropdown 
+                  options={TOPICS} 
+                  value={topicFilter} 
+                  onChange={setTopicFilter} 
+                  placeholder="All Topics"
+                  width={170}
+                />
               </div>
               <div className="problem-count">
                 {filteredProblems.length} Problems Match
@@ -310,12 +389,12 @@ export default function InterviewDSA() {
                         onClick={() => handleProblemClick(p)}
                       >
                         <div style={{ flex: 2, display: 'flex', alignItems: 'center', gap: 16 }}>
-                          <div className="company-badge" style={{ borderColor: `${getCompanyColor(p.topCompany)}40`, background: `${getCompanyColor(p.topCompany)}10`, color: getCompanyColor(p.topCompany) }}>
+                          <div className="company-badge" style={{ borderColor: `${getCompanyColor(p.topCompany)}40`, background: `${getCompanyColor(p.topCompany)}10`, color: getCompanyColor(p.topCompany), flexShrink: 0 }}>
                             {(idx + 1).toString().padStart(2, '0')}
                           </div>
-                          <div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
                             <div className="p-title">
-                              {p.title} 
+                              <span style={{ display: 'inline', whiteSpace: 'normal', wordBreak: 'break-word' }}>{p.title}</span> 
                               {p.tier === 'premium' && <span className="premium-tag">PRO</span>}
                             </div>
                             <div className="p-category">{p.category}</div>
@@ -502,9 +581,26 @@ export default function InterviewDSA() {
         .vault-container { overflow: hidden; display: flex; flex-direction: column; min-height: 600px; }
         .vault-header { padding: 20px 24px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); }
         .filters-group { display: flex; gap: 12px; }
-        .vault-select { background: var(--glass-overlay); border: 1px solid var(--glass-border); color: var(--text-main); padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; outline: none; cursor: pointer; fontFamily: Inter; transition: all 0.2s; }
-        .vault-select:hover { border-color: var(--glass-border-strong); }
-        .vault-select option { background: var(--bg); color: var(--text-main); }
+        
+        .vault-search { background: var(--glass-overlay); border: 1px solid var(--glass-border); color: var(--text-main); padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 500; outline: none; transition: all 0.2s; font-family: Inter, sans-serif; box-sizing: border-box; }
+        .vault-search:focus { border-color: #ff6b35; box-shadow: 0 0 0 2px rgba(255,107,53,0.2); }
+        .vault-search::placeholder { color: var(--text-muted); }
+
+        /* CUSTOM DROPDOWN */
+        .custom-dropdown { position: relative; font-family: Inter, sans-serif; z-index: 20; box-sizing: border-box; }
+        .cd-header { background: var(--glass-overlay); border: 1px solid var(--glass-border); color: var(--text-main); padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; user-select: none; box-sizing: border-box; height: 100%; }
+        .cd-header:hover { border-color: var(--glass-border-strong); background: var(--glass-overlay-hover); }
+        .cd-header svg { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: var(--text-muted); margin-left: 8px; }
+        .cd-menu { position: absolute; top: calc(100% + 8px); left: 0; width: 100%; background: var(--panel-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border); border-radius: 12px; padding: 6px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); max-height: 260px; overflow-y: auto; z-index: 100; box-sizing: border-box; }
+        .cd-item { padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+        .cd-item:hover { background: var(--glass-overlay); color: var(--text-main); }
+        .cd-item.active { background: rgba(255,107,53,0.1); color: #ff6b35; font-weight: 600; }
+        
+        .cd-menu::-webkit-scrollbar { width: 6px; }
+        .cd-menu::-webkit-scrollbar-track { background: transparent; }
+        .cd-menu::-webkit-scrollbar-thumb { background: var(--glass-border-strong); border-radius: 10px; }
+        .cd-menu::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
         .problem-count { font-size: 13px; color: var(--text-muted); font-weight: 500; }
 
         .vault-list { flex: 1; display: flex; flex-direction: column; }
@@ -517,8 +613,8 @@ export default function InterviewDSA() {
         .locked-row:hover { opacity: 1; }
         
         .company-badge { width: 36px; height: 36px; border-radius: 10px; border: 1px solid; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; font-family: Outfit; }
-        .p-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
-        .premium-tag { background: linear-gradient(135deg, #d946ef, #8b5cf6); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; color: #fff; letter-spacing: 0.5px; }
+        .p-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; line-height: 1.4; }
+        .premium-tag { background: linear-gradient(135deg, #d946ef, #8b5cf6); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; color: #fff; letter-spacing: 0.5px; display: inline-block; vertical-align: middle; margin-left: 8px; margin-bottom: 2px; }
         .p-category { font-size: 12px; color: var(--text-muted); font-weight: 500; }
         
         .freq-badge { display: inline-flex; background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.2); color: #ff6b35; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }

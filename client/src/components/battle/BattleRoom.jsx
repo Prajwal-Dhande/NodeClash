@@ -1351,7 +1351,7 @@ export default function BattleRoom() {
                       <div className="example-label">EXAMPLE {i + 1}</div>
                       <div className="code-line" style={{ color: '#fb923c', whiteSpace: 'pre-wrap' }}>Input: {ex.input}</div>
                       <div className="code-line" style={{ color: '#22c55e', whiteSpace: 'pre-wrap' }}>Output: {ex.output}</div>
-                      {ex.explain && <div className="explain-text" style={{ whiteSpace: 'pre-wrap' }}>{ex.explain}</div>}
+                      {ex.explain && <div className="explain-text" style={{ whiteSpace: 'pre-wrap', marginTop: 4 }}><strong>Explanation:</strong> {ex.explain}</div>}
                     </div>
                   ))}
 

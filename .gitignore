@@ -31,4 +31,4 @@ Thumbs.db
 
 # 🧪 Testing & Coverage
 coverage/
-.nyc_output/
+.nyc_output/server/src/scripts/
