@@ -372,8 +372,8 @@ export default function Navbar() {
         .nav-actions { display: flex; gap: 10px; align-items: center; }
         
         .nav-link { 
-          color: var(--text-secondary); 
-          font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease-in-out; 
+          color: #e5e5e5; 
+          font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease-in-out; 
           border-bottom: 2px solid transparent; padding-bottom: 2px;
         }
         .nav-link:hover { 

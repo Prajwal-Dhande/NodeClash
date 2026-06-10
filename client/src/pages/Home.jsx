@@ -33,6 +33,8 @@ export default function Home() {
       </Helmet>
       {/* 👆🔥 MAIN LANDING PAGE SEO 🔥👆 */}
 
+      <div className="ambient-glow" />
+
       <Navbar />
       <Hero />
       <div id="features"><Features /></div>
@@ -81,6 +83,18 @@ export default function Home() {
 
       <style>{`
         /* ── FAQ SECTION ── */
+        .ambient-glow { 
+          position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; 
+          background: 
+            radial-gradient(circle at 50% -20%, rgba(255, 107, 53, 0.25) 0%, rgba(255, 107, 53, 0.08) 40%, transparent 70%),
+            radial-gradient(circle at 100% 100%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 0% 100%, rgba(255, 107, 53, 0.1) 0%, transparent 50%);
+          animation: pulseGlow 8s ease-in-out infinite alternate;
+        }
+        @keyframes pulseGlow {
+          0% { opacity: 0.8; }
+          100% { opacity: 1.2; }
+        }
         .faq-section {
           position: relative; z-index: 1; width: 100%; max-width: 800px; margin: 0 auto;
         }
@@ -89,21 +103,20 @@ export default function Home() {
         }
         .faq-list { display: flex; flex-direction: column; gap: 16px; }
         .faq-item {
-          background: var(--btn-bg);
-          border: 1px solid var(--border);
-          border-radius: 12px;
-          overflow: hidden;
-          transition: border-color 0.3s;
+          background: rgba(30, 30, 36, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 12px; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
-        .faq-item:hover { border-color: var(--border2); }
+        .faq-item:hover { border-color: rgba(255,107,53,0.3); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
         .faq-question {
           width: 100%; display: flex; justify-content: space-between; align-items: center;
-          padding: 20px 24px; background: transparent; border: none; color: var(--text-main);
+          padding: 24px; background: transparent; border: none; color: var(--text-main);
           font-family: Inter, sans-serif; font-size: 16px; font-weight: 600; text-align: left;
           cursor: pointer;
         }
         .faq-answer {
-          padding: 0 24px 20px; color: var(--text-dim); font-size: 15px; line-height: 1.6;
+          padding: 0 24px 24px; color: var(--text-dim); font-size: 15px; line-height: 1.6;
         }
       `}</style>
     </div>
