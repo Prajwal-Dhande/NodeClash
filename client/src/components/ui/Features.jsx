@@ -8,48 +8,12 @@ const features = [
   { icon: <BarChart3 size={32} />, bgIcon: <BarChart3 size={150} />, title: 'Live Analytics', desc: 'Execution time, space complexity, test case delta — tracked in real-time.', color: '#60a5fa', tag: 'REAL-TIME', size: 'large' },
 ]
 
-// 3D Tilt Card Logic
-function TiltCard({ icon, bgIcon, title, desc, color, tag, size }) {
-  const cardRef = useRef(null);
-  const [style, setStyle] = useState({ transition: 'transform 0.5s ease-out' });
-
-  const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    
-    // Calculate mouse position relative to card center
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    
-    // Calculate rotation (-10 to 10 degrees)
-    const rotateX = ((y - centerY) / centerY) * -10;
-    const rotateY = ((x - centerX) / centerX) * 10;
-
-    setStyle({
-      transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`,
-      transition: 'none', // Remove transition for smooth tracking
-      zIndex: 10
-    });
-  };
-
-  const handleMouseLeave = () => {
-    // Snap back to original position
-    setStyle({
-      transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
-      transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-      zIndex: 1
-    });
-  };
-
+// Premium Flat Card Logic
+function FeatureCard({ icon, bgIcon, title, desc, color, tag, size }) {
   return (
     <div 
-      ref={cardRef}
       className={`bento-card ${size}`} 
-      style={{ '--hover-color': color, ...style }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      style={{ '--hover-color': color }}
     >
       <div className="card-glow" style={{ background: color }} />
       
@@ -81,7 +45,7 @@ export default function Features() {
 
         <div className="bento-grid">
           {features.map((feature) => (
-            <TiltCard key={feature.title} {...feature} />
+            <FeatureCard key={feature.title} {...feature} />
           ))}
         </div>
       </div>
@@ -95,26 +59,27 @@ export default function Features() {
         .features-title { font-family: Outfit, sans-serif; font-weight: 800; font-size: clamp(2.5rem, 4vw, 3.5rem); color: var(--text-main); line-height: 1.1; margin: 0; letter-spacing: -1px; }
         .text-glow { color: var(--orange); text-shadow: 0 0 30px rgba(255,107,53,0.4); }
         
-        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; transform-style: preserve-3d; }
+        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         
-        .bento-card { position: relative; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 32px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; will-change: transform; cursor: default; }
-        .bento-card.large { grid-column: span 2; min-height: 280px; }
-        .bento-card.small { grid-column: span 1; min-height: 280px; }
+        .bento-card { position: relative; background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 36px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; cursor: default; box-shadow: inset 0 1px 1px var(--glass-border), 0 10px 30px rgba(0, 0, 0, 0.1); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bento-card.large { grid-column: span 2; min-height: 320px; }
+        .bento-card.small { grid-column: span 1; min-height: 320px; }
         
-        .bento-card:hover { border-color: var(--hover-color); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
-        .card-glow { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 150px; filter: blur(80px); opacity: 0; transition: opacity 0.4s; z-index: -1; }
-        .bento-card:hover .card-glow { opacity: 0.15; }
+        .bento-card:hover { transform: translateY(-4px); border-color: var(--border); box-shadow: inset 0 1px 1px var(--glass-border), 0 20px 50px rgba(0,0,0,0.15); }
+        .card-glow { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 250px; height: 250px; filter: blur(100px); opacity: 0; transition: opacity 0.5s; z-index: -1; pointer-events: none; }
+        .bento-card:hover .card-glow { opacity: 0.25; }
         
-        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: auto; transform: translateZ(30px); }
-        .feature-icon-wrapper { background: var(--bg3); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 16px; border: 1px solid var(--border2); }
-        .feature-badge { font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 6px 12px; border-radius: 30px; border: 1px solid; }
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: auto; }
+        .feature-icon-wrapper { background: var(--glass-overlay); width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-border); transition: all 0.3s; }
+        .bento-card:hover .feature-icon-wrapper { background: var(--glass-overlay); border-color: var(--border); box-shadow: 0 0 20px var(--hover-color); transform: scale(1.05); }
+        .feature-badge { font-size: 11px; font-weight: 700; letter-spacing: 1px; padding: 6px 14px; border-radius: 30px; border: 1px solid; backdrop-filter: blur(8px); }
         
-        .card-content { transform-style: preserve-3d; }
-        .card-title { font-family: Outfit, sans-serif; font-weight: 700; font-size: 22px; color: var(--text-main); margin: 30px 0 10px 0; transform: translateZ(40px); }
-        .card-desc { color: var(--text-dim); font-size: 14px; line-height: 1.6; margin: 0; max-width: 90%; transform: translateZ(20px); }
+        .card-content { position: relative; z-index: 1; }
+        .card-title { font-family: Outfit, sans-serif; font-weight: 700; font-size: 24px; color: var(--text-main); margin: 30px 0 12px 0; letter-spacing: -0.5px; }
+        .card-desc { color: var(--text-dim); font-size: 15px; line-height: 1.6; margin: 0; max-width: 90%; }
         
-        .bg-watermark { position: absolute; bottom: -20px; right: -20px; color: #fff; opacity: 0.02; z-index: 0; filter: grayscale(100%); transition: all 0.4s; transform: translateZ(-10px); }
-        .bento-card:hover .bg-watermark { opacity: 0.05; transform: scale(1.1) translateZ(-10px); }
+        .bg-watermark { position: absolute; bottom: -20px; right: -20px; color: var(--text-main); opacity: 0.02; z-index: 0; filter: grayscale(100%); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; }
+        .bento-card:hover .bg-watermark { opacity: 0.06; transform: scale(1.1) rotate(-5deg); filter: grayscale(0%); }
 
         @media (max-width: 900px) {
           .bento-grid { grid-template-columns: 1fr; }

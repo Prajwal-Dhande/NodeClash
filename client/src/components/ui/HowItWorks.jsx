@@ -47,20 +47,24 @@ export default function HowItWorks() {
         .hiw-desc { color: var(--text-dim); font-size: 16px; line-height: 1.6; max-width: 300px; }
 
         .hiw-right { flex: 1.5; position: relative; padding-left: 40px; }
-        .timeline-line { position: absolute; top: 0; bottom: 0; left: 19px; width: 2px; background: linear-gradient(to bottom, transparent, var(--border2) 10%, var(--border2) 90%, transparent); }
+        .timeline-line { position: absolute; top: 0; bottom: 0; left: 19px; width: 2px; background: linear-gradient(180deg, transparent, rgba(255,107,53,0.5), transparent); background-size: 100% 200%; animation: timelineFlow 3s linear infinite; }
+        @keyframes timelineFlow {
+          0% { background-position: 0 -100%; }
+          100% { background-position: 0 100%; }
+        }
         
         .steps-wrapper { display: flex; flex-direction: column; gap: 3rem; }
         
-        .step-card { position: relative; background: var(--btn-bg); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 16px; padding: 40px; transition: all 0.3s; overflow: hidden; cursor: default; }
-        .step-card:hover { transform: translateX(10px); border-color: var(--border2); background: var(--card-bg); }
+        .step-card { position: relative; background: var(--card-bg); backdrop-filter: blur(24px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 40px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; cursor: default; box-shadow: inset 0 1px 0 var(--glass-border); }
+        .step-card:hover { transform: translateX(12px); border-color: var(--border); background: var(--nav-bg); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 var(--glass-border); }
         
-        .bg-num { position: absolute; right: -10px; bottom: -30px; font-family: Outfit, sans-serif; font-weight: 900; font-size: 140px; color: var(--btn-bg); line-height: 1; z-index: 0; transition: color 0.3s; pointer-events: none; }
-        .step-card:hover .bg-num { opacity: 0.6; }
+        .bg-num { position: absolute; right: -10px; bottom: -40px; font-family: Outfit, sans-serif; font-weight: 900; font-size: 160px; color: var(--glass-border); line-height: 1; z-index: 0; transition: color 0.4s; pointer-events: none; }
+        .step-card:hover .bg-num { color: var(--glass-overlay); }
         
         .step-content { position: relative; z-index: 1; }
-        .step-dot { position: absolute; left: -63px; top: 6px; width: 10px; height: 10px; border-radius: 50%; }
+        .step-dot { position: absolute; left: -63px; top: 6px; width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 15px currentColor; }
         
-        .step-title { font-family: Outfit, sans-serif; font-weight: 800; font-size: 18px; margin: 0 0 12px 0; letter-spacing: 1px; }
+        .step-title { font-family: Outfit, sans-serif; font-weight: 800; font-size: 20px; margin: 0 0 12px 0; letter-spacing: -0.5px; color: var(--text-main); }
         .step-desc { color: var(--text-dim); font-size: 15px; line-height: 1.7; margin: 0; max-width: 90%; }
 
         @media (max-width: 900px) {

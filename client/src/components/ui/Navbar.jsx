@@ -127,6 +127,7 @@ export default function Navbar() {
       }
     } else {
       navigate(href)
+      window.scrollTo(0, 0)
     }
   }
 
@@ -314,12 +315,12 @@ export default function Navbar() {
               <span onClick={() => navigate('/profile')} className="profile-btn" title="View Profile">
                 {(user?.username || 'P').slice(0, 2).toUpperCase()}
               </span>
-              <button onClick={() => navigate('/lobby')} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Zap size={16} /> Enter Arena</button>
+              <button onClick={() => { navigate('/lobby'); window.scrollTo(0, 0); }} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Zap size={16} /> Enter Arena</button>
             </>
           ) : (
             <>
               <button onClick={() => navigate('/auth')} className="btn-secondary">Log In</button>
-              <button onClick={() => navigate('/lobby')} className="btn-primary">Enter Arena</button>
+              <button onClick={() => { navigate('/lobby'); window.scrollTo(0, 0); }} className="btn-primary">Enter Arena</button>
             </>
           )}
         </div>
@@ -342,11 +343,11 @@ export default function Navbar() {
           ))}
           <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
             {isLoggedIn ? (
-              <button onClick={() => navigate('/lobby')} className="btn-primary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}><Zap size={16} /> Enter Arena</button>
+              <button onClick={() => { navigate('/lobby'); window.scrollTo(0, 0); }} className="btn-primary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}><Zap size={16} /> Enter Arena</button>
             ) : (
               <>
                 <button onClick={() => navigate('/auth')} className="btn-secondary" style={{ width: '100%' }}>Log In</button>
-                <button onClick={() => navigate('/lobby')} className="btn-primary">Enter Arena</button>
+                <button onClick={() => { navigate('/lobby'); window.scrollTo(0, 0); }} className="btn-primary">Enter Arena</button>
               </>
             )}
           </div>
@@ -356,30 +357,31 @@ export default function Navbar() {
       <style>{`
         .navbar {
           position: fixed; top: 0; width: 100%; z-index: 100;
-          background: var(--nav-bg); backdrop-filter: blur(20px);
-          border-bottom: 1px solid transparent;
+          background: rgba(6, 6, 8, 0.3); 
+          backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.03);
           display: flex; justify-content: space-between; align-items: center;
           padding: 0 32px; height: 60px; transition: all 0.3s;
           font-family: Inter, sans-serif;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         .navbar.scrolled { 
-          background: var(--nav-bg); 
+          background: rgba(6, 6, 8, 0.65); 
           border-bottom: 1px solid rgba(255,107,53,0.15);
+          box-shadow: 0 4px 30px rgba(0,0,0,0.5);
         }
         .logo { font-family: Outfit, sans-serif; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; cursor: pointer; }
         .nav-links { display: flex; gap: 32px; align-items: center; }
         .nav-actions { display: flex; gap: 10px; align-items: center; }
         
         .nav-link { 
-          color: #e5e5e5; 
-          font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease-in-out; 
-          border-bottom: 2px solid transparent; padding-bottom: 2px;
+          color: var(--text-dim); 
+          font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+          padding: 6px 14px; border-radius: 20px;
         }
         .nav-link:hover { 
           color: var(--text-main); 
-          text-shadow: 0 0 10px rgba(255,107,53,0.2);
-          border-color: rgba(255,107,53,0.5);
+          background: var(--glass-overlay);
+          box-shadow: inset 0 0 0 1px var(--glass-border);
         }
         
         .btn-primary { font-family: Inter; font-size: 13px; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--orange), var(--orange2)); border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; box-shadow: 0 5px 15px rgba(255,107,53,0.2); }

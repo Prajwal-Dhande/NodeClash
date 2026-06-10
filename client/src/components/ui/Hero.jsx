@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Zap, Trophy, Bot } from 'lucide-react'
+import { Zap, Trophy, Bot, CheckCircle2 } from 'lucide-react'
 
 const TESTIMONIALS = [
   { name: 'Arjun K.', role: 'System Engineer @ TCS', stars: 5, color: '#ff6b35', text: 'The free tier gave me a solid foundation, but the PRO The Elite Archive is what actually got me my TCS Digital offer. The curated problems are scarily accurate.' },
@@ -21,15 +21,15 @@ const TESTIMONIALS = [
 
 const codeLines = [
   { text: '// AI Constraint: O(n) time only', color: 'var(--text-muted)' },
-  { text: 'function twoSum(nums, target) {', color: '#e5e5e5' },
-  { text: '  const map = new Map();', color: '#a8b4c8' },
-  { text: '  for (let i = 0; i < nums.length; i++) {', color: '#a8b4c8' },
-  { text: '    const diff = target - nums[i];', color: '#e5e5e5' },
-  { text: '    if (map.has(diff))', color: '#e5e5e5' },
+  { text: 'function twoSum(nums, target) {', color: 'var(--text-main)' },
+  { text: '  const map = new Map();', color: 'var(--text-dim)' },
+  { text: '  for (let i = 0; i < nums.length; i++) {', color: 'var(--text-dim)' },
+  { text: '    const diff = target - nums[i];', color: 'var(--text-main)' },
+  { text: '    if (map.has(diff))', color: 'var(--text-main)' },
   { text: '      return [map.get(diff), i];', color: '#ff6b35' },
-  { text: '    map.set(nums[i], i);', color: '#a8b4c8' },
-  { text: '  }', color: '#a8b4c8' },
-  { text: '}', color: '#e5e5e5' },
+  { text: '    map.set(nums[i], i);', color: 'var(--text-dim)' },
+  { text: '  }', color: 'var(--text-dim)' },
+  { text: '}', color: 'var(--text-main)' },
 ]
 
 export default function Hero() {
@@ -100,17 +100,12 @@ export default function Hero() {
             <button onClick={() => navigate('/leaderboard')} className="btn-leaderboard" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Trophy size={18} /> Leaderboard</button>
           </div>
 
-          <div className="stats-box">
-            {[
-              { val: '2.4K', label: 'Battles today', color: '#ff6b35' },
-              { val: '98ms', label: 'Avg latency', color: '#22c55e' },
-              { val: '500+', label: 'Problems', color: '#fb923c' },
-            ].map(({ val, label, color }, i) => (
-              <div key={label} className={`stat-item ${i < 2 ? 'border-right' : ''}`}>
-                <div style={{ color }} className="stat-val">{val}</div>
-                <div className="stat-label">{label}</div>
-              </div>
-            ))}
+          <div className="trust-badges">
+            <span className="trust-item"><span className="text-glow">2.4K+</span> Battles Today</span>
+            <span className="dot">•</span>
+            <span className="trust-item"><span style={{ color: '#22c55e' }}>98ms</span> Avg Latency</span>
+            <span className="dot">•</span>
+            <span className="trust-item"><span>500+</span> Problems</span>
           </div>
         </div>
 
@@ -192,7 +187,10 @@ export default function Hero() {
                 <div className="testimonial-author">
                   <div className="testimonial-avatar" style={{ background: t.color }}>{t.name[0]}</div>
                   <div>
-                    <div className="testimonial-name">{t.name}</div>
+                    <div className="testimonial-name" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      {t.name}
+                      <CheckCircle2 size={13} color="#3b82f6" fill="rgba(59, 130, 246, 0.2)" />
+                    </div>
                     <div className="testimonial-role">{t.role}</div>
                   </div>
                 </div>
@@ -208,7 +206,10 @@ export default function Hero() {
                 <div className="testimonial-author">
                   <div className="testimonial-avatar" style={{ background: t.color }}>{t.name[0]}</div>
                   <div>
-                    <div className="testimonial-name">{t.name}</div>
+                    <div className="testimonial-name" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      {t.name}
+                      <CheckCircle2 size={13} color="#3b82f6" fill="rgba(59, 130, 246, 0.2)" />
+                    </div>
                     <div className="testimonial-role">{t.role}</div>
                   </div>
                 </div>
@@ -248,30 +249,29 @@ export default function Hero() {
 
         .glow-circle-left { position: absolute; top: 30%; left: 5%; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(255,107,53,0.06) 0%, transparent 65%); pointer-events: none; }
         .glow-circle-right { position: absolute; bottom: 10%; right: 10%; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(247,69,29,0.05) 0%, transparent 65%); pointer-events: none; }
-        .hero-container { max-width: 1200px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; position: relative; z-index: 1; transform-style: preserve-3d; }
+        .hero-container { max-width: 1250px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 4rem; align-items: center; position: relative; z-index: 1; transform-style: preserve-3d; }
         
-        .badge { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; color: var(--orange); border: 1px solid rgba(255,107,53,0.25); background: var(--orange-dim); padding: 5px 12px; border-radius: 6px; margin-bottom: 24px; letter-spacing: 1px; }
-        .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); animation: pulse 1.5s infinite; }
-        .hero-title { font-family: Outfit, sans-serif; font-weight: 900; font-size: clamp(2.8rem, 5vw, 4rem); line-height: 1.05; margin-bottom: 20px; color: var(--text-main); letter-spacing: -2px; }
-        .gradient-text { background: linear-gradient(90deg, var(--orange), var(--orange2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero-desc { color: var(--text-dim); font-size: 1rem; line-height: 1.8; margin-bottom: 32px; max-width: 440px; border-left: 2px solid rgba(255,107,53,0.3); padding-left: 16px; }
-        .hero-desc strong { color: var(--text); }
+        .badge { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; color: var(--text-main); border: 1px solid var(--glass-border); background: var(--glass-overlay); padding: 6px 14px; border-radius: 30px; margin-bottom: 24px; letter-spacing: 0.5px; backdrop-filter: blur(8px); }
+        .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); animation: pulse 1.5s infinite; box-shadow: 0 0 10px var(--orange); }
+        .hero-title { font-family: Outfit, sans-serif; font-weight: 900; font-size: clamp(3rem, 5vw, 4.5rem); line-height: 1.05; margin-bottom: 20px; color: var(--text-main); letter-spacing: -2px; }
+        .gradient-text { background: linear-gradient(135deg, var(--orange), #fcd34d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-desc { color: var(--text-dim); font-size: 1.05rem; line-height: 1.8; margin-bottom: 36px; max-width: 440px; }
+        .hero-desc strong { color: var(--text-main); font-weight: 600; }
         
-        .hero-buttons { display: flex; gap: 12px; margin-bottom: 48px; }
-        .btn-start { font-family: Inter; font-weight: 700; font-size: 14px; color: #fff; background: linear-gradient(135deg, var(--orange), var(--orange2)); border: none; padding: 12px 28px; border-radius: 9px; cursor: pointer; transition: all 0.2s; }
-        .btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,107,53,0.35); }
-        .btn-leaderboard { font-family: Inter; font-weight: 600; font-size: 14px; color: var(--text-dim); background: transparent; border: 1px solid var(--border2); padding: 12px 24px; border-radius: 9px; cursor: pointer; transition: all 0.2s; }
-        .btn-leaderboard:hover { border-color: var(--orange); color: var(--text); }
+        .hero-buttons { display: flex; gap: 14px; margin-bottom: 24px; }
+        .btn-start { font-family: Inter; font-weight: 700; font-size: 14px; color: #111; background: linear-gradient(135deg, var(--orange), #fcd34d); border: none; padding: 12px 28px; border-radius: 30px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 14px 0 rgba(255, 107, 53, 0.39), inset 0 -2px 0 rgba(0,0,0,0.1); }
+        .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,53,0.5), inset 0 -2px 0 rgba(0,0,0,0.1); filter: brightness(1.1); }
+        .btn-leaderboard { font-family: Inter; font-weight: 600; font-size: 14px; color: var(--text-main); background: transparent; border: 1px solid var(--border); padding: 12px 24px; border-radius: 30px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-leaderboard:hover { background: var(--bg3); border-color: var(--text-dim); }
         
-        .stats-box { display: flex; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; overflow: hidden; background: rgba(20, 20, 24, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-        .stat-item { flex: 1; padding: 16px; text-align: center; }
-        .border-right { border-right: 1px solid rgba(255,255,255,0.08); }
-        .stat-val { font-family: Outfit, sans-serif; font-weight: 800; font-size: 22px; }
-        .stat-label { font-size: 11px; color: var(--text-hint); margin-top: 3px; }
+        .trust-badges { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-dim); font-weight: 500; font-family: Inter, sans-serif; }
+        .trust-badges .dot { opacity: 0.3; }
+        .trust-badges strong { color: var(--text-main); font-weight: 700; }
+        .trust-item { display: flex; gap: 4px; align-items: center; }
         
-        .terminal-wrapper { position: relative; width: 100%; transform-style: preserve-3d; will-change: transform; }
-        .ai-alert { position: absolute; top: -14px; right: 16px; z-index: 2; background: var(--red); color: #fff; font-family: Inter; font-weight: 700; font-size: 11px; padding: 4px 10px; border-radius: 5px; letter-spacing: 0.5px; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2); }
-        .terminal-window { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        .terminal-wrapper { position: relative; width: 100%; transform-style: preserve-3d; will-change: transform; filter: drop-shadow(0 25px 50px rgba(0,0,0,0.5)); }
+        .ai-alert { position: absolute; top: -14px; right: 16px; z-index: 2; background: rgba(239, 68, 68, 0.9); backdrop-filter: blur(8px); color: #fff; font-family: Inter; font-weight: 700; font-size: 11px; padding: 6px 12px; border-radius: 20px; letter-spacing: 0.5px; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); border: 1px solid rgba(255,255,255,0.2); }
+        .terminal-window { background: var(--nav-bg); backdrop-filter: blur(24px); border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; box-shadow: inset 0 1px 0 var(--glass-border); }
         .terminal-header { display: flex; align-items: center; gap: 6px; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--bg3); }
         .terminal-path { font-family: JetBrains Mono, monospace; font-size: 11px; color: var(--text-hint); margin-left: 8px; flex: 1; }
         .terminal-live { font-family: Inter; font-size: 11px; color: var(--green); font-weight: 600; }
@@ -334,10 +334,10 @@ export default function Hero() {
         }
         .testimonial-card {
           flex-shrink: 0; width: 340px;
-          background: rgba(20, 20, 24, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-          border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px;
+          background: var(--card-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+          border: 1px solid var(--glass-border); border-radius: 16px;
           padding: 28px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+          box-shadow: 0 8px 30px rgba(0,0,0,0.1);
         }
         .testimonial-card:hover { border-color: rgba(255,107,53,0.4); transform: translateY(-4px); box-shadow: 0 15px 40px rgba(255,107,53,0.15); }
         .testimonial-stars { color: #fbbf24; font-size: 15px; margin-bottom: 14px; letter-spacing: 2px; }

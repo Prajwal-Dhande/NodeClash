@@ -5,6 +5,7 @@ import Navbar from '../components/ui/Navbar'
 import Hero from '../components/ui/Hero'
 import Features from '../components/ui/Features'
 import HowItWorks from '../components/ui/HowItWorks'
+import PricingTeaser from '../components/ui/PricingTeaser'
 import Footer from '../components/ui/Footer'
 
 const FAQS = [
@@ -40,6 +41,8 @@ export default function Home() {
       <div id="features"><Features /></div>
       <div id="how-it-works"><HowItWorks /></div>
       
+      <PricingTeaser />
+
       {/* FAQ SECTION */}
       <div className="faq-section" style={{ padding: '80px 20px' }}>
         <h2 className="faq-title">Frequently Asked Questions</h2>
@@ -101,22 +104,22 @@ export default function Home() {
         .faq-title {
           font-family: Outfit, sans-serif; font-size: 32px; font-weight: 800; color: var(--text-main); text-align: center; margin-bottom: 40px; letter-spacing: -1px;
         }
-        .faq-list { display: flex; flex-direction: column; gap: 16px; }
+        .faq-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--glass-border); }
         .faq-item {
-          background: rgba(30, 30, 36, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          border-radius: 12px; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+          background: transparent; backdrop-filter: none;
+          border: none; border-bottom: 1px solid var(--glass-border);
+          border-radius: 0; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: none;
         }
-        .faq-item:hover { border-color: rgba(255,107,53,0.3); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+        .faq-item:hover { background: var(--glass-overlay); }
         .faq-question {
           width: 100%; display: flex; justify-content: space-between; align-items: center;
-          padding: 24px; background: transparent; border: none; color: var(--text-main);
-          font-family: Inter, sans-serif; font-size: 16px; font-weight: 600; text-align: left;
-          cursor: pointer;
+          padding: 24px 16px; background: transparent; border: none; color: var(--text-main);
+          font-family: Inter, sans-serif; font-size: 17px; font-weight: 500; text-align: left;
+          cursor: pointer; letter-spacing: -0.3px;
         }
         .faq-answer {
-          padding: 0 24px 24px; color: var(--text-dim); font-size: 15px; line-height: 1.6;
+          padding: 0 16px 24px; color: var(--text-dim); font-size: 15px; line-height: 1.7;
         }
       `}</style>
     </div>
