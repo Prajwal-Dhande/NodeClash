@@ -56,7 +56,7 @@ export default function Leaderboard() {
   }, [])
 
   const filtered = players.filter(p =>
-    p.username.toLowerCase().includes(search.toLowerCase())
+    (p.username || '').toLowerCase().includes(search.toLowerCase())
   )
 
   const top3 = players.slice(0, 3)
