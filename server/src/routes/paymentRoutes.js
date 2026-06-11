@@ -92,58 +92,57 @@ router.post('/verify', authMiddleware, async (req, res) => {
 
       const user = await User.findById(req.userId).select('-password -otp -otpExpiry');
 
-      // ── Send Welcome Email ──
+      // ── Send Welcome Email (via Brevo) ──
       try {
-        const nodemailer = require('nodemailer');
-        const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-          },
-        });
-
-        if (user.email && process.env.EMAIL_USER) {
+        if (user.email && process.env.BREVO_API_KEY) {
           const planLabel = planId.includes('6m') ? 'Pro — 6 Months' : 'Pro — 1 Month';
           const amountPaid = orderDetails.amount ? `₹${(orderDetails.amount / 100).toLocaleString('en-IN')}` : 'N/A';
           const expiryStr = expiry.toLocaleDateString('en-IN', { dateStyle: 'long' });
 
-          await transporter.sendMail({
-            from: `"CodeArena" <${process.env.EMAIL_USER}>`,
-            to: user.email,
-            subject: '🎉 Welcome to CodeArena Pro!',
-            html: `
-              <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto; background: #0f0f14; border-radius: 16px; overflow: hidden;">
-                <div style="background: linear-gradient(135deg, #ff6b35, #f7451d); padding: 28px 32px;">
-                  <h1 style="color: #fff; margin: 0; font-size: 24px;">{C} CodeArena Pro</h1>
-                  <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px;">Thank you for subscribing!</p>
-                </div>
-                <div style="padding: 32px;">
-                  <p style="color: #d1d5db; font-size: 15px; line-height: 1.7;">
-                    Hey <strong style="color: #fff;">${user.username || 'Champion'}</strong>,
-                  </p>
-                  <p style="color: #d1d5db; font-size: 14px; line-height: 1.7;">
-                    You now have full access to the <strong style="color: #ff6b35;">The Elite Archive</strong>, 
-                    <strong style="color: #60a5fa;">Clara AI Interviews</strong>, ranked tournaments, and all Pro features.
-                  </p>
-                  <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; margin: 24px 0;">
-                    <table style="width: 100%; color: #d1d5db; font-size: 13px; border-collapse: collapse;">
-                      <tr><td style="padding: 8px 0; color: #888;">Plan</td><td style="text-align: right; font-weight: 700; color: #fff;">${planLabel}</td></tr>
-                      <tr><td style="padding: 8px 0; color: #888;">Amount Paid</td><td style="text-align: right; font-weight: 700; color: #ff6b35;">${amountPaid}</td></tr>
-                      <tr><td style="padding: 8px 0; color: #888;">Valid Until</td><td style="text-align: right; font-weight: 700; color: #22c55e;">${expiryStr}</td></tr>
-                      <tr><td style="padding: 8px 0; color: #888;">Order ID</td><td style="text-align: right; font-size: 11px; color: #888;">${razorpay_order_id}</td></tr>
-                    </table>
-                  </div>
-                  <a href="https://codearena.dev/interview-dsa" style="display: inline-block; background: linear-gradient(135deg, #ff6b35, #f7451d); color: #fff; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-weight: 700; font-size: 14px; margin-top: 8px;">
-                    🚀 Start Practicing Now
-                  </a>
-                  <p style="color: #666; font-size: 12px; margin-top: 28px;">
-                    If you have questions, reply to this email or reach out at support@codearena.dev.
-                  </p>
-                </div>
+          const htmlContent = `
+            <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto; background: #0f0f14; border-radius: 16px; overflow: hidden;">
+              <div style="background: linear-gradient(135deg, #ff6b35, #f7451d); padding: 28px 32px;">
+                <h1 style="color: #fff; margin: 0; font-size: 24px;">{C} CodeArena Pro</h1>
+                <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px;">Thank you for subscribing!</p>
               </div>
-            `,
+              <div style="padding: 32px;">
+                <p style="color: #d1d5db; font-size: 15px; line-height: 1.7;">
+                  Hey <strong style="color: #fff;">${user.username || 'Champion'}</strong>,
+                </p>
+                <p style="color: #d1d5db; font-size: 14px; line-height: 1.7;">
+                  You now have full access to the <strong style="color: #ff6b35;">The Elite Archive</strong>, 
+                  <strong style="color: #60a5fa;">Clara AI Interviews</strong>, ranked tournaments, and all Pro features.
+                </p>
+                <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; margin: 24px 0;">
+                  <table style="width: 100%; color: #d1d5db; font-size: 13px; border-collapse: collapse;">
+                    <tr><td style="padding: 8px 0; color: #888;">Plan</td><td style="text-align: right; font-weight: 700; color: #fff;">${planLabel}</td></tr>
+                    <tr><td style="padding: 8px 0; color: #888;">Amount Paid</td><td style="text-align: right; font-weight: 700; color: #ff6b35;">${amountPaid}</td></tr>
+                    <tr><td style="padding: 8px 0; color: #888;">Valid Until</td><td style="text-align: right; font-weight: 700; color: #22c55e;">${expiryStr}</td></tr>
+                    <tr><td style="padding: 8px 0; color: #888;">Order ID</td><td style="text-align: right; font-size: 11px; color: #888;">${razorpay_order_id}</td></tr>
+                  </table>
+                </div>
+                <a href="https://code-arena-virid.vercel.app/interview-dsa" style="display: inline-block; background: linear-gradient(135deg, #ff6b35, #f7451d); color: #fff; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-weight: 700; font-size: 14px; margin-top: 8px;">
+                  🚀 Start Practicing Now
+                </a>
+              </div>
+            </div>
+          `;
+
+          await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+              'accept': 'application/json',
+              'api-key': process.env.BREVO_API_KEY,
+              'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+              sender: { email: process.env.EMAIL_USER, name: 'CodeArena' },
+              to: [{ email: user.email }],
+              subject: '🎉 Welcome to CodeArena Pro!',
+              htmlContent: htmlContent
+            })
           });
+
           console.log(`Welcome email sent to ${user.email}`);
         }
       } catch (emailErr) {
