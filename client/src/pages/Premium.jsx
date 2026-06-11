@@ -367,8 +367,8 @@ export default function Premium() {
   const getBtnProps = (plan) => {
     let activePlanId = premiumStatus?.premiumPlan || user?.premiumPlan;
     
-    // Auto-fix for UI if activePlanId is somehow 'free' but user is Premium
-    if (isPremiumUser && (!activePlanId || activePlanId === 'free')) {
+    // Auto-fix for UI if activePlanId is somehow 'free' or 'monthly' but user is Premium
+    if (isPremiumUser && (!activePlanId || activePlanId === 'free' || activePlanId === 'monthly')) {
       activePlanId = 'pro_1m';
     }
     

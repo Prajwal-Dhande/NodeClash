@@ -26,7 +26,7 @@ router.post('/create-order', authMiddleware, async (req, res) => {
     }
 
     // Amount aur plan frontend se aayega
-    const { amount, plan } = req.body;
+    const { amount, planId } = req.body;
 
     if (!amount) {
       return res.status(400).json({ success: false, message: "Amount is required" });
@@ -38,7 +38,7 @@ router.post('/create-order', authMiddleware, async (req, res) => {
       receipt: `rcp_${Date.now()}_${req.userId.substring(18)}`, // under 40 chars
       notes: {
         userId: req.userId,
-        plan: plan || 'monthly' // Storing plan info for verification
+        plan: planId || 'pro_1m' // Storing plan info for verification
       }
     };
     
@@ -73,8 +73,17 @@ router.post('/verify', authMiddleware, async (req, res) => {
       const notes = orderDetails.notes || {};
       const planId = notes.plan || 'pro_1m';
 
-      // Calculate expiry from plan
-      const expiry = new Date();
+      const userBeforeUpdate = await User.findById(req.userId);
+
+      // Calculate expiry from plan (accumulate if already premium)
+      let expiry = new Date();
+      if (userBeforeUpdate && userBeforeUpdate.isPremium && userBeforeUpdate.premiumExpiry) {
+        const currentExpiry = new Date(userBeforeUpdate.premiumExpiry);
+        if (currentExpiry > new Date()) {
+          expiry = currentExpiry; // Start adding from current expiry
+        }
+      }
+
       if (planId.includes('6m') || planId === 'six_months' || planId === 'yearly') {
         expiry.setMonth(expiry.getMonth() + 6);
         expiry.setDate(expiry.getDate() + 7); // 7-day trial for 6-month plan
