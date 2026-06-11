@@ -41,9 +41,9 @@ const PLANS = [
   {
     id: 'pro_1m',
     name: 'Pro — 1 Month',
-    price: 1,
+    price: 249,
     originalPrice: 399,
-    priceLabel: '₹1',
+    priceLabel: '₹249',
     period: '/mo',
     saveBadge: 'Save 37%',
     desc: 'Full access to every premium feature for 1 month.',
