@@ -162,9 +162,9 @@ export default function Premium() {
   // Trust backend if available, fallback to local storage
   const isPremiumUser = premiumStatus ? premiumStatus.isPremium : user?.isPremium;
 
-  // ── Professional HTML/Tailwind Receipt Generator ──
+  // ── Professional Razorpay-Style Receipt Generator ──
   const generateReceipt = (purchaseInfo) => {
-    const { planName, amount, date, expiry, username, email } = purchaseInfo
+    const { planName, amount, date, expiry, username, email, paymentId, orderId } = purchaseInfo
     const invoiceNo = `CA-${Date.now().toString(36).toUpperCase()}`
 
     const htmlContent = `
@@ -173,133 +173,97 @@ export default function Premium() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeArena Receipt - ${invoiceNo}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: { orange: { 500: '#FF5722' }, dark: '#111111' },
-                    fontFamily: { sans: ['Inter', 'sans-serif'], signature: ['Playfair Display', 'serif'] }
-                }
-            }
-        }
-    </script>
+    <title>Payment Receipt - ${paymentId || invoiceNo}</title>
     <style>
-        body { background-color: white; margin: 0; padding: 0; display: flex; justify-content: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        .a4-page { width: 100%; max-width: 210mm; min-height: 297mm; background: white; position: relative; display: flex; flex-direction: column; }
-        @media print { 
-            @page { margin: 0; size: A4; }
-            body { background-color: white; padding: 0; margin: 0; } 
-            .a4-page { box-shadow: none; width: 100%; min-height: 100vh; page-break-after: avoid; } 
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 40px; color: #111; }
+        .container { max-width: 750px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-radius: 8px; border: 1px solid #e2e8f0; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .logo { font-size: 24px; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 8px; }
+        .logo span { color: #ff6b35; }
+        .title { font-size: 16px; font-weight: 500; color: #4b5563; }
+        
+        .table { width: 100%; border-collapse: collapse; }
+        .row { border-bottom: 1px solid #f1f5f9; }
+        .row:last-child { border-bottom: none; }
+        .label { width: 30%; color: #64748b; font-size: 14px; padding: 18px 0; vertical-align: top; }
+        .value { width: 70%; font-size: 14px; color: #0f172a; padding: 18px 0; font-weight: 500; line-height: 1.5; }
+        
+        .blue-link { color: #2563eb; cursor: pointer; text-decoration: none; }
+        .badge { display: inline-block; background: #dcfce7; color: #16a34a; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        
+        .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #94a3b8; padding-top: 20px; }
+        
+        @media print {
+            body { background-color: white; padding: 0; }
+            .container { box-shadow: none; border: none; padding: 10px; }
         }
     </style>
 </head>
-<body class="antialiased text-gray-800">
-    <div class="a4-page">
-        <!-- 1. Header Section -->
-        <div class="bg-dark text-white px-12 py-10 flex justify-between items-center" style="background-color: #111111; color: white;">
-            <div class="flex flex-col">
-                <div class="flex items-center gap-3">
-                    <span class="text-orange-500 font-bold text-3xl" style="color: #FF5722;">{C}</span>
-                    <span class="font-bold text-2xl tracking-wide">CodeArena</span>
-                </div>
-                <div class="text-gray-400 text-xs font-semibold tracking-widest mt-2" style="color: #9ca3af;">
-                    SUBSCRIPTION RECEIPT
-                </div>
-            </div>
-            <div class="text-right flex flex-col gap-1">
-                <div class="text-sm font-medium" style="color: #e5e7eb;">Invoice: ${invoiceNo}</div>
-                <div class="text-sm" style="color: #9ca3af;">${date}</div>
-            </div>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo"><span>{C}</span> CodeArena</div>
+            <div class="title">Payment Receipt</div>
         </div>
 
-        <div class="flex-grow px-12 py-12 flex flex-col">
-            <!-- 2. Billing Details Section -->
-            <div class="flex justify-between items-start mb-12">
-                <div class="flex flex-col">
-                    <div class="text-xs font-bold tracking-widest mb-3" style="color: #9ca3af;">BILLED TO</div>
-                    <div class="text-lg font-bold mb-1" style="color: #111827;">${username || 'CodeArena User'}</div>
-                    <div class="text-sm mb-1" style="color: #6b7280;">${email || 'N/A'}</div>
-                    <div class="text-sm w-48 leading-relaxed" style="color: #6b7280;">
-                        123, User Billing Address,<br>City, State
-                    </div>
-                </div>
+        <table class="table">
+            <tr class="row">
+                <td class="label">Payment ID</td>
+                <td class="value"><strong>${paymentId || 'pay_XXXXXXXXX'}</strong></td>
+            </tr>
+            <tr class="row">
+                <td class="label">Order ID</td>
+                <td class="value"><span class="blue-link">${orderId || 'order_XXXXXXXXX'}</span></td>
+            </tr>
+            <tr class="row">
+                <td class="label">Invoice ID</td>
+                <td class="value">${invoiceNo}</td>
+            </tr>
+            <tr class="row">
+                <td class="label">Payment method</td>
+                <td class="value">
+                    <div style="font-weight: 400;">Online Payment</div>
+                    <div style="color: #64748b; margin-top: 4px;">Payer Account Type: Verified</div>
+                </td>
+            </tr>
+            <tr class="row">
+                <td class="label">Customer details</td>
+                <td class="value" style="font-weight: 400;">
+                    <div>👤 ${username}</div>
+                    <div>✉️ ${email}</div>
+                </td>
+            </tr>
+            <tr class="row">
+                <td class="label">Total Amount</td>
+                <td class="value">
+                    <div>₹${Number(amount).toLocaleString('en-IN')}.00</div>
+                    <div style="color: #64748b; font-weight: 400; font-size: 13px; margin-top: 4px;">Paid at: ${date}</div>
+                </td>
+            </tr>
+            <tr class="row">
+                <td class="label">App Name</td>
+                <td class="value" style="font-weight: 400;">CodeArena</td>
+            </tr>
+            <tr class="row">
+                <td class="label">Description</td>
+                <td class="value" style="font-weight: 400;">${planName} Subscription</td>
+            </tr>
+            <tr class="row">
+                <td class="label">Notes</td>
+                <td class="value" style="font-weight: 400;">
+                    <strong>username:</strong> ${username}<br>
+                    <strong>valid_until:</strong> ${expiry}
+                </td>
+            </tr>
+        </table>
 
-                <div class="flex flex-col text-right">
-                    <div class="text-xs font-bold tracking-widest mb-3" style="color: #9ca3af;">BILLED FROM</div>
-                    <div class="text-lg font-bold mb-1" style="color: #111827;">CodeArena Tech</div>
-                    <div class="text-sm w-48 ml-auto leading-relaxed" style="color: #6b7280;">
-                        IT Park, Nagpur,<br>Maharashtra 440022, India
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. Line Items Table -->
-            <div class="mb-10">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="text-xs uppercase tracking-wider" style="background-color: #f9fafb; color: #6b7280;">
-                            <th class="py-4 px-4 font-semibold rounded-l-lg w-1/2">Description</th>
-                            <th class="py-4 px-4 font-semibold text-center w-1/4">Duration</th>
-                            <th class="py-4 px-4 font-semibold text-right rounded-r-lg w-1/4">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="border-b" style="border-color: #f3f4f6;">
-                            <td class="py-6 px-4 text-sm font-medium" style="color: #1f2937;">CodeArena Pro &mdash; ${planName.replace('PRO &mdash; ', '').replace('PRO \u2014 ', '')}</td>
-                            <td class="py-6 px-4 text-sm text-center" style="color: #4b5563;">${planName.toLowerCase().includes('6') ? '6 Months + Trial' : '1 Month'}</td>
-                            <td class="py-6 px-4 text-sm font-bold text-right" style="color: #111827;">&#8377;${Number(amount).toLocaleString('en-IN')}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- 4. Totals & PAID Badge Section -->
-            <div class="flex justify-end items-center mb-16 gap-12 border-b pb-8" style="border-color: #f3f4f6;">
-                <div class="flex items-center gap-6">
-                    <div class="text-sm font-bold" style="color: #374151;">Total Paid:</div>
-                    <div class="text-2xl font-bold" style="color: #FF5722;">&#8377;${Number(amount).toLocaleString('en-IN')}</div>
-                </div>
-                <div class="border-2 font-bold text-lg px-6 py-2 rounded uppercase tracking-widest transform -rotate-2" style="border-color: #22c55e; color: #22c55e; background-color: #f0fdf4;">
-                    PAID
-                </div>
-            </div>
-
-            <!-- 5. Validation & Signature Section -->
-            <div class="flex justify-between items-end mt-auto mb-8">
-                <div class="border rounded-xl px-5 py-3" style="background-color: #f0fdf4; border-color: #bbf7d0;">
-                    <div class="flex items-center gap-2" style="color: #16a34a;">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="font-bold text-sm">Valid Until: ${expiry}</span>
-                    </div>
-                </div>
-
-                <div class="flex flex-col items-center">
-                    <div class="font-signature text-3xl mb-2" style="color: #1f2937;">Prajwal Dhande</div>
-                    <div class="w-48 h-px mb-2" style="background-color: #d1d5db;"></div>
-                    <div class="text-xs" style="color: #9ca3af;">Authorized Signatory</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 6. Footer -->
-        <div class="border-t px-12 py-8 mt-auto" style="border-color: #f3f4f6;">
-            <div class="flex flex-col gap-1.5 text-xs" style="color: #9ca3af;">
-                <p>This is an auto-generated receipt.</p>
-                <p>CodeArena &bull; support@codearena.dev &bull; codearena.dev</p>
-                <p>Secure payment processed via Razorpay.</p>
-            </div>
+        <div class="footer">
+            <p>This is an auto-generated payment receipt for your records.</p>
+            <p>Secure payment processed via Razorpay</p>
         </div>
     </div>
     <script>
-        // Wait for Tailwind to render
-        setTimeout(() => {
-            window.print();
-        }, 800);
+        setTimeout(() => { window.print(); }, 800);
     </script>
 </body>
 </html>
@@ -376,6 +340,8 @@ export default function Premium() {
               expiry: expiryDate.toLocaleDateString('en-IN', { dateStyle: 'long' }),
               username: verifyData.user?.username || user?.username,
               email: verifyData.user?.email || user?.email,
+              paymentId: response.razorpay_payment_id,
+              orderId: response.razorpay_order_id,
             }
             setLastPurchase(purchase)
             localStorage.setItem('ca_last_receipt', JSON.stringify(purchase))
