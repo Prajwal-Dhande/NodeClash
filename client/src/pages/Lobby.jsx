@@ -1143,7 +1143,7 @@ export default function Lobby() {
         .avatar { width: 22px; height: 22px; border-radius: 50%; background: #60a5fa; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; }
         .username { font-size: 12px; font-weight: 600; color: var(--text-main); }
         
-        .lobby-container { max-width: 1200px; margin: 0 auto; padding: 60px 24px; position: relative; z-index: 10; }
+        .lobby-container { max-width: 1200px; margin: 0 auto; padding: 24px 24px 60px; position: relative; z-index: 10; }
         .lobby-header { text-align: center; margin-bottom: 40px; }
         .page-title { font-size: 32px; font-weight: 700; color: var(--text-main); margin: 0 0 12px 0; letter-spacing: -0.5px; }
         .page-subtitle { font-size: 15px; color: var(--text-muted); max-width: 500px; line-height: 1.6; margin: 0 auto; }
