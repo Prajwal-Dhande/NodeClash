@@ -1,13 +1,32 @@
 require('dotenv').config()
-const nodemailer = require('nodemailer')
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+const sendBrevoEmail = async (toEmail, subject, htmlContent) => {
+  const apiKey = process.env.BREVO_API_KEY
+  if (!apiKey) {
+    console.warn('⚠️ BREVO_API_KEY not found in .env, email will not be sent')
+    throw new Error('Missing BREVO_API_KEY')
   }
-})
+
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'api-key': apiKey,
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      sender: { email: process.env.EMAIL_USER, name: 'CodeArena' },
+      to: [{ email: toEmail }],
+      subject: subject,
+      htmlContent: htmlContent
+    })
+  })
+  
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.message || 'Failed to send email via Brevo')
+  }
+  return response.json()
+}
 
 // ✅ OTP Email
 const sendOtpEmail = async (toEmail, username, otp) => {
@@ -74,8 +93,8 @@ const sendOtpEmail = async (toEmail, username, otp) => {
   }
 
   try {
-    const info = await transporter.sendMail(mailOptions)
-    console.log(`✅ OTP email sent to ${toEmail}: ${info.messageId}`)
+    await sendBrevoEmail(toEmail, mailOptions.subject, mailOptions.html)
+    console.log(`✅ OTP email sent to ${toEmail}`)
     return { success: true }
   } catch (error) {
     console.error('❌ Email send failed:', error.message)
@@ -150,7 +169,7 @@ const sendWelcomeEmail = async (toEmail, username) => {
   }
 
   try {
-    await transporter.sendMail(mailOptions)
+    await sendBrevoEmail(toEmail, mailOptions.subject, mailOptions.html)
     console.log(`✅ Welcome email sent to ${toEmail}`)
   } catch (error) {
     console.error('❌ Welcome email failed:', error.message)
@@ -232,7 +251,7 @@ const sendExpiryEmail = async (toEmail, username, daysLeft) => {
   }
 
   try {
-    await transporter.sendMail(mailOptions)
+    await sendBrevoEmail(toEmail, mailOptions.subject, mailOptions.html)
     console.log(`✅ Expiry warning email sent to ${toEmail} (${daysLeft} days left)`)
   } catch (error) {
     console.error('❌ Expiry email failed:', error.message)
