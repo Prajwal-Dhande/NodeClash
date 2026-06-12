@@ -11,7 +11,8 @@ import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from "reac
 import { synthwaveTheme } from './MonacoThemes';
 import LofiRadio from './LofiRadio';
 import VisualFlowHint from './VisualFlowHint';
-import { CheckCircle, Lock, Bot, Brain, Swords, ClipboardList } from 'lucide-react'
+import { CheckCircle, Lock, Bot, Brain, Swords, ClipboardList, Bug, Search, Lightbulb, Pencil, Copy, RotateCcw } from 'lucide-react'
+import CompanyLogo from '../ui/CompanyLogo';
 
 const PROBLEM_COMPLEXITY = {
   'two-sum': 'O(N)',
@@ -52,11 +53,11 @@ const DIFF_COLOR = {
 }
 
 const DEFAULT_STARTER = {
-  javascript: `function solution() {\n  // Your solution here\n\n};`,
-  typescript: `function solution(): any {\n  // Your TS solution here\n\n};`,
-  python: `def solution():\n    # Your solution here\n    pass`,
-  cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\n// Your solution here`,
-  java: `class Solution {\n    // Your solution here\n}`,
+  javascript: `function solution() {\\n  // Your solution here\\n\\n};`,
+  typescript: `function solution(): any {\\n  // Your TS solution here\\n\\n};`,
+  python: `def solution():\\n    # Your solution here\\n    pass`,
+  cpp: `#include <bits/stdc++.h>\\nusing namespace std;\\n\\n// Your solution here`,
+  java: `class Solution {\\n    // Your solution here\\n}`,
 }
 
 const LanguageIcon = ({ lang }) => {
@@ -172,6 +173,7 @@ export default function BattleRoom() {
   const [aiLoading, setAiLoading] = useState(false)
   const [aiDebugHint, setAiDebugHint] = useState(null)
   const [aiDebugLoading, setAiDebugLoading] = useState(false)
+  const [codeCopied, setCodeCopied] = useState(false)
   const [voiceMode, setVoiceMode] = useState(false)
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [zenMode, setZenMode] = useState(false)
@@ -1345,8 +1347,9 @@ export default function BattleRoom() {
                            <span key={c} style={{ 
                              background: 'linear-gradient(135deg, rgba(168,85,247,0.1), rgba(236,72,153,0.1))',
                              border: '1px solid rgba(168,85,247,0.3)', color: '#c084fc',
-                             fontSize: '11px', fontWeight: '800', padding: '4px 10px', borderRadius: '6px'
-                           }}>🏢 {c}</span>
+                             fontSize: '11px', fontWeight: '800', padding: '4px 10px', borderRadius: '6px',
+                             display: 'flex', alignItems: 'center', gap: '6px'
+                           }}><CompanyLogo name={c} /> {c}</span>
                         ))}
                       </div>
                     </div>
@@ -1547,12 +1550,12 @@ export default function BattleRoom() {
               </div>
             ))}
 
-            {/* 🐛 Debug with Clara — shows after any failed test in premium mode */}
+            {/* Debug with Clara — shows after any failed test in premium mode */}
             {premiumMode && results.some(r => !r.ok) && (
               <div style={{ marginTop: 16, padding: 16, background: 'rgba(236,72,153,0.05)', border: '1px solid rgba(236,72,153,0.2)', borderRadius: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: aiDebugHint ? 14 : 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 18 }}>🐛</span>
+                    <Bug size={18} color="#ec4899" />
                     <span style={{ color: '#ec4899', fontWeight: 800, fontFamily: 'Outfit', fontSize: 13 }}>Debug with Clara</span>
                   </div>
                   {!aiDebugHint && (
@@ -1563,8 +1566,8 @@ export default function BattleRoom() {
                       display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s'
                     }}>
                       {aiDebugLoading
-                        ? <><span style={{ width: 10, height: 10, border: '2px solid rgba(255,255,255,0.3)', borderTopcolor: 'var(--text-main)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', display: 'inline-block' }} /> Analyzing...</>
-                        : '🔍 Find Bug'}
+                        ? <><span style={{ width: 10, height: 10, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'var(--text-main)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', display: 'inline-block' }} /> Analyzing...</>
+                        : <><Search size={14} /> Find Bug</>}
                     </button>
                   )}
                 </div>
@@ -1580,25 +1583,45 @@ export default function BattleRoom() {
                     )}
                     {/* Bug Description */}
                     <div style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.15)', borderRadius: 8, padding: '10px 12px', borderLeft: '3px solid #ef4444' }}>
-                      <div style={{ fontSize: 11, fontWeight: 800, color: '#ef4444', marginBottom: 4 }}>🐛 BUG</div>
+                      <div style={{ fontSize: 11, fontWeight: 800, color: '#ef4444', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}><Bug size={13} /> BUG</div>
                       <p style={{ margin: 0, color: '#fca5a5', fontSize: 12, lineHeight: 1.6 }}>{aiDebugHint.bugDescription}</p>
                     </div>
                     {/* Fix suggestion */}
                     {aiDebugHint.fix && (
                       <div style={{ background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.15)', borderRadius: 8, padding: '10px 12px', borderLeft: '3px solid #22c55e' }}>
-                        <div style={{ fontSize: 11, fontWeight: 800, color: '#22c55e', marginBottom: 4 }}>💡 FIX</div>
+                        <div style={{ fontSize: 11, fontWeight: 800, color: '#22c55e', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}><Lightbulb size={13} /> FIX</div>
                         <p style={{ margin: 0, color: '#86efac', fontSize: 12, lineHeight: 1.6 }}>{aiDebugHint.fix}</p>
                       </div>
                     )}
-                    {/* Fixed code snippet */}
+                    {/* Fixed code snippet — properly formatted with line numbers + copy button */}
                     {aiDebugHint.fixedSnippet && (
                       <div style={{ background: 'rgba(96,165,250,0.05)', border: '1px solid rgba(96,165,250,0.15)', borderRadius: 8, padding: '10px 12px' }}>
-                        <div style={{ fontSize: 11, fontWeight: 800, color: '#60a5fa', marginBottom: 6 }}>✏️ CORRECTED CODE</div>
-                        <pre style={{ margin: 0, background: 'rgba(0,0,0,0.4)', borderRadius: 6, padding: '8px 10px', fontSize: 11, color: '#a78bfa', fontFamily: 'JetBrains Mono, monospace', overflowX: 'auto' }}>{aiDebugHint.fixedSnippet}</pre>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                          <div style={{ fontSize: 11, fontWeight: 800, color: '#60a5fa', display: 'flex', alignItems: 'center', gap: 6 }}><Pencil size={13} /> CORRECTED CODE</div>
+                          <button
+                            onClick={() => { navigator.clipboard.writeText(aiDebugHint.fixedSnippet); setCodeCopied(true); setTimeout(() => setCodeCopied(false), 2000); }}
+                            style={{ background: codeCopied ? 'rgba(34,197,94,0.15)' : 'rgba(96,165,250,0.1)', border: `1px solid ${codeCopied ? 'rgba(34,197,94,0.35)' : 'rgba(96,165,250,0.25)'}`, borderRadius: 6, padding: '3px 8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, color: codeCopied ? '#22c55e' : '#60a5fa', transition: 'all 0.2s' }}
+                            onMouseEnter={e => { if (!codeCopied) e.currentTarget.style.background = 'rgba(96,165,250,0.2)' }}
+                            onMouseLeave={e => { if (!codeCopied) e.currentTarget.style.background = 'rgba(96,165,250,0.1)' }}
+                          >
+                            {codeCopied ? <><CheckCircle size={11} /> Copied!</> : <><Copy size={11} /> Copy</>}
+                          </button>
+                        </div>
+                        <div style={{ background: 'rgba(0,0,0,0.4)', borderRadius: 6, padding: '10px 0', overflowX: 'auto' }}>
+                          {aiDebugHint.fixedSnippet.replace(/\\n/g, '\n').split('\n').map((line, idx) => (
+                            <div key={idx} style={{ display: 'flex', fontFamily: 'JetBrains Mono, monospace', fontSize: 11, lineHeight: '20px' }}>
+                              <span style={{ width: 36, textAlign: 'right', paddingRight: 10, color: '#555', userSelect: 'none', flexShrink: 0 }}>{idx + 1}</span>
+                              <span style={{ color: '#a78bfa', whiteSpace: 'pre' }}>{line}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                     {/* Re-debug button */}
-                    <button onClick={() => { setAiDebugHint(null) }} style={{ alignSelf: 'flex-start', background: 'transparent', border: '1px solid rgba(236,72,153,0.3)', color: '#ec4899', borderRadius: 6, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>↩ Try Again</button>
+                    <button onClick={() => { setAiDebugHint(null) }} style={{ alignSelf: 'flex-start', background: 'transparent', border: '1px solid rgba(236,72,153,0.3)', color: '#ec4899', borderRadius: 6, padding: '5px 12px', fontSize: 11, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontWeight: 600, transition: 'all 0.2s' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(236,72,153,0.1)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    ><RotateCcw size={12} /> Try Again</button>
                   </div>
                 )}
               </div>

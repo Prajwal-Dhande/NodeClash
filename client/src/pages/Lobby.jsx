@@ -7,6 +7,7 @@ import ActivityCalendar from '../components/ActivityCalendar'
 import { Crown, Diamond, Medal, Zap, Target, Dumbbell, Brain, ShieldCheck, Moon, Swords, Rocket, MapPin, GraduationCap, Briefcase, Calendar, Award, Search, X, Flame, SearchIcon, Lightbulb, Bot, Puzzle, Eye, Plus, Link2, Lock, Activity, Terminal, Timer, Bug, Database } from 'lucide-react'
 import { ThemeToggle } from '../context/ThemeContext'
 import API_URL from '../config/api'
+import CompanyLogo from '../components/ui/CompanyLogo';
 
 const DIFFICULTIES = ['All', 'Easy', 'Medium', 'Hard']
 const TOPICS = ['All', 'Arrays', 'Strings', 'Linked List', 'Trees', 'Dynamic Programming', 'Graphs', 'Binary Search', 'Stack']
@@ -706,7 +707,7 @@ export default function Lobby() {
 
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 'auto' }}>
                   {['Google', 'Amazon', 'Meta', 'Netflix', 'Apple'].map(c => (
-                    <span key={c} style={{ background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', color: 'var(--text-muted)', fontSize: 12, padding: '4px 10px', borderRadius: 6, fontWeight: 500 }}>{c}</span>
+                    <span key={c} style={{ background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', color: 'var(--text-muted)', fontSize: 12, padding: '4px 10px', borderRadius: 6, fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px' }}><CompanyLogo name={c} /> {c}</span>
                   ))}
                 </div>
               </div>

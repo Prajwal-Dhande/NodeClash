@@ -173,7 +173,7 @@ Return ONLY a valid JSON object with this exact structure:
   "bugLine": <line number as integer, or null if not determinable>,
   "bugDescription": "<concise description of the bug in 1-2 sentences>",
   "fix": "<specific fix suggestion in 1 sentence>",
-  "fixedSnippet": "<just the fixed lines of code, not the whole solution>"
+  "fixedSnippet": "<the corrected version of the full function with the bug fixed. IMPORTANT: You MUST include actual newline characters (\\n) and proper indentation (2 spaces) in the code so it displays as multi-line formatted code. Never return code as a single line. Example format: function foo(x) {\\n  const result = x * 2;\\n  return result;\\n}>"
 }`;
 
     const completion = await groq.chat.completions.create({

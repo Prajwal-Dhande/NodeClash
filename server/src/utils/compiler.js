@@ -79,7 +79,12 @@ const executePython = async (code) => {
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
       if (error) {
         if (error.killed) return resolve({ success: false, output: "Error: Time Limit Exceeded" });
-        return resolve({ success: false, output: stderr || error.message });
+        const rawError = stderr || error.message;
+        const escapedPath = filePath.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'); 
+        let cleanError = rawError.replace(new RegExp(escapedPath, 'gi'), 'solution.py');
+        cleanError = cleanError.replace(/File ".*\\.py"/gi, 'File "solution.py"');
+        cleanError = cleanError.replace(/File '.*\\.py'/gi, 'File "solution.py"');
+        return resolve({ success: false, output: cleanError });
       }
       resolve({ success: true, output: stdout.trim() });
     });
@@ -126,8 +131,9 @@ const executeJava = async (code) => {
         }
 
         const rawError = compileStderr ? compileStderr : compileError.message;
-        const escapedPath = filePath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
-        const cleanError = rawError.replace(new RegExp(escapedPath, 'g'), 'Main.java');
+        const escapedPath = filePath.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'); 
+        let cleanError = rawError.replace(new RegExp(escapedPath, 'gi'), 'Main.java');
+        cleanError = cleanError.replace(/.*\\.java:/gi, 'Main.java:');
         
         return resolve({ success: false, output: cleanError });
       }
@@ -153,7 +159,11 @@ const executeCpp = async (code) => {
 
       if (compileError) {
         if (compileError.killed) return resolve({ success: false, output: "Error: Compilation Time Limit Exceeded" });
-        return resolve({ success: false, output: compileStderr || compileError.message });
+        const rawError = compileStderr || compileError.message;
+        const escapedPath = filePath.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');
+        let cleanError = rawError.replace(new RegExp(escapedPath, 'gi'), 'solution.cpp');
+        cleanError = cleanError.replace(/.*\\.cpp:/gi, 'solution.cpp:');
+        return resolve({ success: false, output: cleanError });
       }
       resolve({ success: true, output: "Syntax is perfectly valid!" });
     });
