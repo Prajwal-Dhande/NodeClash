@@ -549,6 +549,14 @@ export default function BattleRoom() {
     }
   }, [battleStarted, gameOver])
 
+  // When game ends, replace this /battle URL in history with /lobby
+  // so pressing browser-back from any later page won't return to a dead battle
+  useEffect(() => {
+    if (gameOver) {
+      window.history.replaceState(null, '', '/lobby')
+    }
+  }, [gameOver])
+
   // Handle explicit forfeit (Quit Game button in modal)
   const handleForfeit = () => {
     setShowLeaveModal(false)

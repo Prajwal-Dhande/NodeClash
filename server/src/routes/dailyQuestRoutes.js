@@ -92,7 +92,7 @@ router.get('/today', async (req, res) => {
     tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
     const msToNextQuest = tomorrow.getTime() - istNow.getTime()
 
-    // Top 10 solvers leaderboard
+    // Top 10 real solvers
     const leaderboard = [...quest.solvers]
       .sort((a, b) => a.timeTaken - b.timeTaken)
       .slice(0, 10)
@@ -103,6 +103,59 @@ router.get('/today', async (req, res) => {
         solvedAt: s.solvedAt
       }))
 
+    // ── Bot Leaderboard Injection (when no real solvers) ──────────────────────
+    // All 15 bots — rotate 6 daily based on day-of-year seed
+    const ALL_BOTS = [
+      { username: 'AlgoNinja_X',    baseTimes: [312, 287, 445, 198, 521] },
+      { username: 'CodeStrike99',   baseTimes: [445, 312, 198, 567, 289] },
+      { username: 'ByteWizard',     baseTimes: [198, 521, 312, 445, 178] },
+      { username: 'QuantumCoder',   baseTimes: [567, 198, 289, 312, 490] },
+      { username: 'NeuralHacker',   baseTimes: [289, 445, 521, 198, 356] },
+      { username: 'SyntaxSamurai',  baseTimes: [178, 289, 312, 521, 234] },
+      { username: 'GFGMaster',      baseTimes: [490, 178, 445, 289, 412] },
+      { username: 'DevRocket_',     baseTimes: [234, 490, 178, 312, 567] },
+      { username: 'CodeArena_Pro',  baseTimes: [412, 234, 567, 178, 289] },
+      { username: 'AlphaDevX',      baseTimes: [356, 412, 289, 490, 198] },
+      { username: 'ZeroToMAANG',    baseTimes: [521, 356, 490, 234, 312] },
+      { username: 'BitMasker',      baseTimes: [267, 523, 189, 456, 378] },
+      { username: 'RecursionKing',  baseTimes: [189, 267, 378, 523, 445] },
+      { username: 'DP_Expert',      baseTimes: [456, 189, 523, 267, 512] },
+      { username: 'GraphGuru99',    baseTimes: [378, 456, 267, 189, 334] },
+    ]
+
+    // Deterministic daily seed based on date so it changes every day
+    const dateSeed = quest.date.split('-').reduce((acc, val, i) => acc + parseInt(val) * (i + 1), 0)
+    const dayBots = [...ALL_BOTS]
+      .sort((a, b) => ((dateSeed * 31 + ALL_BOTS.indexOf(a)) % 97) - ((dateSeed * 31 + ALL_BOTS.indexOf(b)) % 97))
+      .slice(0, 6)
+
+    let finalLeaderboard = leaderboard
+    if (leaderboard.length === 0) {
+      // Inject bots only — generate time based on difficulty and seed
+      const diffBase = quest.difficulty === 'Easy' ? 200 : quest.difficulty === 'Medium' ? 400 : 600
+      finalLeaderboard = dayBots.map((bot, i) => {
+        const timeVariation = bot.baseTimes[dateSeed % bot.baseTimes.length]
+        const timeTaken = Math.round(diffBase + timeVariation + (i * 23))
+        return { rank: i + 1, username: bot.username, timeTaken, solvedAt: quest.date }
+      }).sort((a, b) => a.timeTaken - b.timeTaken).map((b, i) => ({ ...b, rank: i + 1 }))
+    } else if (leaderboard.length < 6) {
+      // Mix real solvers with bots to fill up to 6 slots
+      const realUsernames = new Set(leaderboard.map(s => s.username))
+      const diffBase = quest.difficulty === 'Easy' ? 200 : quest.difficulty === 'Medium' ? 400 : 600
+      const needed = 6 - leaderboard.length
+      const fillerBots = dayBots
+        .filter(b => !realUsernames.has(b.username))
+        .slice(0, needed)
+        .map((bot, i) => {
+          const lastRealTime = leaderboard[leaderboard.length - 1]?.timeTaken || diffBase
+          const timeTaken = lastRealTime + 30 + (i * 20) + (bot.baseTimes[dateSeed % bot.baseTimes.length] % 50)
+          return { rank: 0, username: bot.username, timeTaken, solvedAt: quest.date }
+        })
+      finalLeaderboard = [...leaderboard, ...fillerBots]
+        .sort((a, b) => a.timeTaken - b.timeTaken)
+        .map((s, i) => ({ ...s, rank: i + 1 }))
+    }
+
     res.json({
       success: true,
       quest: {
@@ -112,7 +165,7 @@ router.get('/today', async (req, res) => {
         difficulty: quest.difficulty,
         category: quest.category,
         totalSolvers: quest.solvers.length,
-        leaderboard
+        leaderboard: finalLeaderboard
       },
       user: {
         streak: userStreak,
@@ -130,7 +183,8 @@ router.get('/today', async (req, res) => {
 // ── GET /api/daily-quest/history ──────────────────────────────────────────────
 router.get('/history', async (req, res) => {
   try {
-    const quests = await DailyQuest.find()
+    const today = getTodayIST()
+    const quests = await DailyQuest.find({ date: { $lt: today } }) // only past, not today or future
       .sort({ date: -1 })
       .limit(7)
       .select('date problemTitle difficulty category solvers')
