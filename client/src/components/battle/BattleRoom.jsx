@@ -53,11 +53,11 @@ const DIFF_COLOR = {
 }
 
 const DEFAULT_STARTER = {
-  javascript: `function solution() {\\n  // Your solution here\\n\\n};`,
-  typescript: `function solution(): any {\\n  // Your TS solution here\\n\\n};`,
-  python: `def solution():\\n    # Your solution here\\n    pass`,
-  cpp: `#include <bits/stdc++.h>\\nusing namespace std;\\n\\n// Your solution here`,
-  java: `class Solution {\\n    // Your solution here\\n}`,
+  javascript: `function solution() {\n  // Your solution here\n\n};`,
+  typescript: `function solution(): any {\n  // Your TS solution here\n\n};`,
+  python: `def solution():\n    # Your solution here\n    pass`,
+  cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\n// Your solution here`,
+  java: `class Solution {\n    // Your solution here\n}`,
 }
 
 const LanguageIcon = ({ lang }) => {
