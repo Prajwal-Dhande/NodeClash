@@ -250,16 +250,18 @@ body::after {
     height: 54px !important;
   }
   .profile-main-grid {
-    grid-template-columns: 1fr !important;
-    gap: 14px !important;
-    padding: 14px 10px 60px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    padding: 16px 12px 80px !important;
   }
-  .profile-sidebar { order: 1; }
-  .profile-content { order: 2; }
+  .profile-sidebar { order: 1 !important; width: 100% !important; }
+  .profile-content { order: 2 !important; width: 100% !important; }
 
   /* Stats overview card */
   .profile-stats-overview {
-    grid-template-columns: 1fr !important;
+    display: flex !important;
+    flex-direction: column !important;
     gap: 20px !important;
     padding: 18px 14px !important;
     border-radius: 14px !important;
