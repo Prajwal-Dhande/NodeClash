@@ -132,29 +132,39 @@ router.get('/today', async (req, res) => {
     let finalLeaderboard = leaderboard
     if (leaderboard.length === 0) {
       // Inject bots only — generate time based on difficulty and seed
-      const diffBase = quest.difficulty === 'Easy' ? 200 : quest.difficulty === 'Medium' ? 400 : 600
+      const diffBase = quest.difficulty === 'Easy' ? 150 : quest.difficulty === 'Medium' ? 300 : 500
       finalLeaderboard = dayBots.map((bot, i) => {
         const timeVariation = bot.baseTimes[dateSeed % bot.baseTimes.length]
-        const timeTaken = Math.round(diffBase + timeVariation + (i * 23))
+        let timeTaken = Math.round(diffBase + timeVariation + (i * 23))
+        // Cap at 14:59 (899s) because time limit is 15 mins
+        if (timeTaken >= 900) {
+          timeTaken = 830 + (i * 9) + (dateSeed % 17)
+        }
         return { rank: i + 1, username: bot.username, timeTaken, solvedAt: quest.date }
       }).sort((a, b) => a.timeTaken - b.timeTaken).map((b, i) => ({ ...b, rank: i + 1 }))
     } else if (leaderboard.length < 6) {
       // Mix real solvers with bots to fill up to 6 slots
       const realUsernames = new Set(leaderboard.map(s => s.username))
-      const diffBase = quest.difficulty === 'Easy' ? 200 : quest.difficulty === 'Medium' ? 400 : 600
+      const diffBase = quest.difficulty === 'Easy' ? 150 : quest.difficulty === 'Medium' ? 300 : 500
       const needed = 6 - leaderboard.length
       const fillerBots = dayBots
         .filter(b => !realUsernames.has(b.username))
         .slice(0, needed)
         .map((bot, i) => {
           const lastRealTime = leaderboard[leaderboard.length - 1]?.timeTaken || diffBase
-          const timeTaken = lastRealTime + 30 + (i * 20) + (bot.baseTimes[dateSeed % bot.baseTimes.length] % 50)
+          let timeTaken = lastRealTime + 30 + (i * 20) + (bot.baseTimes[dateSeed % bot.baseTimes.length] % 50)
+          if (timeTaken >= 900) {
+            timeTaken = 840 + (i * 6) + (dateSeed % 13)
+          }
           return { rank: 0, username: bot.username, timeTaken, solvedAt: quest.date }
         })
       finalLeaderboard = [...leaderboard, ...fillerBots]
         .sort((a, b) => a.timeTaken - b.timeTaken)
         .map((s, i) => ({ ...s, rank: i + 1 }))
     }
+
+    // Ensure totalSolvers matches the visual leaderboard count if bots are injected
+    const displayTotalSolvers = Math.max(quest.solvers.length, finalLeaderboard.length)
 
     res.json({
       success: true,
@@ -164,7 +174,7 @@ router.get('/today', async (req, res) => {
         problemTitle: quest.problemTitle,
         difficulty: quest.difficulty,
         category: quest.category,
-        totalSolvers: quest.solvers.length,
+        totalSolvers: displayTotalSolvers,
         leaderboard: finalLeaderboard
       },
       user: {
