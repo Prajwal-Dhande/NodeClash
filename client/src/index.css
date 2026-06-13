@@ -279,6 +279,9 @@ body::after {
     padding: 18px 14px !important;
     border-radius: 14px !important;
   }
+  .profile-badges-card > div:last-child {
+    justify-content: center !important;
+  }
 
   /* Activity matrix */
   .profile-activity-card {
@@ -286,9 +289,17 @@ body::after {
     border-radius: 14px !important;
   }
   .activity-header {
-    flex-direction: column !important;
-    align-items: flex-start !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
     gap: 8px !important;
+    align-items: center !important;
+  }
+  .activity-header > div:first-child {
+    flex-wrap: wrap !important;
+  }
+  .activity-header > div:last-child {
+    width: 100% !important;
+    justify-content: flex-start !important;
   }
 
   /* Profile tabs */
@@ -301,143 +312,189 @@ body::after {
   }
   .profile-tabs::-webkit-scrollbar { display: none; }
   .profile-tabs button {
-    padding: 8px 14px !important;
-    font-size: 12px !important;
+    padding: 10px 16px !important;
+    font-size: 13px !important;
     white-space: nowrap;
   }
 
-  /* Battle history: hide table, show card layout */
+  /* Battle history: Card layout for mobile */
   .battle-table-header {
     display: none !important;
   }
   .battle-row {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    padding: 14px !important;
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    grid-template-rows: auto auto auto !important;
+    gap: 12px 16px !important;
+    padding: 20px !important;
+    background: rgba(255,255,255,0.03) !important;
+    border-radius: 16px !important;
+    margin-bottom: 12px !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
   }
-  .battle-row > div {
-    width: 100% !important;
+  .battle-row:last-child {
+    margin-bottom: 0 !important;
+  }
+  .battle-row > div:nth-child(1) { /* Result Tag */
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+  .battle-row > div:nth-child(2) { /* Problem & Title */
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+  }
+  .battle-row > div:nth-child(2) > div:first-child {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .battle-row > div:nth-child(3) { /* Opponent */
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .battle-row > div:nth-child(4) { /* Difficulty */
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+    align-self: center;
+  }
+  .battle-row > div:nth-child(5) { /* Time */
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .battle-row > div:nth-child(6) { /* Date */
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: end;
   }
 
   /* Stat mini cards */
   .profile-content .stat-card {
-    padding: 10px 8px !important;
+    padding: 16px 12px !important;
+    border-radius: 14px !important;
   }
 
   /* ===== SETTINGS PAGE ===== */
   .settings-layout {
     flex-direction: column !important;
-    padding: 16px 10px !important;
-    gap: 14px !important;
+    padding: 24px 16px !important;
+    gap: 20px !important;
   }
   .settings-sidebar {
     width: 100% !important;
   }
   .settings-sidebar > div:first-child {
-    margin-bottom: 16px !important;
+    margin-bottom: 20px !important;
   }
   .settings-sidebar h1 {
-    font-size: 22px !important;
-    margin-bottom: 4px !important;
+    font-size: 26px !important;
+    margin-bottom: 6px !important;
   }
   .settings-sidebar .settings-tabs {
     flex-direction: row !important;
     overflow-x: auto !important;
-    gap: 6px !important;
+    gap: 10px !important;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    padding-bottom: 4px !important;
   }
   .settings-sidebar .settings-tabs::-webkit-scrollbar { display: none; }
   .settings-sidebar .settings-tabs button {
     white-space: nowrap;
-    padding: 8px 14px !important;
-    font-size: 12px !important;
-    border-radius: 10px !important;
-    gap: 8px !important;
+    padding: 12px 18px !important;
+    font-size: 14px !important;
+    border-radius: 12px !important;
+    gap: 10px !important;
   }
   .settings-sidebar .settings-tabs .tab-chevron { display: none !important; }
   .settings-sidebar .settings-logout { display: none; }
 
   .settings-content .tab-header {
-    padding: 18px 14px !important;
+    padding: 24px 20px !important;
+    border-radius: 16px 16px 0 0 !important;
   }
   .settings-content .tab-header h2 {
-    font-size: 17px !important;
+    font-size: 20px !important;
   }
   .settings-content .tab-header p {
-    font-size: 12px !important;
+    font-size: 14px !important;
+    margin-top: 8px !important;
   }
 
   .setting-row {
-    padding: 14px 12px !important;
-    gap: 12px !important;
-    flex-wrap: wrap;
+    padding: 20px !important;
+    gap: 16px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    background: rgba(255,255,255,0.02) !important;
+    border-radius: 16px !important;
+    margin: 12px !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
   }
   .setting-row > div:first-child {
-    gap: 10px !important;
+    gap: 14px !important;
+    width: 100% !important;
   }
   .setting-row > div:first-child > div:first-child {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    border-radius: 10px !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    border-radius: 12px !important;
   }
   .setting-row > div:first-child > div:last-child > div:first-child {
-    font-size: 13px !important;
+    font-size: 15px !important;
+    margin-bottom: 6px !important;
   }
   .setting-row > div:first-child > div:last-child > div:last-child {
-    font-size: 11px !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
   }
-  .setting-row select {
-    min-width: 100px !important;
-    font-size: 12px !important;
-    padding: 8px 10px !important;
+  .setting-row select,
+  .setting-row button {
+    width: 100% !important;
+    min-width: unset !important;
+    font-size: 14px !important;
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
   }
 
   /* ===== GENERAL ===== */
   nav {
-    padding: 0 10px !important;
+    padding: 0 16px !important;
   }
 }
 
 /* ---- SMALL MOBILE (< 480px) ---- */
 @media (max-width: 480px) {
   .profile-main-grid {
-    padding: 10px 6px 60px !important;
-    gap: 10px !important;
+    padding: 16px 12px 60px !important;
+    gap: 16px !important;
   }
   .profile-stats-overview {
-    padding: 14px 10px !important;
+    padding: 20px 16px !important;
   }
   .profile-badges-card {
-    padding: 14px 10px !important;
+    padding: 20px 16px !important;
   }
   .profile-activity-card {
-    padding: 12px 8px !important;
+    padding: 20px 12px !important;
   }
 
   .settings-layout {
-    padding: 10px 6px !important;
+    padding: 16px 12px !important;
   }
   .settings-content .tab-header {
-    padding: 14px 10px !important;
+    padding: 20px 16px !important;
   }
   .setting-row {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 10px !important;
-    padding: 12px 10px !important;
-  }
-  .setting-row select,
-  .setting-row button {
-    width: 100% !important;
+    margin: 8px !important;
+    padding: 16px !important;
   }
 
   /* Battle row cards tighter */
   .battle-row {
-    padding: 10px !important;
-    gap: 6px !important;
-    font-size: 12px !important;
+    padding: 16px !important;
+    gap: 10px !important;
   }
 }
