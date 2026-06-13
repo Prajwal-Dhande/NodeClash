@@ -469,6 +469,12 @@ body::after {
 
 /* ---- SMALL MOBILE (< 480px) ---- */
 @media (max-width: 480px) {
+  .global-rank-badge {
+    position: static !important;
+    text-align: left !important;
+    margin-top: 16px !important;
+  }
+
   .profile-main-grid {
     padding: 16px 12px 60px !important;
     gap: 16px !important;

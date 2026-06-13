@@ -694,7 +694,7 @@ export default function Profile() {
               {/* ✅ REAL Global Rank */}
               <div style={{ background: 'var(--glass-overlay)', border: `1px solid ${tier.color}40`, borderRadius: 16, padding: '20px 24px', position: 'relative' }}>
                 
-                <div style={{ position: 'absolute', top: 20, right: 24, textAlign: 'right' }}>
+                <div className="global-rank-badge" style={{ position: 'absolute', top: 20, right: 24, textAlign: 'right' }}>
                    <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>Global Rank</div>
                    <div style={{ fontFamily: 'JetBrains Mono', fontSize: 20, fontWeight: 800, color: 'var(--text-main)' }}>#{globalRank.toLocaleString()}</div>
                 </div>
@@ -780,7 +780,7 @@ export default function Profile() {
               </div>
 
               <div style={{ flex: 1, overflowX: 'auto', paddingBottom: 8 }}>
-                <div style={{ display: 'flex', gap: 3, marginBottom: 6, paddingLeft: 2 }}>
+                <div style={{ display: 'flex', gap: 3, marginBottom: 6, paddingLeft: 2, minWidth: weeks.length * 18 }}>
                   {dynamicMonths.map((m, i) => (
                     <div key={i} style={{ width: `${100/12}%`, fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', fontWeight: 600, fontFamily: 'JetBrains Mono' }}>{m}</div>
                   ))}
