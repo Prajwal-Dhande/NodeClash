@@ -655,7 +655,7 @@ export default function Profile() {
         {/* ✅ RIGHT MAIN CONTENT */}
         <div className="profile-content" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-          <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '28px', display: 'grid', gridTemplateColumns: 'min-content 1fr', gap: 32, alignItems: 'center' }}>
+          <div className="profile-stats-overview" style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '28px', display: 'grid', gridTemplateColumns: 'min-content 1fr', gap: 32, alignItems: 'center' }}>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
               <div style={{ position: 'relative', width: 140, height: 140, flexShrink: 0 }}>

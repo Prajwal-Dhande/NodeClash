@@ -224,16 +224,16 @@ export default function Settings() {
         </button>
       </nav>
 
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 24px', width: '100%', display: 'flex', gap: 40, flex: 1 }}>
+      <div className="settings-layout" style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 24px', width: '100%', display: 'flex', gap: 40, flex: 1 }}>
         
         {/* SIDEBAR */}
-        <div style={{ width: 280, flexShrink: 0 }}>
+        <div className="settings-sidebar" style={{ width: 280, flexShrink: 0 }}>
           <div style={{ marginBottom: 40 }}>
             <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 32, fontWeight: 900, color: 'var(--text-main)', letterSpacing: '-1px', margin: '0 0 8px 0' }}>Settings</h1>
             <p style={{ color: 'var(--text-muted)', fontSize: 14, lineHeight: 1.5, margin: 0 }}>Manage your preferences, security, and CodeArena setup.</p>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div className="settings-tabs" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {TABS.map(tab => (
               <button
                 key={tab.id}
@@ -250,12 +250,12 @@ export default function Settings() {
               >
                 <tab.icon size={18} style={{ color: activeTab === tab.id ? 'var(--orange)' : 'var(--text-muted)' }} />
                 {tab.label}
-                {activeTab === tab.id && <ChevronRight size={16} style={{ marginLeft: 'auto', opacity: 0.5 }} />}
+                {activeTab === tab.id && <ChevronRight size={16} className="tab-chevron" style={{ marginLeft: 'auto', opacity: 0.5 }} />}
               </button>
             ))}
           </div>
 
-          <div style={{ marginTop: 60, borderTop: '1px solid var(--border)', paddingTop: 30 }}>
+          <div className="settings-logout" style={{ marginTop: 60, borderTop: '1px solid var(--border)', paddingTop: 30 }}>
             <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'transparent', border: 'none', color: 'var(--red)', fontSize: 14, fontWeight: 600, cursor: 'pointer', padding: '10px 18px', borderRadius: 12, transition: 'background 0.2s', width: '100%', textAlign: 'left' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(239,68,68,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
               <LogOut size={18} /> Log out from all devices
             </button>
@@ -263,7 +263,7 @@ export default function Settings() {
         </div>
 
         {/* MAIN CONTENT AREA */}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="settings-content" style={{ flex: 1, minWidth: 0 }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -281,7 +281,7 @@ export default function Settings() {
               {/* --- ACCOUNT TAB --- */}
               {activeTab === 'account' && (
                 <div>
-                  <div style={{ padding: '30px 40px', borderBottom: '1px solid var(--border)', background: 'var(--btn-bg)' }}>
+                  <div className="tab-header" style={{ padding: '30px 40px', borderBottom: '1px solid var(--border)', background: 'var(--btn-bg)' }}>
                     <h2 style={{ fontFamily: 'Outfit', fontSize: 22, fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>Account Profile</h2>
                     <p style={{ color: 'var(--text-muted)', fontSize: 14, marginTop: 6 }}>Manage your identity and authentication settings.</p>
                   </div>
@@ -307,7 +307,7 @@ export default function Settings() {
               {/* --- ARENA TAB --- */}
               {activeTab === 'arena' && (
                 <div>
-                  <div style={{ padding: '30px 40px', borderBottom: '1px solid var(--border)', background: 'var(--btn-bg)' }}>
+                  <div className="tab-header" style={{ padding: '30px 40px', borderBottom: '1px solid var(--border)', background: 'var(--btn-bg)' }}>
                     <h2 style={{ fontFamily: 'Outfit', fontSize: 22, fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>Arena Preferences</h2>
                     <p style={{ color: 'var(--text-muted)', fontSize: 14, marginTop: 6 }}>Customize your coding environment and editor behavior.</p>
                   </div>
@@ -353,7 +353,7 @@ export default function Settings() {
               {/* --- PRIVACY TAB --- */}
               {activeTab === 'privacy' && (
                 <div>
-                  <div style={{ padding: '30px 40px', borderBottom: '1px solid var(--border)', background: 'var(--btn-bg)' }}>
+                  <div className="tab-header" style={{ padding: '30px 40px', borderBottom: '1px solid var(--border)', background: 'var(--btn-bg)' }}>
                     <h2 style={{ fontFamily: 'Outfit', fontSize: 22, fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>Privacy & Display</h2>
                     <p style={{ color: 'var(--text-muted)', fontSize: 14, marginTop: 6 }}>Control who sees your profile and statistics.</p>
                   </div>
@@ -371,7 +371,7 @@ export default function Settings() {
               {/* --- SUBSCRIPTION TAB --- */}
               {activeTab === 'subscription' && (
                 <div>
-                  <div style={{ padding: '30px 40px', borderBottom: '1px solid var(--border)', background: 'var(--btn-bg)' }}>
+                  <div className="tab-header" style={{ padding: '30px 40px', borderBottom: '1px solid var(--border)', background: 'var(--btn-bg)' }}>
                     <h2 style={{ fontFamily: 'Outfit', fontSize: 22, fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>Subscription Plan</h2>
                     <p style={{ color: 'var(--text-muted)', fontSize: 14, marginTop: 6 }}>Manage your CodeArena membership and billing.</p>
                   </div>

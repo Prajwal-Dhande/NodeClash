@@ -32,9 +32,15 @@ import Settings from './pages/Settings'
 
 import AuthGuard from './components/AuthGuard' 
 
+// 📱 PWA & MOBILE
+import InstallPrompt from './components/ui/InstallPrompt'
+import MobileWarning from './components/ui/MobileWarning'
+
 export default function App() {
   return (
     <BrowserRouter>
+      <InstallPrompt />
+      <MobileWarning />
       <Routes>
         {/* 🌐 PUBLIC ROUTES */}
         <Route path="/" element={<Home />} />

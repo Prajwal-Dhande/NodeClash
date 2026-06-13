@@ -161,3 +161,183 @@ body::after {
   0% { background-position: 0 0, 75px 75px; }
   100% { background-position: 150px 150px, 225px 225px; }
 }
+
+/* ========================================= */
+/* MOBILE RESPONSIVE                          */
+/* ========================================= */
+
+/* Utility classes */
+.mobile-only { display: none !important; }
+.mobile-menu-btn {
+  display: none !important;
+  background: none; border: none; color: var(--text-main);
+  font-size: 22px; cursor: pointer; padding: 4px;
+}
+
+/* Mobile Drawer (Profile page uses it) */
+.mobile-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: 280px; background: var(--bg2);
+  border-left: 1px solid var(--border);
+  z-index: 200; display: flex; flex-direction: column;
+  box-shadow: -20px 0 60px rgba(0,0,0,0.5);
+}
+.mobile-drawer .drawer-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px; border-bottom: 1px solid var(--border);
+}
+.mobile-drawer .close-drawer-btn {
+  background: none; border: none; color: var(--text-muted);
+  font-size: 18px; cursor: pointer;
+}
+.mobile-drawer .drawer-content { flex: 1; display: flex; flex-direction: column; padding: 20px; }
+.mobile-drawer .drawer-links {
+  display: flex; flex-direction: column; gap: 12px;
+  font-size: 15px; font-weight: 600; color: var(--text-main);
+}
+.mobile-drawer .drawer-links span { cursor: pointer; padding: 10px 0; }
+.mobile-drawer .drawer-footer { margin-top: auto; }
+
+/* ---- TABLET (< 1024px) ---- */
+@media (max-width: 1024px) {
+  /* Settings: stack sidebar + content */
+  .settings-layout {
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+  .settings-sidebar {
+    width: 100% !important;
+    flex-shrink: unset !important;
+  }
+  .settings-sidebar .settings-tabs {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    gap: 6px !important;
+    padding-bottom: 4px;
+  }
+  .settings-sidebar .settings-tabs button {
+    white-space: nowrap;
+    padding: 10px 16px !important;
+    font-size: 13px !important;
+  }
+  .settings-sidebar .settings-tabs .tab-chevron { display: none !important; }
+  .settings-sidebar .settings-logout { display: none; }
+
+  /* Profile: stack sidebar + content */
+  .profile-main-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    padding: 20px 16px 60px !important;
+  }
+}
+
+/* ---- MOBILE (< 768px) ---- */
+@media (max-width: 768px) {
+  .desktop-only { display: none !important; }
+  .mobile-only { display: flex !important; }
+  .mobile-menu-btn { display: flex !important; }
+
+  /* Reduce background animation for performance */
+  body::before { opacity: 0.2 !important; animation: none !important; }
+  body::after { opacity: 0.1 !important; animation: none !important; }
+
+  /* Profile page */
+  .profile-main-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 16px 12px 60px !important;
+  }
+  .profile-nav {
+    padding: 0 16px !important;
+    height: 56px !important;
+  }
+  .profile-sidebar { order: 1; }
+  .profile-content { order: 2; }
+
+  /* Profile stats grid */
+  .profile-content .stat-card { padding: 12px 8px !important; }
+  .profile-stats-overview {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    padding: 20px !important;
+  }
+  .profile-stats-overview > div:first-child {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  /* Install prompt on mobile */
+  .install-prompt-wrapper {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 12px !important;
+    max-width: none !important;
+  }
+
+  /* Settings page */
+  .settings-layout {
+    flex-direction: column !important;
+    padding: 20px 12px !important;
+    gap: 16px !important;
+  }
+  .settings-sidebar {
+    width: 100% !important;
+  }
+  .settings-sidebar h1 { font-size: 24px !important; }
+  .settings-sidebar .settings-tabs {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    gap: 6px !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .settings-sidebar .settings-tabs::-webkit-scrollbar { display: none; }
+  .settings-sidebar .settings-tabs button {
+    white-space: nowrap;
+    padding: 10px 14px !important;
+    font-size: 12px !important;
+    border-radius: 10px !important;
+  }
+  .settings-sidebar .settings-tabs .tab-chevron { display: none !important; }
+  .settings-sidebar .settings-logout { display: none; }
+  .settings-content .tab-header {
+    padding: 20px !important;
+  }
+  .settings-content .tab-header h2 { font-size: 18px !important; }
+  .setting-row {
+    padding: 14px 12px !important;
+    gap: 12px !important;
+    flex-wrap: wrap;
+  }
+  .setting-row select { min-width: 110px !important; font-size: 12px !important; }
+
+  /* Nav common adjustments */
+  nav {
+    padding: 0 12px !important;
+  }
+
+  /* General typography scaling */
+  h1 { font-size: 24px !important; }
+  h2 { font-size: 20px !important; }
+}
+
+/* ---- SMALL MOBILE (< 480px) ---- */
+@media (max-width: 480px) {
+  .profile-main-grid {
+    padding: 12px 8px 60px !important;
+  }
+
+  .settings-layout {
+    padding: 12px 8px !important;
+  }
+
+  /* Settings content padding */
+  .settings-content .tab-header {
+    padding: 16px 12px !important;
+  }
+  .setting-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+}
