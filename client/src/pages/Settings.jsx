@@ -417,6 +417,14 @@ export default function Settings() {
             </motion.div>
           </AnimatePresence>
         </div>
+
+        {/* MOBILE LOGOUT BUTTON */}
+        <div className="mobile-only" style={{ width: '100%', marginTop: 10, marginBottom: 20 }}>
+          <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: 'var(--red)', fontSize: 15, fontWeight: 700, cursor: 'pointer', padding: '16px', borderRadius: 16, width: '100%', fontFamily: 'Inter' }}>
+            <LogOut size={20} /> Log out from all devices
+          </button>
+        </div>
+
       </div>
 
       {/* MODALS */}
