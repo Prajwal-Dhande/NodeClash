@@ -200,10 +200,9 @@ body::after {
 
 /* ---- TABLET (< 1024px) ---- */
 @media (max-width: 1024px) {
-  /* Settings: stack sidebar + content */
   .settings-layout {
     flex-direction: column !important;
-    gap: 20px !important;
+    gap: 24px !important;
   }
   .settings-sidebar {
     width: 100% !important;
@@ -223,11 +222,15 @@ body::after {
   .settings-sidebar .settings-tabs .tab-chevron { display: none !important; }
   .settings-sidebar .settings-logout { display: none; }
 
-  /* Profile: stack sidebar + content */
   .profile-main-grid {
     grid-template-columns: 1fr !important;
     gap: 20px !important;
-    padding: 20px 16px 60px !important;
+    padding: 24px 16px 60px !important;
+  }
+
+  .profile-stats-overview {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
   }
 }
 
@@ -237,53 +240,107 @@ body::after {
   .mobile-only { display: flex !important; }
   .mobile-menu-btn { display: flex !important; }
 
-  /* Reduce background animation for performance */
-  body::before { opacity: 0.2 !important; animation: none !important; }
-  body::after { opacity: 0.1 !important; animation: none !important; }
+  /* Performance: disable heavy animations */
+  body::before { opacity: 0.15 !important; animation: none !important; }
+  body::after { opacity: 0.08 !important; animation: none !important; }
 
-  /* Profile page */
+  /* ===== PROFILE PAGE ===== */
+  .profile-nav {
+    padding: 0 14px !important;
+    height: 54px !important;
+  }
   .profile-main-grid {
     grid-template-columns: 1fr !important;
-    gap: 16px !important;
-    padding: 16px 12px 60px !important;
-  }
-  .profile-nav {
-    padding: 0 16px !important;
-    height: 56px !important;
+    gap: 14px !important;
+    padding: 14px 10px 60px !important;
   }
   .profile-sidebar { order: 1; }
   .profile-content { order: 2; }
 
-  /* Profile stats grid */
-  .profile-content .stat-card { padding: 12px 8px !important; }
+  /* Stats overview card */
   .profile-stats-overview {
     grid-template-columns: 1fr !important;
     gap: 20px !important;
-    padding: 20px !important;
+    padding: 18px 14px !important;
+    border-radius: 14px !important;
   }
   .profile-stats-overview > div:first-child {
     flex-direction: column !important;
     align-items: center !important;
+    gap: 16px !important;
+  }
+  .profile-stats-overview > div:first-child > div:last-child {
+    min-width: unset !important;
+    width: 100% !important;
   }
 
-  /* Install prompt on mobile */
-  .install-prompt-wrapper {
-    left: 12px !important;
-    right: 12px !important;
-    bottom: 12px !important;
-    max-width: none !important;
+  /* Badges card */
+  .profile-badges-card {
+    padding: 18px 14px !important;
+    border-radius: 14px !important;
   }
 
-  /* Settings page */
+  /* Activity matrix */
+  .profile-activity-card {
+    padding: 16px 10px !important;
+    border-radius: 14px !important;
+  }
+  .activity-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+
+  /* Profile tabs */
+  .profile-tabs {
+    gap: 4px !important;
+    padding: 0 !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .profile-tabs::-webkit-scrollbar { display: none; }
+  .profile-tabs button {
+    padding: 8px 14px !important;
+    font-size: 12px !important;
+    white-space: nowrap;
+  }
+
+  /* Battle history: hide table, show card layout */
+  .battle-table-header {
+    display: none !important;
+  }
+  .battle-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 14px !important;
+  }
+  .battle-row > div {
+    width: 100% !important;
+  }
+
+  /* Stat mini cards */
+  .profile-content .stat-card {
+    padding: 10px 8px !important;
+  }
+
+  /* ===== SETTINGS PAGE ===== */
   .settings-layout {
     flex-direction: column !important;
-    padding: 20px 12px !important;
-    gap: 16px !important;
+    padding: 16px 10px !important;
+    gap: 14px !important;
   }
   .settings-sidebar {
     width: 100% !important;
   }
-  .settings-sidebar h1 { font-size: 24px !important; }
+  .settings-sidebar > div:first-child {
+    margin-bottom: 16px !important;
+  }
+  .settings-sidebar h1 {
+    font-size: 22px !important;
+    margin-bottom: 4px !important;
+  }
   .settings-sidebar .settings-tabs {
     flex-direction: row !important;
     overflow-x: auto !important;
@@ -294,50 +351,93 @@ body::after {
   .settings-sidebar .settings-tabs::-webkit-scrollbar { display: none; }
   .settings-sidebar .settings-tabs button {
     white-space: nowrap;
-    padding: 10px 14px !important;
+    padding: 8px 14px !important;
     font-size: 12px !important;
     border-radius: 10px !important;
+    gap: 8px !important;
   }
   .settings-sidebar .settings-tabs .tab-chevron { display: none !important; }
   .settings-sidebar .settings-logout { display: none; }
+
   .settings-content .tab-header {
-    padding: 20px !important;
+    padding: 18px 14px !important;
   }
-  .settings-content .tab-header h2 { font-size: 18px !important; }
+  .settings-content .tab-header h2 {
+    font-size: 17px !important;
+  }
+  .settings-content .tab-header p {
+    font-size: 12px !important;
+  }
+
   .setting-row {
     padding: 14px 12px !important;
     gap: 12px !important;
     flex-wrap: wrap;
   }
-  .setting-row select { min-width: 110px !important; font-size: 12px !important; }
-
-  /* Nav common adjustments */
-  nav {
-    padding: 0 12px !important;
+  .setting-row > div:first-child {
+    gap: 10px !important;
+  }
+  .setting-row > div:first-child > div:first-child {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    border-radius: 10px !important;
+  }
+  .setting-row > div:first-child > div:last-child > div:first-child {
+    font-size: 13px !important;
+  }
+  .setting-row > div:first-child > div:last-child > div:last-child {
+    font-size: 11px !important;
+  }
+  .setting-row select {
+    min-width: 100px !important;
+    font-size: 12px !important;
+    padding: 8px 10px !important;
   }
 
-  /* General typography scaling */
-  h1 { font-size: 24px !important; }
-  h2 { font-size: 20px !important; }
+  /* ===== GENERAL ===== */
+  nav {
+    padding: 0 10px !important;
+  }
 }
 
 /* ---- SMALL MOBILE (< 480px) ---- */
 @media (max-width: 480px) {
   .profile-main-grid {
-    padding: 12px 8px 60px !important;
+    padding: 10px 6px 60px !important;
+    gap: 10px !important;
   }
-
-  .settings-layout {
+  .profile-stats-overview {
+    padding: 14px 10px !important;
+  }
+  .profile-badges-card {
+    padding: 14px 10px !important;
+  }
+  .profile-activity-card {
     padding: 12px 8px !important;
   }
 
-  /* Settings content padding */
+  .settings-layout {
+    padding: 10px 6px !important;
+  }
   .settings-content .tab-header {
-    padding: 16px 12px !important;
+    padding: 14px 10px !important;
   }
   .setting-row {
     flex-direction: column !important;
     align-items: flex-start !important;
     gap: 10px !important;
+    padding: 12px 10px !important;
+  }
+  .setting-row select,
+  .setting-row button {
+    width: 100% !important;
+  }
+
+  /* Battle row cards tighter */
+  .battle-row {
+    padding: 10px !important;
+    gap: 6px !important;
+    font-size: 12px !important;
   }
 }

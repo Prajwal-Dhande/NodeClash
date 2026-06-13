@@ -733,7 +733,7 @@ export default function Profile() {
             </div>
           </div>
 
-          <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '24px 28px' }}>
+          <div className="profile-badges-card" style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '24px 28px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <span style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: 14 }}>Badges</span>
               <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{ACHIEVEMENTS.filter(a => a.unlocked).length} / {ACHIEVEMENTS.length} unlocked</span>
@@ -754,8 +754,8 @@ export default function Profile() {
             </div>
           </div>
 
-          <div style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '28px', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <div className="profile-activity-card" style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '28px', overflow: 'hidden' }}>
+            <div className="activity-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 20 }}>🟩</span>
                 <span style={{ fontWeight: 900, color: 'var(--text-main)', fontSize: 16, fontFamily: 'Outfit', letterSpacing: 1 }}>
@@ -818,7 +818,7 @@ export default function Profile() {
           </div>
 
           {/* Tabs Navigation */}
-          <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)', gap: 16, background: 'transparent', padding: '0 8px' }}>
+          <div className="profile-tabs" style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)', gap: 16, background: 'transparent', padding: '0 8px' }}>
             {['battles', 'achievements', 'stats'].map(t => (
               <button key={t} onClick={() => { setActiveTab(t); if (t === 'battles') setVisibleCount(10); }} style={{
                 padding: '10px 22px', fontSize: 13, fontWeight: 600, background: 'none', border: 'none',
@@ -845,7 +845,7 @@ export default function Profile() {
                   )}
                 </div>
               )}
-              <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 90px 70px 90px', padding: '14px 24px', background: 'var(--glass-overlay-heavy)', fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', letterSpacing: 2 }}>
+              <div className="battle-table-header" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 90px 70px 90px', padding: '14px 24px', background: 'var(--glass-overlay-heavy)', fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', letterSpacing: 2 }}>
                 {['RESULT', 'PROBLEM', 'OPPONENT', 'DIFF', 'TIME', 'DATE'].map(h => <div key={h}>{h}</div>)}
               </div>
               {battles.length === 0 ? (
@@ -856,7 +856,7 @@ export default function Profile() {
                   {isOwnProfile && <button onClick={() => navigate('/lobby')} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none', borderRadius: 12, padding: '12px 28px', cursor: 'pointer', fontWeight: 700, fontFamily: 'Inter', fontSize: 14, boxShadow: '0 8px 24px rgba(255,107,53,0.3)', transition: 'all 0.3s', display: 'flex', alignItems: 'center', gap: '8px' }}><Zap size={18} fill="currentColor" /> Enter Arena</button>}
                 </div>
               ) : battles.slice(0, visibleCount).map((b, i) => (
-                <div key={i} style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 90px 70px 90px', padding: '16px 24px', alignItems: 'center', borderTop: '1px solid var(--glass-border)' }}>
+                <div key={i} className="battle-row" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 90px 70px 90px', padding: '16px 24px', alignItems: 'center', borderTop: '1px solid var(--glass-border)' }}>
                   <div>
                     <span style={{ fontSize: 10, fontWeight: 800, padding: '4px 10px', borderRadius: 20, background: b.result === 'win' ? 'rgba(34,197,94,0.1)' : b.result === 'draw' ? 'rgba(251,191,36,0.1)' : 'rgba(239,68,68,0.1)', color: b.result === 'win' ? '#22c55e' : b.result === 'draw' ? '#fbbf24' : '#ef4444', border: `1px solid ${b.result === 'win' ? 'rgba(34,197,94,0.25)' : b.result === 'draw' ? 'rgba(251,191,36,0.25)' : 'rgba(239,68,68,0.25)'}`, letterSpacing: 0.5 }}>
                       {b.result?.toUpperCase()}
