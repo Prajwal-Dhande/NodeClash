@@ -689,9 +689,8 @@ export default function Lobby() {
                   Master the exact algorithms asked by top tech companies. Train with precision, zero distractions, and our integrated AI interviewer.
                 </p>
 
-                {/* Inline Banner Image - Reliable Server/Code Aesthetic */}
                 <div className="card-inline-image" style={{ 
-                  backgroundImage: "url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop')", 
+                  backgroundImage: "url('/elite-archive-cropped.jpg')", 
                   height: 160, width: '100%', marginBottom: 20, borderRadius: 12, 
                   backgroundSize: 'cover', backgroundPosition: 'center',
                   border: '1px solid var(--glass-border)'
@@ -736,7 +735,7 @@ export default function Lobby() {
               
               {/* Inline Banner Image */}
               <div className="card-inline-image" style={{ 
-                backgroundImage: "url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop')", 
+                backgroundImage: "url('/random-match-cropped.png')", 
                 height: 120, width: '100%', marginTop: 'auto', marginBottom: 16, borderRadius: 12, 
                 backgroundSize: 'cover', backgroundPosition: 'center',
                 border: '1px solid var(--glass-border)'
@@ -764,7 +763,7 @@ export default function Lobby() {
               
               {/* Inline Banner Image */}
               <div className="card-inline-image" style={{ 
-                backgroundImage: "url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop')", 
+                backgroundImage: "url('/ranked-match-cropped.jpg')", 
                 height: 120, width: '100%', marginTop: 'auto', marginBottom: 16, borderRadius: 12, 
                 backgroundSize: 'cover', backgroundPosition: 'center',
                 border: '1px solid var(--glass-border)'
@@ -790,9 +789,9 @@ export default function Lobby() {
                 Hone your skills against our AI speed bot. No ELO risk, just pure coding. Perfect for warm-ups before ranked battles.
               </p>
               
-              {/* Inline Banner Image - Proper Cute Robot Head */}
+              {/* Inline Banner Image */}
               <div className="card-inline-image" style={{ 
-                backgroundImage: "url('https://images.unsplash.com/photo-1589254065878-42c9da997008?q=80&w=1000&auto=format&fit=crop')", 
+                backgroundImage: "url('/practice-bot-cropped.png')", 
                 height: 140, width: '100%', marginTop: 'auto', marginBottom: 16, borderRadius: 12, 
                 backgroundSize: 'cover', backgroundPosition: 'center',
                 border: '1px solid var(--glass-border)'
