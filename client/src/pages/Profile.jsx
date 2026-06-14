@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async' 
 import { ThemeToggle } from '../context/ThemeContext'
 import API_URL from '../config/api'
-import { Crown, Diamond, Medal, Zap, Target, Dumbbell, Brain, ShieldCheck, Moon, Swords, Rocket, MapPin, GraduationCap, Briefcase, Calendar, Award, Edit2, GitBranch, Globe, Search, Flame } from 'lucide-react'
+import { Crown, Diamond, Medal, Zap, Target, Dumbbell, Brain, ShieldCheck, Moon, Swords, Rocket, MapPin, GraduationCap, Briefcase, Calendar, Award, Edit2, GitBranch, Globe, Search, Flame, Lock } from 'lucide-react'
 
 // Load premium fonts
 if (typeof document !== 'undefined') {
@@ -109,6 +109,69 @@ const TopicRadarChart = ({ data }) => {
           return <text key={i} x={x} y={y} fill="var(--text-muted)" fontSize="11" textAnchor="middle" dominantBaseline="middle" fontWeight="600" fontFamily="JetBrains Mono">{d.label}</text>
         })}
       </svg>
+    </div>
+  )
+}
+const HexagonBadge = ({ title, type, unlocked, value, label }) => {
+  let borderGradient = 'linear-gradient(135deg, #3f3f46, #18181b)';
+  let innerGradient = 'linear-gradient(135deg, #27272a, #18181b)';
+  let textColor = '#52525b';
+  
+  if (unlocked) {
+    if (type === 'premium') {
+      borderGradient = 'linear-gradient(135deg, #fcd34d, #f59e0b, #d97706)';
+      innerGradient = 'linear-gradient(135deg, #1e3a8a, #0f172a)';
+      textColor = '#fde68a';
+    } else if (type === 'gold') {
+      borderGradient = 'linear-gradient(135deg, #fde047, #eab308)';
+      innerGradient = 'linear-gradient(135deg, #7c2d12, #450a0a)';
+      textColor = '#fef08a';
+    } else if (type === 'silver') {
+      borderGradient = 'linear-gradient(135deg, #cbd5e1, #94a3b8)';
+      innerGradient = 'linear-gradient(135deg, #1e293b, #0f172a)';
+      textColor = '#e2e8f0';
+    } else {
+      borderGradient = 'linear-gradient(135deg, #86efac, #22c55e)';
+      innerGradient = 'linear-gradient(135deg, #064e3b, #022c22)';
+      textColor = '#bbf7d0';
+    }
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, width: 88 }}>
+      <div style={{
+        width: 68, height: 78, 
+        position: 'relative',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        filter: unlocked ? 'drop-shadow(0 6px 16px rgba(0,0,0,0.5))' : 'grayscale(1) opacity(0.4)'
+      }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: borderGradient,
+          clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{
+            position: 'absolute', inset: '2px',
+            background: innerGradient,
+            clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+          }}>
+            {unlocked ? (
+              <>
+                <span style={{ fontSize: 22, fontWeight: 900, color: textColor, fontFamily: 'Outfit', lineHeight: 1, textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{value}</span>
+                <span style={{ fontSize: 9, fontWeight: 800, color: textColor, opacity: 0.9, letterSpacing: 1, marginTop: 2 }}>{label}</span>
+              </>
+            ) : (
+              <Lock size={24} color="#52525b" strokeWidth={2.5} />
+            )}
+          </div>
+        </div>
+      </div>
+      <div style={{ fontSize: 11, fontWeight: 600, color: unlocked ? 'var(--text-main)' : 'var(--text-muted)', textAlign: 'center', lineHeight: 1.3 }}>
+        {title}
+      </div>
+      {unlocked && <div style={{ fontSize: 10, color: '#22c55e', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700 }}><div style={{width:6, height:6, borderRadius:3, background:'#22c55e', boxShadow:'0 0 8px #22c55e'}}/> Active</div>}
     </div>
   )
 }
@@ -733,23 +796,31 @@ export default function Profile() {
             </div>
           </div>
 
-          <div className="profile-badges-card" style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '24px 28px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <span style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: 14 }}>Badges</span>
-              <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{ACHIEVEMENTS.filter(a => a.unlocked).length} / {ACHIEVEMENTS.length} unlocked</span>
+          {/* MILESTONE BADGES */}
+          <div className="profile-badges-card" style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '28px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ display: 'flex', alignItems: 'center', color: '#f59e0b' }}><Award size={24} strokeWidth={2.5} /></span>
+                <span style={{ fontWeight: 900, color: 'var(--text-main)', fontSize: 16, fontFamily: 'Outfit', letterSpacing: 1 }}>
+                  MILESTONE BADGES
+                </span>
+              </div>
+              <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Unlock by battling & winning!</span>
             </div>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              {ACHIEVEMENTS.map(({ icon, title, unlocked }) => (
-                <div key={title} title={title} style={{
-                  width: 52, height: 52, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 24, transition: 'all 0.2s', cursor: 'default',
-                  background: unlocked ? 'rgba(255,107,53,0.1)' : 'var(--glass-overlay)',
-                  border: `1px solid ${unlocked ? 'rgba(255,107,53,0.3)' : 'var(--glass-border)'}`,
-                  filter: unlocked ? 'none' : 'grayscale(1) opacity(0.3)',
-                  boxShadow: unlocked ? '0 0 12px rgba(255,107,53,0.15)' : 'none'
-                }}>
-                  {unlocked ? icon : '🔒'}
-                </div>
+            
+            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+              {[
+                { value: 1000, label: 'WINS', title: '1000 Wins Badge', type: 'premium', unlocked: wins >= 1000 },
+                { value: 500, label: 'WINS', title: '500 Wins Badge', type: 'gold', unlocked: wins >= 500 },
+                { value: 365, label: 'WINS', title: '365 Wins Badge', type: 'gold', unlocked: wins >= 365 },
+                { value: 200, label: 'WINS', title: '200 Wins Badge', type: 'silver', unlocked: wins >= 200 },
+                { value: 100, label: 'WINS', title: '100 Wins Badge', type: 'silver', unlocked: wins >= 100 },
+                { value: 50, label: 'WINS', title: '50 Wins Badge', type: 'bronze', unlocked: wins >= 50 },
+                { value: 10, label: 'STREAK', title: '10 Win Streak', type: 'bronze', unlocked: (user?.stats?.streak || 0) >= 10 },
+                { value: 50, label: 'STREAK', title: '50 Win Streak', type: 'silver', unlocked: (user?.stats?.streak || 0) >= 50 },
+                { value: 100, label: 'STREAK', title: '100 Win Streak', type: 'premium', unlocked: (user?.stats?.streak || 0) >= 100 }
+              ].map((b, idx) => (
+                <HexagonBadge key={idx} {...b} />
               ))}
             </div>
           </div>
