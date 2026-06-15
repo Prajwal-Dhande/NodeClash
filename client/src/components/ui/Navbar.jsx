@@ -138,8 +138,8 @@ export default function Navbar() {
     <>
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <span onClick={() => navigate('/')} className="logo">
-          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
-          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
+          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span>
+          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span>
         </span>
 
         {/* Desktop Nav */}

@@ -19,11 +19,11 @@ export default function Timer({ initialSeconds = 600, onTimeUp, roomId }) {
       setSeconds(s => {
         if (s <= 1) {
           clearInterval(t)
-          if (roomId) localStorage.removeItem(`codeArena_remainingTime_${roomId}`)
+          if (roomId) localStorage.removeItem(`nodeclash_remainingTime_${roomId}`)
           if (onTimeUpRef.current) onTimeUpRef.current()
           return 0
         }
-        if (roomId) localStorage.setItem(`codeArena_remainingTime_${roomId}`, s - 1)
+        if (roomId) localStorage.setItem(`nodeclash_remainingTime_${roomId}`, s - 1)
         return s - 1
       })
     }, 1000)

@@ -202,7 +202,7 @@ export default function Premium() {
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo"><span>{C}</span> CodeArena</div>
+            <div class="logo"><span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span> NodeClash</div>
             <div class="title">Payment Receipt</div>
         </div>
 
@@ -242,7 +242,7 @@ export default function Premium() {
             </tr>
             <tr class="row">
                 <td class="label">App Name</td>
-                <td class="value" style="font-weight: 400;">CodeArena</td>
+                <td class="value" style="font-weight: 400;">NodeClash</td>
             </tr>
             <tr class="row">
                 <td class="label">Description</td>
@@ -280,7 +280,7 @@ export default function Premium() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `CodeArena_Receipt_${invoiceNo}.html`;
+      a.download = `NodeClash_Receipt_${invoiceNo}.html`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -307,7 +307,7 @@ export default function Premium() {
         key: data.key,
         amount: data.order.amount,
         currency: 'INR',
-        name: 'CodeArena',
+        name: 'NodeClash',
         description: `${plan.name} Subscription`,
         order_id: data.order.id,
         handler: async (response) => {
@@ -414,8 +414,8 @@ export default function Premium() {
       {/* NAV */}
       <nav style={{ height: 60, background: 'var(--nav-bg)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', padding: '0 24px', position: 'sticky', top: 0, zIndex: 50, backdropFilter: 'blur(20px)', transition: 'background-color 0.3s ease' }}>
         <span style={{ fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', marginRight: 32 }} onClick={() => navigate('/')}>
-          <span style={{ color: '#ff6b35', marginRight: 6 }}>{'{C}'}</span>
-          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
+          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span>
+          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span>
         </span>
         <div style={{ display: 'flex', gap: 24, flex: 1 }}>
           {[
@@ -505,7 +505,7 @@ export default function Premium() {
         {/* HERO */}
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ textAlign: 'center', marginBottom: 72 }}>
           <div style={{ display: 'inline-block', background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.25)', color: '#fbbf24', fontSize: 11, fontWeight: 800, letterSpacing: 2, padding: '6px 18px', borderRadius: 20, marginBottom: 24 }}>
-            💎 CODEARENA PRO
+            💎 NODECLASH PRO
           </div>
           <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 56, fontWeight: 900, color: 'var(--text-main)', margin: '0 0 20px 0', letterSpacing: '-2px', lineHeight: 1.1 }}>
             The fastest path to<br />
@@ -701,7 +701,7 @@ export default function Premium() {
             style={{ textAlign: 'center', marginTop: 80, padding: '48px', background: 'linear-gradient(135deg, rgba(255,107,53,0.08), rgba(96,165,250,0.05))', border: '1px solid rgba(255,107,53,0.2)', borderRadius: 24 }}>
             <div style={{ fontSize: 40, marginBottom: 16 }}>🚀</div>
             <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 28, fontWeight: 900, color: 'var(--text-main)', margin: '0 0 12px 0' }}>Start your MAANG journey today</h2>
-            <p style={{ color: 'var(--text-muted)', marginBottom: 28, fontSize: 15 }}>Join hundreds of coders who cracked their dream companies using CodeArena Pro.</p>
+            <p style={{ color: 'var(--text-muted)', marginBottom: 28, fontSize: 15 }}>Join hundreds of coders who cracked their dream companies using NodeClash Pro.</p>
             <button onClick={() => handlePayment(PLANS[2])} style={{ background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none', borderRadius: 12, padding: '16px 40px', fontSize: 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 8px 30px rgba(255,107,53,0.35)', fontFamily: 'Inter, sans-serif', transition: 'all 0.2s' }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 14px 40px rgba(255,107,53,0.5)' }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(255,107,53,0.35)' }}>

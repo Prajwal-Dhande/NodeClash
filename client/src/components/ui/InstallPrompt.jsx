@@ -71,7 +71,7 @@ export default function InstallPrompt() {
 
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: '#f8fafc', marginBottom: 2 }}>
-          Install CodeArena
+          Install NodeClash
         </div>
         <div style={{ fontSize: 11, color: '#888', lineHeight: 1.4 }}>
           Get the app for quick access

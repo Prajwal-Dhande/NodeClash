@@ -302,7 +302,7 @@ export default function Profile() {
 
   const handleShare = () => {
     const tier = getTier(elo)
-    navigator.clipboard.writeText(`🏆 ${username} on CodeArena | ${tier.icon} ${tier.name} | Rank #${globalRank} | ELO: ${elo} | ${wins}W-${losses}L`)
+    navigator.clipboard.writeText(`🏆 ${username} on NodeClash | ${tier.icon} ${tier.name} | Rank #${globalRank} | ELO: ${elo} | ${wins}W-${losses}L`)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -438,8 +438,8 @@ export default function Profile() {
     <div className="profile-container" style={{ minHeight: '100vh', background: 'var(--bg)', fontFamily: 'Inter, sans-serif', color: 'var(--text-main)', position: 'relative' }}>
 
       <Helmet>
-        <title>{username ? `${username} | CodeArena Profile` : 'Player Profile | CodeArena'}</title>
-        <meta name="description" content={`Check out ${username || 'this player'}'s CodeArena stats. Current ELO: ${elo} (${tier.name}). Total Battles: ${total}, Win Rate: ${winRate}%.`} />
+        <title>{username ? `${username} | NodeClash Profile` : 'Player Profile | NodeClash'}</title>
+        <meta name="description" content={`Check out ${username || 'this player'}'s NodeClash stats. Current ELO: ${elo} (${tier.name}). Total Battles: ${total}, Win Rate: ${winRate}%.`} />
       </Helmet>
 
       <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
@@ -519,8 +519,8 @@ export default function Profile() {
       {/* NAV */}
       <nav style={{ height: 64, background: 'var(--nav-bg)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', padding: '0 32px', gap: 16, position: 'sticky', top: 0, zIndex: 50, transition: 'background-color 0.3s' }} className="profile-nav">
         <span onClick={() => navigate('/')} className="logo">
-          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
-          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
+          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span>
+          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span>
         </span>
         <div style={{ flex: 1 }} />
         <div className="desktop-only"><ThemeToggle /></div>
@@ -553,8 +553,8 @@ export default function Profile() {
           >
             <div className="drawer-header">
               <span className="logo" onClick={() => { setIsMobileMenuOpen(false); navigate('/') }}>
-                <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
-                <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
+                <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span>
+                <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span>
               </span>
               <button className="close-drawer-btn" onClick={() => setIsMobileMenuOpen(false)}>✕</button>
             </div>

@@ -335,8 +335,8 @@ export default function Auth() {
       <div className="auth-left">
         <div className="auth-left-content">
           <div className="auth-logo">
-            <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
-            <span><span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span></span>
+            <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span>
+            <span><span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span></span>
           </div>
 
           <h1 className="auth-headline">

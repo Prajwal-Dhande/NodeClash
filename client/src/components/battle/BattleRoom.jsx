@@ -126,11 +126,11 @@ export default function BattleRoom() {
   
   const [language, setLanguage] = useState(() => {
     const slug = new URLSearchParams(window.location.search).get('problem');
-    const solvedLang = localStorage.getItem(`codeArena_solvedLang_${slug}`);
+    const solvedLang = localStorage.getItem(`nodeclash_solvedLang_${slug}`);
     if (solvedLang) return solvedLang;
     
     const roomId = getRoomId();
-    return localStorage.getItem(`codeArena_lang_${roomId}`) || localStorage.getItem('ca_defaultLang') || 'javascript';
+    return localStorage.getItem(`nodeclash_lang_${roomId}`) || localStorage.getItem('ca_defaultLang') || 'javascript';
   })
 
   // --- PREFERENCES ---
@@ -154,10 +154,10 @@ export default function BattleRoom() {
     const roomId = getRoomId();
     const slug = getProblemSlug();
     
-    const solvedCode = localStorage.getItem(`codeArena_solvedCode_${slug}_${language}`) || localStorage.getItem(`codeArena_solvedCode_${slug}`);
+    const solvedCode = localStorage.getItem(`nodeclash_solvedCode_${slug}_${language}`) || localStorage.getItem(`nodeclash_solvedCode_${slug}`);
     if (solvedCode) return solvedCode;
 
-    return localStorage.getItem(`codeArena_draft_${roomId}`) || DEFAULT_STARTER[language];
+    return localStorage.getItem(`nodeclash_draft_${roomId}`) || DEFAULT_STARTER[language];
   })
   
   const [opponentCode, setOpponentCode] = useState('// Waiting for opponent...')
@@ -199,7 +199,7 @@ export default function BattleRoom() {
   const [timerKey, setTimerKey] = useState(0) 
   const [remainingTime, setRemainingTime] = useState(() => {
     const roomId = getRoomId();
-    const savedRemaining = localStorage.getItem(`codeArena_remainingTime_${roomId}`);
+    const savedRemaining = localStorage.getItem(`nodeclash_remainingTime_${roomId}`);
     if (savedRemaining) {
       return parseInt(savedRemaining, 10);
     }
@@ -227,7 +227,7 @@ export default function BattleRoom() {
       if (isPremiumMode()) return;
 
       const roomId = getRoomId();
-      const savedRemaining = localStorage.getItem(`codeArena_remainingTime_${roomId}`);
+      const savedRemaining = localStorage.getItem(`nodeclash_remainingTime_${roomId}`);
       
       if (savedRemaining) {
         const timeLeft = parseInt(savedRemaining, 10);
@@ -239,7 +239,7 @@ export default function BattleRoom() {
           handleTimeUp();
         }
       } else {
-        localStorage.setItem(`codeArena_remainingTime_${roomId}`, '900');
+        localStorage.setItem(`nodeclash_remainingTime_${roomId}`, '900');
         setRemainingTime(900);
         setTimerKey(prev => prev + 1);
       }
@@ -278,12 +278,12 @@ export default function BattleRoom() {
           });
 
           if (isProblemSolvedLocally) {
-            const solvedCode = localStorage.getItem(`codeArena_solvedCode_${slug}_${language}`) || localStorage.getItem(`codeArena_solvedCode_${slug}`);
+            const solvedCode = localStorage.getItem(`nodeclash_solvedCode_${slug}_${language}`) || localStorage.getItem(`nodeclash_solvedCode_${slug}`);
             if (solvedCode) {
               setCode(solvedCode);
               
               // Fallback for legacy solved problems that didn't save their language
-              if (!localStorage.getItem(`codeArena_solvedLang_${slug}`)) {
+              if (!localStorage.getItem(`nodeclash_solvedLang_${slug}`)) {
                 if (solvedCode.includes('public class') || solvedCode.includes('import java')) setLanguage('java');
                 else if (solvedCode.includes('def ') || solvedCode.includes('class Solution:')) setLanguage('python');
                 else if (solvedCode.includes('#include') || solvedCode.includes('using namespace')) setLanguage('cpp');
@@ -293,7 +293,7 @@ export default function BattleRoom() {
               setCode(data.problem.starterCode?.[language] || DEFAULT_STARTER[language] || DEFAULT_STARTER.javascript);
             }
           } else {
-            const savedCode = localStorage.getItem(`codeArena_draft_${roomId}`);
+            const savedCode = localStorage.getItem(`nodeclash_draft_${roomId}`);
             if (!savedCode) {
               setCode(data.problem.starterCode?.[language] || DEFAULT_STARTER[language] || DEFAULT_STARTER.javascript)
             }
@@ -381,7 +381,7 @@ export default function BattleRoom() {
       setConnected(true)
       const roomId = getRoomId()
       
-      const isReconnecting = !!localStorage.getItem(`codeArena_endTime_${roomId}`)
+      const isReconnecting = !!localStorage.getItem(`nodeclash_endTime_${roomId}`)
       if (isReconnecting) {
         setBattleStarted(true)
         battleStartedRef.current = true
@@ -588,17 +588,17 @@ export default function BattleRoom() {
   const handleLanguageChange = (lang) => {
     setLanguage(lang)
     const roomId = getRoomId()
-    localStorage.setItem(`codeArena_lang_${roomId}`, lang)
+    localStorage.setItem(`nodeclash_lang_${roomId}`, lang)
     
     let newCode = problem?.starterCode?.[lang] || DEFAULT_STARTER[lang] || ''
     if (isAlreadySolved) {
       const slug = getProblemSlug();
-      const solvedCode = localStorage.getItem(`codeArena_solvedCode_${slug}_${lang}`);
+      const solvedCode = localStorage.getItem(`nodeclash_solvedCode_${slug}_${lang}`);
       if (solvedCode) newCode = solvedCode;
     }
     
     setCode(newCode)
-    localStorage.setItem(`codeArena_draft_${roomId}`, newCode)
+    localStorage.setItem(`nodeclash_draft_${roomId}`, newCode)
   }
 
   const handleEditorMount = (editor, monaco) => {
@@ -615,7 +615,7 @@ export default function BattleRoom() {
   const handleProblemChange = async (slug) => {
     setShowProblemPicker(false)
     const roomId = getRoomId();
-    localStorage.removeItem(`codeArena_draft_${roomId}`); 
+    localStorage.removeItem(`nodeclash_draft_${roomId}`); 
     
     setResults([]); setMyTests(0); setOppTests(0); setConstraint(null)
     setGameOver(false); setGameResult(null); setSubmitStatus(null)
@@ -636,7 +636,7 @@ export default function BattleRoom() {
   const handleCodeChange = (val) => {
     setCode(val)
     const roomId = getRoomId()
-    localStorage.setItem(`codeArena_draft_${roomId}`, val)
+    localStorage.setItem(`nodeclash_draft_${roomId}`, val)
     if (!isPracticeMode() && !isViewOnlyMode()) {
       socketRef.current?.emit('code_change', { roomId, code: val })
     }
@@ -877,14 +877,14 @@ export default function BattleRoom() {
           setCurrentUser(updatedUser);
         }
 
-        const currentCode = localStorage.getItem(`codeArena_draft_${roomId}`) || code;
-        const currentLang = localStorage.getItem(`codeArena_lang_${roomId}`) || language;
+        const currentCode = localStorage.getItem(`nodeclash_draft_${roomId}`) || code;
+        const currentLang = localStorage.getItem(`nodeclash_lang_${roomId}`) || language;
 
-        localStorage.setItem(`codeArena_solvedCode_${slug}_${currentLang}`, currentCode);
-        localStorage.setItem(`codeArena_solvedCode_${slug}`, currentCode); // Fallback for legacy
-        localStorage.setItem(`codeArena_solvedLang_${slug}`, currentLang);
+        localStorage.setItem(`nodeclash_solvedCode_${slug}_${currentLang}`, currentCode);
+        localStorage.setItem(`nodeclash_solvedCode_${slug}`, currentCode); // Fallback for legacy
+        localStorage.setItem(`nodeclash_solvedLang_${slug}`, currentLang);
 
-        const savedRemaining = localStorage.getItem(`codeArena_remainingTime_${roomId}`);
+        const savedRemaining = localStorage.getItem(`nodeclash_remainingTime_${roomId}`);
         let secondsTaken = 0;
         if (savedRemaining) {
            secondsTaken = 900 - parseInt(savedRemaining, 10);
@@ -924,16 +924,16 @@ export default function BattleRoom() {
   useEffect(() => {
     if (gameOver) {
       const roomId = getRoomId();
-      localStorage.removeItem(`codeArena_draft_${roomId}`);
-      localStorage.removeItem(`codeArena_endTime_${roomId}`);
-      localStorage.removeItem(`codeArena_lang_${roomId}`);
+      localStorage.removeItem(`nodeclash_draft_${roomId}`);
+      localStorage.removeItem(`nodeclash_endTime_${roomId}`);
+      localStorage.removeItem(`nodeclash_lang_${roomId}`);
     }
   }, [gameOver])
 
   const handleRematch = () => {
     const roomId = getRoomId();
-    localStorage.removeItem(`codeArena_draft_${roomId}`);
-    localStorage.removeItem(`codeArena_endTime_${roomId}`);
+    localStorage.removeItem(`nodeclash_draft_${roomId}`);
+    localStorage.removeItem(`nodeclash_endTime_${roomId}`);
     
     setGameOver(false); setGameResult(null); gameOverRef.current = false
     setCode(problem?.starterCode?.[language] || DEFAULT_STARTER[language])
@@ -958,8 +958,8 @@ export default function BattleRoom() {
         <span className="logo" onClick={() => {
           if (battleStarted && !gameOver && !isPracticeMode() && !isViewOnlyMode()) { setShowLeaveModal(true) } else { navigate(-1) }
         }}>
-          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
-          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
+          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span>
+          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span>
         </span>
         <div className="divider" />
 

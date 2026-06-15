@@ -97,7 +97,7 @@ button { outline: none; }
 /* ========================================= */
 
 /* CRITICAL: React Root Container MUST be on top */
-/* Ye lines Code Arena ki visual context ke liye main content ko upar laata hai */
+/* Ye lines NodeClash ki visual context ke liye main content ko upar laata hai */
 #root {
   position: relative;
   z-index: 10; /* Set content above the background effects */

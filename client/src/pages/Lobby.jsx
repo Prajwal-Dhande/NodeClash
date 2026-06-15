@@ -431,8 +431,8 @@ export default function Lobby() {
     <div className="lobby-wrapper">
 
       <Helmet>
-        <title>{tab === 'puzzles' ? 'Daily Puzzles | CodeArena' : 'Battle Arena | CodeArena'}</title>
-        <meta name="description" content="Choose your training mode. Master algorithms with structured tracks, solve daily puzzles, or test your speed with live coding battles on CodeArena." />
+        <title>{tab === 'puzzles' ? 'Daily Puzzles | NodeClash' : 'Battle Arena | NodeClash'}</title>
+        <meta name="description" content="Choose your training mode. Master algorithms with structured tracks, solve daily puzzles, or test your speed with live coding battles on NodeClash." />
       </Helmet>
 
       {showMatchmaking && <Matchmaking user={user} onMatchFound={handleMatchFound} onCancel={() => setShowMatchmaking(false)} selectedProblem={matchmakingMode === 'ranked' ? rankedSelected : null} mode={matchmakingMode} />}
@@ -481,8 +481,8 @@ export default function Lobby() {
       {/* NAV */}
       <nav className="glass-nav">
         <span className="logo" onClick={() => navigate('/')}>
-          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
-          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
+          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span>
+          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span>
         </span>
         
         <div style={{ flex: 1 }} className="desktop-only" />
@@ -570,8 +570,8 @@ export default function Lobby() {
           >
             <div className="drawer-header">
               <span className="logo" onClick={() => { setIsMobileMenuOpen(false); navigate('/') }}>
-                <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
-                <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
+                <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span>
+                <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span>
               </span>
               <button className="close-drawer-btn" onClick={() => setIsMobileMenuOpen(false)}>✕</button>
             </div>

@@ -62,3 +62,4 @@ coverage/
 server/seed_faang.js
 server/src/scripts/seed_faang.js
 server/src/scripts/seed_elite_batch*.js
+server/src/scripts/seed_free_batch*.js

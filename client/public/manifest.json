@@ -1,25 +1,25 @@
 {
-  "name": "CodeArena",
-  "short_name": "CodeArena",
+  "name": "NodeClash",
+  "short_name": "NodeClash",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#060608",
   "theme_color": "#ff6b35",
   "icons": [
     {
-      "src": "/codearena-logo.svg",
+      "src": "/nodeclash-logo.svg",
       "sizes": "192x192",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "/codearena-logo.svg",
+      "src": "/nodeclash-logo.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "/codearena-logo.svg",
+      "src": "/nodeclash-logo.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"

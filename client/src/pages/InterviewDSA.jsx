@@ -142,7 +142,7 @@ export default function InterviewDSA() {
         key: order.key || "rzp_test_Sd4kIt56xgH8Yw", 
         amount: order.order?.amount || order.amount,
         currency: order.order?.currency || "INR",
-        name: "Code Arena Pro",
+        name: "NodeClash Pro",
         description: "Unlock Premium The Elite Archive",
         image: "/favicon.svg",
         order_id: order.order?.id || order.id,
@@ -249,8 +249,8 @@ export default function InterviewDSA() {
     <>
       <nav className="glass-nav">
         <span className="logo" onClick={() => navigate('/')}>
-          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{"{C}"}</span>
-          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
+          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span>
+          <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span>
         </span>
         <div style={{ flex: 1 }} />
         <div className="nav-links">

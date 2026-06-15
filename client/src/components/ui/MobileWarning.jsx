@@ -73,7 +73,7 @@ export default function MobileWarning() {
         <p style={{
           fontSize: 14, color: '#888', lineHeight: 1.7, margin: '0 0 28px',
         }}>
-          CodeArena involves writing & running code which works best on a 
+          NodeClash involves writing & running code which works best on a 
           <span style={{ color: '#ff6b35', fontWeight: 600 }}> laptop or desktop</span>. 
           For the best coding experience, please switch to a larger screen.
         </p>

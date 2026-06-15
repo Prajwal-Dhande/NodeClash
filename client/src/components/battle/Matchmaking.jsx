@@ -152,7 +152,7 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
 
       {phase === 'searching' && (
         <>
-          <div style={{ marginBottom: 48, fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: 24 }}><span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span><span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span></div>
+          <div style={{ marginBottom: 48, fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: 24 }}><span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span><span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span></div>
           <div style={{ position: 'relative', width: 200, height: 200, marginBottom: 48 }}>
             {[200, 150, 100].map((size, i) => (
               <div key={i} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: size, height: size, borderRadius: '50%', border: `1px solid rgba(255,107,53,${0.1 + i * 0.08})`, animation: `ping ${2 + i * 0.5}s ease-out infinite`, animationDelay: `${i * 0.3}s` }} />

@@ -9,7 +9,7 @@ import PricingTeaser from '../components/ui/PricingTeaser'
 import Footer from '../components/ui/Footer'
 
 const FAQS = [
-  { question: "Is CodeArena free to use?", answer: "Yes! Core features like random match-making, practice rooms, and the public leaderboard are completely free." },
+  { question: "Is NodeClash free to use?", answer: "Yes! Core features like random match-making, practice rooms, and the public leaderboard are completely free." },
   { question: "What programming languages are supported?", answer: "We currently support JavaScript, Python, C++, and Java for all battles and practice sessions." },
   { question: "How does the ELO ranking system work?", answer: "You gain or lose points based on match outcomes. Beating higher-ranked players yields more points, ensuring a fair reflection of your skill." },
   { question: "What is Clara AI?", answer: "Clara is our AI interviewer that acts as your opponent or mentor. She injects dynamic constraints mid-battle and provides code reviews in the Pro tier." },
@@ -23,12 +23,12 @@ export default function Home() {
     <div>
       {/* 👇🔥 MAIN LANDING PAGE SEO 🔥👇 */}
       <Helmet>
-        <title>CodeArena | Real-time 1v1 Coding Battles</title>
-        <meta name="description" content="Compete against other developers in real-time coding challenges. Practice DSA, climb the global leaderboard, and prove your skills on CodeArena." />
+        <title>NodeClash | Real-time 1v1 Coding Battles</title>
+        <meta name="description" content="Compete against other developers in real-time coding challenges. Practice DSA, climb the global leaderboard, and prove your skills on NodeClash." />
         <meta name="keywords" content="coding platform, competitive programming, 1v1 coding, dsa practice, leetcode alternative, multiplayer coding" />
         
         {/* Social Media Share Preview Tags */}
-        <meta property="og:title" content="CodeArena | Real-time 1v1 Coding Battles" />
+        <meta property="og:title" content="NodeClash | Real-time 1v1 Coding Battles" />
         <meta property="og:description" content="Compete against other developers in real-time coding challenges. Practice DSA and climb the leaderboard!" />
         <meta property="og:type" content="website" />
       </Helmet>

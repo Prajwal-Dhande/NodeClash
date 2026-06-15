@@ -214,8 +214,8 @@ export default function Settings() {
       {/* NAV */}
       <nav style={{ height: 70, background: 'var(--nav-bg)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', padding: '0 32px', position: 'sticky', top: 0, zIndex: 50 }}>
         <span style={{ fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => navigate('/')}>
-          <span style={{ color: 'var(--orange)', marginRight: 8, fontWeight: 900 }}>{'{C}'}</span>
-          <span style={{ color: 'var(--text-main)', fontWeight: 800, letterSpacing: '-0.5px' }}>CodeArena</span>
+          <span style={{ color: 'var(--orange)', marginRight: 8, fontWeight: 900 }}>{'{N}'}</span>
+          <span style={{ color: 'var(--text-main)', fontWeight: 800, letterSpacing: '-0.5px' }}>NodeClash</span>
         </span>
         <div style={{ flex: 1 }} />
         <ThemeToggle />
@@ -230,7 +230,7 @@ export default function Settings() {
         <div className="settings-sidebar" style={{ width: 280, flexShrink: 0 }}>
           <div style={{ marginBottom: 40 }}>
             <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 32, fontWeight: 900, color: 'var(--text-main)', letterSpacing: '-1px', margin: '0 0 8px 0' }}>Settings</h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: 14, lineHeight: 1.5, margin: 0 }}>Manage your preferences, security, and CodeArena setup.</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: 14, lineHeight: 1.5, margin: 0 }}>Manage your preferences, security, and NodeClash setup.</p>
           </div>
 
           <div className="settings-tabs" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -286,7 +286,7 @@ export default function Settings() {
                     <p style={{ color: 'var(--text-muted)', fontSize: 14, marginTop: 6 }}>Manage your identity and authentication settings.</p>
                   </div>
                   <div style={{ padding: '10px 20px' }}>
-                    <SettingRow label="Username" desc="Your unique CodeArena identity" icon={User}>
+                    <SettingRow label="Username" desc="Your unique NodeClash identity" icon={User}>
                       <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-main)', padding: '8px 16px', background: 'var(--btn-bg)', borderRadius: 10, border: '1px solid var(--border)' }}>@{user?.username}</div>
                     </SettingRow>
                     <SettingRow label="Email Address" desc={user?.email || 'Not set'} icon={CheckCircle2}>
@@ -358,7 +358,7 @@ export default function Settings() {
                     <p style={{ color: 'var(--text-muted)', fontSize: 14, marginTop: 6 }}>Control who sees your profile and statistics.</p>
                   </div>
                   <div style={{ padding: '10px 20px', paddingBottom: 60 }}>
-                    <SettingRow label="Public Profile" desc="Allow other users to view your CodeArena profile" icon={User}>
+                    <SettingRow label="Public Profile" desc="Allow other users to view your NodeClash profile" icon={User}>
                       <Toggle value={profilePublic} onChange={setProfilePublic} />
                     </SettingRow>
                     <SettingRow label="Leaderboard Visibility" desc="Display your ELO and rank on the global leaderboard" icon={Shield}>
@@ -373,7 +373,7 @@ export default function Settings() {
                 <div>
                   <div className="tab-header" style={{ padding: '30px 40px', borderBottom: '1px solid var(--border)', background: 'var(--btn-bg)' }}>
                     <h2 style={{ fontFamily: 'Outfit', fontSize: 22, fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>Subscription Plan</h2>
-                    <p style={{ color: 'var(--text-muted)', fontSize: 14, marginTop: 6 }}>Manage your CodeArena membership and billing.</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: 14, marginTop: 6 }}>Manage your NodeClash membership and billing.</p>
                   </div>
                   <div style={{ padding: '40px' }}>
                     <div style={{ 

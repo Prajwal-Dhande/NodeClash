@@ -69,8 +69,8 @@ export default function Leaderboard() {
     <div className="lb-wrapper">
       
       <Helmet>
-        <title>Global Leaderboard | CodeArena Rankings</title>
-        <meta name="description" content={`Check out the top-ranked coders on CodeArena. Current Grandmasters include ${top3[0]?.username || 'top players'} and more. Compete to get your name on the board!`} />
+        <title>Global Leaderboard | NodeClash Rankings</title>
+        <meta name="description" content={`Check out the top-ranked coders on NodeClash. Current Grandmasters include ${top3[0]?.username || 'top players'} and more. Compete to get your name on the board!`} />
       </Helmet>
 
       {/* Premium Background Effects */}
@@ -80,7 +80,7 @@ export default function Leaderboard() {
 
       <nav className="glass-nav">
         <span className="logo" onClick={() => navigate('/')}>
-          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span><span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
+          <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span><span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span>
         </span>
         <div className="nav-divider desktop-only" />
         <span className="nav-subtitle desktop-only">Leaderboard</span>
@@ -106,8 +106,8 @@ export default function Leaderboard() {
           >
             <div className="drawer-header">
               <span className="logo" onClick={() => { setIsMobileMenuOpen(false); navigate('/') }}>
-                <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
-                <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
+                <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span>
+                <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span>
               </span>
               <button className="close-drawer-btn" onClick={() => setIsMobileMenuOpen(false)}>✕</button>
             </div>

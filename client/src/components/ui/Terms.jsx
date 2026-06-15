@@ -49,7 +49,7 @@ export default function Terms() {
           <div className="icon-container"><CheckSquare size={22} /></div>
           <div className="section-content">
             <h2 className="section-title">Acceptance of Terms</h2>
-            <p className="section-text">By accessing or using CodeArena, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access our platform. We reserve the right to modify or replace these Terms at any time.</p>
+            <p className="section-text">By accessing or using NodeClash, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access our platform. We reserve the right to modify or replace these Terms at any time.</p>
           </div>
         </div>
 
@@ -65,7 +65,7 @@ export default function Terms() {
           <div className="icon-container"><Star size={22} /></div>
           <div className="section-content">
             <h2 className="section-title">Premium Subscriptions</h2>
-            <p className="section-text">CodeArena offers Premium subscriptions that grant access to exclusive features such as Clara AI, private tournaments, and advanced analytics. Subscriptions are billed on a recurring basis. You may cancel your subscription at any time, but we do not offer refunds for partial billing periods.</p>
+            <p className="section-text">NodeClash offers Premium subscriptions that grant access to exclusive features such as Clara AI, private tournaments, and advanced analytics. Subscriptions are billed on a recurring basis. You may cancel your subscription at any time, but we do not offer refunds for partial billing periods.</p>
           </div>
         </div>
 
@@ -73,7 +73,7 @@ export default function Terms() {
           <div className="icon-container"><ShieldAlert size={22} /></div>
           <div className="section-content">
             <h2 className="section-title">Fair Play & Code of Conduct</h2>
-            <p className="section-text">CodeArena is built on fair competition. Any use of bots, automated scripts, unauthorized third-party assistance, or exploitation of bugs to manipulate ELO ratings during ranked battles will result in an immediate and permanent ban without refund.</p>
+            <p className="section-text">NodeClash is built on fair competition. Any use of bots, automated scripts, unauthorized third-party assistance, or exploitation of bugs to manipulate ELO ratings during ranked battles will result in an immediate and permanent ban without refund.</p>
           </div>
         </div>
 
@@ -81,7 +81,7 @@ export default function Terms() {
           <div className="icon-container"><Copyright size={22} /></div>
           <div className="section-content">
             <h2 className="section-title">Intellectual Property</h2>
-            <p className="section-text">The platform, its original content, features, and functionality are owned by CodeArena and are protected by international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.</p>
+            <p className="section-text">The platform, its original content, features, and functionality are owned by NodeClash and are protected by international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.</p>
           </div>
         </div>
 
@@ -89,7 +89,7 @@ export default function Terms() {
           <div className="icon-container"><AlertTriangle size={22} /></div>
           <div className="section-content">
             <h2 className="section-title">Limitation of Liability</h2>
-            <p className="section-text">In no event shall CodeArena, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of the service.</p>
+            <p className="section-text">In no event shall NodeClash, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of the service.</p>
           </div>
         </div>
       </div>

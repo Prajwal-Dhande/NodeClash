@@ -6,8 +6,8 @@ export default function Footer() {
   return (
     <footer className="footer">
       <span onClick={() => navigate('/')} className="footer-logo">
-        <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{C}'}</span>
-        <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>CodeArena</span>
+        <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span>
+        <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span>
       </span>
 
       <span className="footer-copyright">
