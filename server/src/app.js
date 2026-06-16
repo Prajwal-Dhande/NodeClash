@@ -19,6 +19,8 @@ const app = express()
 // 👇🔥 YAHAN HUA HAI ASLI FIX (CORS UPDATE) 🔥👇
 app.use(cors({
   origin: [
+    'https://nodeclash.in',
+    'https://www.nodeclash.in',
     'http://localhost:5173',
     'http://localhost:5174', // Added in case Vite runs on 5174
     'https://code-arena-virid.vercel.app' // Tera Vercel URL yahan allow ho gaya!
