@@ -86,8 +86,8 @@ export default function Hero() {
           </div>
 
           <h1 className="hero-title">
-            Code under<br />
-            <span className="gradient-text">pressure.</span>
+            Real-Time 1v1<br />
+            <span className="gradient-text">Coding Platform</span>
           </h1>
 
           <p className="hero-desc">
