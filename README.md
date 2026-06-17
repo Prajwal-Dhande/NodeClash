@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=timeGradient&height=250&section=header&text=CodeArena&fontSize=80&fontAlignY=35&desc=Next-Gen%20Multiplayer%20Coding%20Battleground&descAlignY=55&descAlign=50" alt="CodeArena Banner" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=timeGradient&height=250&section=header&text=NodeClash&fontSize=80&fontAlignY=35&desc=Next-Gen%20Multiplayer%20Coding%20Battleground&descAlignY=55&descAlign=50" alt="NodeClash Banner" />
 
   <br />
 
@@ -17,9 +17,9 @@
 
 ---
 
-## 🚀 What is CodeArena?
+## 🚀 What is NodeClash?
 
-CodeArena is a high-octane, real-time multiplayer competitive coding platform. Think of it as a battleground where developers go head-to-head to solve Data Structures & Algorithms (DSA) problems. But there's a twist: **An AI Interviewer is watching**. 
+NodeClash is a high-octane, real-time multiplayer competitive coding platform. Think of it as a battleground where developers go head-to-head to solve Data Structures & Algorithms (DSA) problems. But there's a twist: **An AI Interviewer is watching**. 
 
 Mid-battle, the AI analyzes your code and injects dynamic, real-time constraints (e.g., *"Solve this without using any built-in methods!"*), pushing your adaptability and problem-solving skills to the absolute limit.
 
@@ -42,7 +42,7 @@ Mid-battle, the AI analyzes your code and injects dynamic, real-time constraints
 A clean, decoupled, and highly scalable architecture built for speed and real-time synchronization.
 
 ```text
-CODE ARENA/
+NODECLASH/
 ├── 🌐 client/                 # React, Vite, Monaco Editor
 │   └── src/components/        # BattleRoom, Timer, WinnerScreen 
 └── ⚙️ server/                 # Node.js, Express, Socket.io
@@ -60,8 +60,8 @@ Want to run the battleground on your local machine? Let's get you set up.
 
 ### 1. Clone & Install
 ```bash
-git clone [https://github.com/Prajwal-Dhande/CodeArena.git](https://github.com/Prajwal-Dhande/CodeArena.git)
-cd CodeArena
+git clone [https://github.com/Prajwal-Dhande/NodeClash.git](https://github.com/Prajwal-Dhande/NodeClash.git)
+cd NodeClash
 ```
 
 ### 2. Ignite the Backend
