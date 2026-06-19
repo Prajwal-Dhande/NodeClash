@@ -122,7 +122,7 @@ button { outline: none; }
   .mobile-only { display: flex !important; }
   .mobile-menu-btn { display: flex !important; }
   body::before { opacity: 0.15 !important; animation: none !important; }
-  body::after { opacity: 0.08 !important; animation: none !important; }
+  body::after { opacity: 0.015 !important; animation: none !important; }
 
   .profile-nav { padding: 0 14px !important; height: 54px !important; }
   .profile-main-grid { display: flex !important; flex-direction: column !important; gap: 16px !important; padding: 16px 12px 80px !important; }

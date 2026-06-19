@@ -24,7 +24,7 @@ export default function Home() {
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
 
   return (
-    <div style={{ 
+    <div className="home-container" style={{ 
       background: '#09090B', /* Slightly lighter than pitch black (Zinc 950) */
       backgroundImage: `
         radial-gradient(ellipse at 50% 0%, rgba(229, 77, 46, 0.15) 0%, rgba(229, 77, 46, 0.02) 30%, transparent 70%),
@@ -37,6 +37,13 @@ export default function Home() {
       color: '#FAFAFA', 
       fontFamily: 'Inter, sans-serif' 
     }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .home-container {
+            background-image: radial-gradient(ellipse at 50% 0%, rgba(229, 77, 46, 0.15) 0%, rgba(229, 77, 46, 0.02) 30%, transparent 70%) !important;
+          }
+        }
+      `}</style>
       <Helmet>
         <title>NodeClash | Real-time 1v1 Coding Battles</title>
         <meta name="description" content="Compete against other developers in real-time coding challenges. Practice DSA, climb the global leaderboard, and prove your skills on NodeClash." />

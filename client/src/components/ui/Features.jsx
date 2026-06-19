@@ -61,7 +61,7 @@ function FeatureRow({ tag, title, desc, bullets, linkText, linkHref, badges, moc
         }}>{title}</h2>
 
         <p style={{
-          fontSize: 15, color: '#71717A', lineHeight: 1.8,
+          fontSize: 15, color: '#A1A1AA', lineHeight: 1.8,
           maxWidth: 420, marginBottom: 28,
         }}>{desc}</p>
 
@@ -245,10 +245,10 @@ export default function Features() {
           ]}
           mockup={
             <IDEMockup url="https://nodeclash.in/battle">
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: '#71717A', lineHeight: '20px', marginBottom: 16 }}>
-                <div><span style={{ color: '#3F3F46' }}>1</span> <span style={{ color: '#22C55E' }}># Read input from stdin</span></div>
-                <div><span style={{ color: '#3F3F46' }}>2</span> <span style={{ color: '#E54D2E' }}>Example</span>: n = int(input())</div>
-                <div><span style={{ color: '#3F3F46' }}>3</span> <span style={{ color: '#E54D2E' }}>Example</span>: arr = list(map(int, input().split()))</div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: '#A1A1AA', lineHeight: '20px', marginBottom: 16 }}>
+                <div><span style={{ color: '#FAFAFA' }}>1</span> <span style={{ color: '#22C55E' }}># Read input from stdin</span></div>
+                <div><span style={{ color: '#FAFAFA' }}>2</span> <span style={{ color: '#E54D2E' }}>Example</span>: n = int(input())</div>
+                <div><span style={{ color: '#FAFAFA' }}>3</span> <span style={{ color: '#E54D2E' }}>Example</span>: arr = list(map(int, input().split()))</div>
               </div>
               {/* AI Chat Bubble */}
               <div style={{
@@ -262,14 +262,14 @@ export default function Features() {
                 </div>
                 <div style={{
                   background: '#27272A', borderRadius: 8, padding: 12, fontSize: 12,
-                  color: '#A1A1AA', lineHeight: 1.6, borderLeft: '3px solid #A78BFA',
+                  color: '#FAFAFA', lineHeight: 1.6, borderLeft: '3px solid #A78BFA',
                 }}>
                   I keep failing case 1. Can you find the bug without giving me the full solution?
                 </div>
                 <div style={{
                   background: 'rgba(167,139,250,0.05)', borderRadius: 8, padding: 12,
-                  fontSize: 12, color: '#A1A1AA', lineHeight: 1.6, marginTop: 8,
-                  borderLeft: '3px solid #3F3F46',
+                  fontSize: 12, color: '#FAFAFA', lineHeight: 1.6, marginTop: 8,
+                  borderLeft: '3px solid #52525B',
                 }}>
                   I'm checking the failing case against your loop. The set idea is right; ask for target − x before you add x. Then add the current member after that check. Try the duplicate case next.
                 </div>

@@ -86,7 +86,7 @@ export default function ProductEvidence() {
             >
               <div style={{ fontSize: 20, fontWeight: 600, color: '#FAFAFA', fontFamily: "'Inter', sans-serif", marginBottom: 32 }}>{item.value}</div>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#A1A1AA', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: 12 }}>{item.title}</div>
-              <p style={{ color: '#71717A', fontSize: 13, lineHeight: 1.5, margin: 0 }}>{item.desc}</p>
+              <p style={{ color: '#A1A1AA', fontSize: 13, lineHeight: 1.5, margin: 0 }}>{item.desc}</p>
             </motion.div>
           ))}
         </div>
