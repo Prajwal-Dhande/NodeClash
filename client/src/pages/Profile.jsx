@@ -795,13 +795,15 @@ export default function Profile() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 {[
                   { label: 'Win Rate', val: `${winRate}%`, color: '#fb923c' },
-                  { label: <><Flame size={20} style={{ marginRight: 4, verticalAlign: 'middle' }} color="#ff6b35" /> Streak</>, val: user?.stats?.streak || 0, color: '#fb923c' },
+                  { label: 'Streak', val: user?.stats?.streak || 0, color: '#fb923c', icon: <Flame size={20} color="#ff6b35" /> },
                   { label: 'Peak ELO', val: Math.max(peakElo, elo), color: 'var(--text-muted)' },
                   { label: 'Battles', val: total, color: 'var(--text-muted)' },
-                ].map(({ label, val, color }) => (
+                ].map(({ label, val, color, icon }) => (
                   <div key={label} className="stat-card" style={{ background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 12, padding: '16px 12px', textAlign: 'center' }}>
-                    <div style={{ fontWeight: 800, fontSize: 26, fontFamily: 'Outfit', color, marginBottom: 6 }}>{val}</div>
-                    <div style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500, letterSpacing: 0.5, textTransform: 'uppercase' }}>{label}</div>
+                    <div style={{ fontWeight: 700, fontSize: 22, fontFamily: 'Outfit', color, marginBottom: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                      {icon}{val}
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 500, letterSpacing: 0.5, textTransform: 'uppercase' }}>{label}</div>
                   </div>
                 ))}
               </div>
