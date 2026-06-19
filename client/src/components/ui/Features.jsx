@@ -157,6 +157,9 @@ export default function Features() {
             transform: scale(0.85);
             transform-origin: center top;
           }
+          .afk-mockup, .vibecoding-mockup {
+            flex-direction: column !important;
+          }
         }
       `}</style>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>
@@ -321,7 +324,7 @@ export default function Features() {
           desc="Early concept for turning ideas into repos, exports, benchmarks, and real code you can take anywhere."
           badges={[{ text: 'AFK', color: '#71717A', bg: 'transparent', border: 'none' }]}
           mockup={
-            <div style={{ display: 'flex', gap: 12, background: '#0A0A0A', border: '1px solid #1A1A1C', borderRadius: 12, padding: 16 }}>
+            <div className="afk-mockup" style={{ display: 'flex', gap: 12, background: '#0A0A0A', border: '1px solid #1A1A1C', borderRadius: 12, padding: 16 }}>
               {/* Chat Column */}
               <div style={{ flex: 1, background: '#111113', border: '1px solid #27272A', borderRadius: 8, padding: 12 }}>
                 <div style={{ fontSize: 10, color: '#A1A1AA', marginBottom: 12 }}>Clara AFK</div>
@@ -385,7 +388,7 @@ export default function Features() {
           desc="A future course where learners prompt Clara in plain English, watch the assistant translate intent into steps, and discover real CS concepts."
           badges={[{ text: 'VIBECODING COURSES', color: '#71717A', bg: 'transparent', border: 'none' }]}
           mockup={
-            <div style={{ display: 'flex', gap: 12, background: '#0A0A0A', border: '1px solid #1A1A1C', borderRadius: 12, padding: 16 }}>
+            <div className="vibecoding-mockup" style={{ display: 'flex', gap: 12, background: '#0A0A0A', border: '1px solid #1A1A1C', borderRadius: 12, padding: 16 }}>
               {/* Left Column: Visual Courses */}
               <div style={{ flex: 1, background: '#111113', border: '1px solid #27272A', borderRadius: 8, padding: 12 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#A1A1AA', marginBottom: 16 }}>
