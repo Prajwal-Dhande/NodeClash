@@ -144,13 +144,10 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <div className="nav-links desktop-only">
-          {[
-            { label: 'Features', href: '#features' },
-            { label: 'How It Works', href: '#how-it-works' },
-            { label: 'Leaderboard', href: '/leaderboard' },
-          ].map(({ label, href }) => (
-            <span key={label} onClick={() => handleNavClick(href)} className="nav-link">{label}</span>
-          ))}
+          <span className="nav-link" onClick={() => handleNavClick('/#features')}>Features</span>
+          <span className="nav-link" onClick={() => handleNavClick('/lobby?tab=puzzles')}>Puzzles</span>
+          <span className="nav-link" onClick={() => handleNavClick('/leaderboard')}>Leaderboard</span>
+          <span className="nav-link" onClick={() => handleNavClick('/premium')} style={{ color: '#E54D2E' }}>Pro</span>
         </div>
 
         <div className="nav-actions desktop-only">
@@ -334,13 +331,12 @@ export default function Navbar() {
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="mobile-menu">
-          {[
-            { label: 'Features', href: '#features' },
-            { label: 'How It Works', href: '#how-it-works' },
-            { label: 'Leaderboard', href: '/leaderboard' },
-          ].map(({ label, href }) => (
-            <span key={label} onClick={() => handleNavClick(href)} className="nav-link">{label}</span>
-          ))}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <span className="nav-link" onClick={() => handleNavClick('/#features')}>Features</span>
+            <span className="nav-link" onClick={() => handleNavClick('/lobby?tab=puzzles')}>Puzzles</span>
+            <span className="nav-link" onClick={() => handleNavClick('/leaderboard')}>Leaderboard</span>
+            <span className="nav-link" onClick={() => handleNavClick('/premium')} style={{ color: '#E54D2E' }}>Pro</span>
+          </div>
           <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
             {isLoggedIn ? (
               <button onClick={() => { navigate('/lobby'); window.scrollTo(0, 0); }} className="btn-primary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}><Zap size={16} /> Enter Arena</button>

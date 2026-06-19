@@ -1,82 +1,58 @@
-/* ========================================= */
-/* UNIVERSAL / GLOBAL STYLES - Corrected Full File */
-/* ========================================= */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+@import "tailwindcss";
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root,
 [data-theme="dark"] {
-  --bg: #0d0d0d;
-  --bg2: #111111;
+  /* Premium AlgoArena Dark Theme Colors */
+  --bg: #0A0A0A;
+  --bg2: #121212;
   --bg3: #181818;
-  --border: #1f1f1f;
-  --border2: #252525;
-  --bg-dark: #030305;
-  --text-main: #f8fafc;
-  --orange: #ff6b35;
-  --orange2: #f7451d;
-  --orange-dim: rgba(255,107,53,0.15);
+  --border: #27272A;
+  --border2: #3F3F46;
+  --bg-dark: #000000;
+  --text-main: #FAFAFA;
+
+  /* The Sharp Orange Accent */
+  --brand: #E54D2E;
+  --brand-hover: #D43F25;
+  --orange: #E54D2E;
+  --orange2: #D43F25;
+  --orange-dim: rgba(229,77,46,0.15);
+
   --red: #ef4444;
   --green: #22c55e;
   --text: #e5e5e5;
   --text-dim: #888888;
   --text-hint: #555555;
-  --purple: #c084fc;
-  --blue: #60a5fa;
-  --card-bg: #16161a;
-  --nav-bg: rgba(10,10,12,0.9);
+  --card-bg: #0A0A0A;
+  --nav-bg: rgba(10,10,10,0.8);
   --text-secondary: #888;
   --text-muted: #555;
   --text-disabled: #333;
   --btn-bg: rgba(255,255,255,0.05);
-}
-
-[data-theme="light"] {
-  --bg: #f5f5f5;
-  --bg2: #ffffff;
-  --bg3: #ebebeb;
-  --border: #e0e0e0;
-  --border2: #d0d0d0;
-  --bg-dark: #f0f2f5;
-  --text-main: #0f172a;
-  --orange: #e85d2a;
-  --orange2: #d63e14;
-  --orange-dim: rgba(232,93,42,0.08);
-  --red: #dc2626;
-  --green: #16a34a;
-  --text: #1a1a1a;
-  --text-dim: #666666;
-  --text-hint: #999999;
-  --purple: #9333ea;
-  --blue: #2563eb;
-  --card-bg: #ffffff;
-  --nav-bg: rgba(255,255,255,0.95);
-  --text-secondary: #666;
-  --text-muted: #999;
-  --text-disabled: #ccc;
-  --btn-bg: rgba(0,0,0,0.04);
+  --glass-border: rgba(255,255,255,0.06);
+  --glass-overlay: rgba(255,255,255,0.03);
 }
 
 body {
   background: var(--bg);
-  color: var(--text);
+  color: var(--text-main);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
-  position: relative; /* Essential for pseudo-element background positioning */
+  position: relative;
   min-height: 100vh;
 }
 
+/* Subtle Premium Noise */
 body::after {
   content: "";
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.025;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  pointer-events: none; z-index: 9999;
+  opacity: 0.015;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
@@ -85,88 +61,15 @@ body::after {
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-hint); }
 
-/* Light mode: reduce background animation intensity */
-[data-theme="light"] body::before { opacity: 0.25; }
-[data-theme="light"] body::after { opacity: 0.15; }
-
 select { outline: none; }
 button { outline: none; }
 
-/* ========================================= */
-/* BACKGROUND ANIMATION LAYERS - Fix Section */
-/* ========================================= */
-
-/* CRITICAL: React Root Container MUST be on top */
-/* Ye lines NodeClash ki visual context ke liye main content ko upar laata hai */
-#root {
-  position: relative;
-  z-index: 10; /* Set content above the background effects */
-}
-
-/* LAYER 1: 3D Grid Floor (Orange lines) */
-body::before {
-  content: '';
-  position: fixed; /* Fixed background */
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  z-index: 1; /* Lowest layering, just above body bg color */
-  pointer-events: none;
-  
-  background-image: 
-    linear-gradient(var(--orange-dim) 1.5px, transparent 1.5px),
-    linear-gradient(90deg, var(--orange-dim) 1.5px, transparent 1.5px);
-  background-size: 80px 80px; /* Adjust size as needed */
-  background-position: center;
-  
-  /* Applying 3D perspective to make it look like a floor/distant grid */
-  transform: perspective(1000px) rotateX(45deg) translateY(-200px) scale(3.5);
-  animation: cyberGridFloat 40s linear infinite;
-  opacity: 0.6; /* Slight transparency for subtleness */
-}
-
-/* LAYER 2: Floating Nodes (Orange stars/dots) */
-body::after {
-  content: '';
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  z-index: 2; /* Just above the grid lines, still behind content */
-  pointer-events: none;
-  opacity: 0.4;
-  
-  background-image: 
-    radial-gradient(var(--orange) 1.5px, transparent 1.5px),
-    radial-gradient(var(--text) 0.5px, transparent 0.5px);
-  background-size: 150px 150px;
-  background-position: 0 0, 75px 75px; /* Offset the two dot sizes */
-  
-  animation: dataNodeDrift 60s linear infinite;
-}
-
-/* ========================================= */
-/* BACKGROUND ANIMATION KEYFRAMES            */
-/* ========================================= */
-
-@keyframes cyberGridFloat {
-  0% { 
-    background-position: center 0;
-  }
-  100% { 
-    /* Pattern repeats perfectly if it moves the distance of one background-size (80px) */
-    background-position: center 80px; 
-  }
-}
-
-@keyframes dataNodeDrift {
-  0% { background-position: 0 0, 75px 75px; }
-  100% { background-position: 150px 150px, 225px 225px; }
-}
+#root { position: relative; z-index: 10; }
 
 /* ========================================= */
 /* MOBILE RESPONSIVE                          */
 /* ========================================= */
 
-/* Utility classes */
 .mobile-only { display: none !important; }
 .mobile-menu-btn {
   display: none !important;
@@ -174,7 +77,6 @@ body::after {
   font-size: 22px; cursor: pointer; padding: 4px;
 }
 
-/* Mobile Drawer (Profile page uses it) */
 .mobile-drawer {
   position: fixed; top: 0; right: 0; bottom: 0;
   width: 280px; background: var(--bg2);
@@ -200,38 +102,17 @@ body::after {
 
 /* ---- TABLET (< 1024px) ---- */
 @media (max-width: 1024px) {
-  .settings-layout {
-    flex-direction: column !important;
-    gap: 24px !important;
-  }
-  .settings-sidebar {
-    width: 100% !important;
-    flex-shrink: unset !important;
-  }
+  .settings-layout { flex-direction: column !important; gap: 24px !important; }
+  .settings-sidebar { width: 100% !important; flex-shrink: unset !important; }
   .settings-sidebar .settings-tabs {
-    flex-direction: row !important;
-    overflow-x: auto !important;
-    gap: 6px !important;
-    padding-bottom: 4px;
+    flex-direction: row !important; overflow-x: auto !important;
+    gap: 6px !important; padding-bottom: 4px;
   }
-  .settings-sidebar .settings-tabs button {
-    white-space: nowrap;
-    padding: 10px 16px !important;
-    font-size: 13px !important;
-  }
+  .settings-sidebar .settings-tabs button { white-space: nowrap; padding: 10px 16px !important; font-size: 13px !important; }
   .settings-sidebar .settings-tabs .tab-chevron { display: none !important; }
   .settings-sidebar .settings-logout { display: none; }
-
-  .profile-main-grid {
-    grid-template-columns: 1fr !important;
-    gap: 20px !important;
-    padding: 24px 16px 60px !important;
-  }
-
-  .profile-stats-overview {
-    grid-template-columns: 1fr !important;
-    gap: 24px !important;
-  }
+  .profile-main-grid { grid-template-columns: 1fr !important; gap: 20px !important; padding: 24px 16px 60px !important; }
+  .profile-stats-overview { grid-template-columns: 1fr !important; gap: 24px !important; }
 }
 
 /* ---- MOBILE (< 768px) ---- */
@@ -239,270 +120,67 @@ body::after {
   .desktop-only { display: none !important; }
   .mobile-only { display: flex !important; }
   .mobile-menu-btn { display: flex !important; }
-
-  /* Performance: disable heavy animations */
   body::before { opacity: 0.15 !important; animation: none !important; }
   body::after { opacity: 0.08 !important; animation: none !important; }
 
-  /* ===== PROFILE PAGE ===== */
-  .profile-nav {
-    padding: 0 14px !important;
-    height: 54px !important;
-  }
-  .profile-main-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 16px !important;
-    padding: 16px 12px 80px !important;
-  }
+  .profile-nav { padding: 0 14px !important; height: 54px !important; }
+  .profile-main-grid { display: flex !important; flex-direction: column !important; gap: 16px !important; padding: 16px 12px 80px !important; }
   .profile-sidebar { order: 1 !important; width: 100% !important; }
   .profile-content { order: 2 !important; width: 100% !important; }
-
-  /* Stats overview card */
-  .profile-stats-overview {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 20px !important;
-    padding: 18px 14px !important;
-    border-radius: 14px !important;
-  }
-  .profile-stats-overview > div:first-child {
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 16px !important;
-  }
-  .profile-stats-overview > div:first-child > div:last-child {
-    min-width: unset !important;
-    width: 100% !important;
-  }
-
-  /* Badges card */
-  .profile-badges-card {
-    padding: 18px 14px !important;
-    border-radius: 14px !important;
-  }
-  .profile-badges-card > div:last-child {
-    justify-content: center !important;
-  }
-
-  /* Activity matrix */
-  .profile-activity-card {
-    padding: 16px 10px !important;
-    border-radius: 14px !important;
-  }
-  .activity-header {
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-    align-items: center !important;
-  }
-  .activity-header > div:first-child {
-    flex-wrap: wrap !important;
-  }
-  .activity-header > div:last-child {
-    width: 100% !important;
-    justify-content: flex-start !important;
-  }
-
-  /* Profile tabs */
-  .profile-tabs {
-    gap: 4px !important;
-    padding: 0 !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
+  .profile-stats-overview { display: flex !important; flex-direction: column !important; gap: 20px !important; padding: 18px 14px !important; border-radius: 14px !important; }
+  .profile-stats-overview > div:first-child { flex-direction: column !important; align-items: center !important; gap: 16px !important; }
+  .profile-stats-overview > div:first-child > div:last-child { min-width: unset !important; width: 100% !important; }
+  .profile-badges-card { padding: 18px 14px !important; border-radius: 14px !important; }
+  .profile-badges-card > div:last-child { justify-content: center !important; }
+  .profile-activity-card { padding: 16px 10px !important; border-radius: 14px !important; }
+  .activity-header { flex-direction: row !important; flex-wrap: wrap !important; gap: 8px !important; align-items: center !important; }
+  .activity-header > div:first-child { flex-wrap: wrap !important; }
+  .activity-header > div:last-child { width: 100% !important; justify-content: flex-start !important; }
+  .profile-tabs { gap: 4px !important; padding: 0 !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .profile-tabs::-webkit-scrollbar { display: none; }
-  .profile-tabs button {
-    padding: 10px 16px !important;
-    font-size: 13px !important;
-    white-space: nowrap;
-  }
+  .profile-tabs button { padding: 10px 16px !important; font-size: 13px !important; white-space: nowrap; }
+  .battle-table-header { display: none !important; }
+  .battle-row { display: grid !important; grid-template-columns: 1fr auto !important; grid-template-rows: auto auto auto !important; gap: 12px 16px !important; padding: 20px !important; background: rgba(255,255,255,0.03) !important; border-radius: 16px !important; margin-bottom: 12px !important; border: 1px solid rgba(255,255,255,0.05) !important; }
+  .battle-row:last-child { margin-bottom: 0 !important; }
+  .battle-row > div:nth-child(1) { grid-column: 2; grid-row: 1; justify-self: end; }
+  .battle-row > div:nth-child(2) { grid-column: 1; grid-row: 1; align-self: start; }
+  .battle-row > div:nth-child(2) > div:first-child { flex-wrap: wrap !important; gap: 8px !important; }
+  .battle-row > div:nth-child(3) { grid-column: 1; grid-row: 2; }
+  .battle-row > div:nth-child(4) { grid-column: 2; grid-row: 2; justify-self: end; align-self: center; }
+  .battle-row > div:nth-child(5) { grid-column: 1; grid-row: 3; }
+  .battle-row > div:nth-child(6) { grid-column: 2; grid-row: 3; justify-self: end; }
+  .profile-content .stat-card { padding: 16px 12px !important; border-radius: 14px !important; }
 
-  /* Battle history: Card layout for mobile */
-  .battle-table-header {
-    display: none !important;
-  }
-  .battle-row {
-    display: grid !important;
-    grid-template-columns: 1fr auto !important;
-    grid-template-rows: auto auto auto !important;
-    gap: 12px 16px !important;
-    padding: 20px !important;
-    background: rgba(255,255,255,0.03) !important;
-    border-radius: 16px !important;
-    margin-bottom: 12px !important;
-    border: 1px solid rgba(255,255,255,0.05) !important;
-  }
-  .battle-row:last-child {
-    margin-bottom: 0 !important;
-  }
-  .battle-row > div:nth-child(1) { /* Result Tag */
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: end;
-  }
-  .battle-row > div:nth-child(2) { /* Problem & Title */
-    grid-column: 1;
-    grid-row: 1;
-    align-self: start;
-  }
-  .battle-row > div:nth-child(2) > div:first-child {
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-  }
-  .battle-row > div:nth-child(3) { /* Opponent */
-    grid-column: 1;
-    grid-row: 2;
-  }
-  .battle-row > div:nth-child(4) { /* Difficulty */
-    grid-column: 2;
-    grid-row: 2;
-    justify-self: end;
-    align-self: center;
-  }
-  .battle-row > div:nth-child(5) { /* Time */
-    grid-column: 1;
-    grid-row: 3;
-  }
-  .battle-row > div:nth-child(6) { /* Date */
-    grid-column: 2;
-    grid-row: 3;
-    justify-self: end;
-  }
-
-  /* Stat mini cards */
-  .profile-content .stat-card {
-    padding: 16px 12px !important;
-    border-radius: 14px !important;
-  }
-
-  /* ===== SETTINGS PAGE ===== */
-  .settings-layout {
-    flex-direction: column !important;
-    padding: 24px 16px !important;
-    gap: 20px !important;
-  }
-  .settings-sidebar {
-    width: 100% !important;
-  }
-  .settings-sidebar > div:first-child {
-    margin-bottom: 20px !important;
-  }
-  .settings-sidebar h1 {
-    font-size: 26px !important;
-    margin-bottom: 6px !important;
-  }
-  .settings-sidebar .settings-tabs {
-    flex-direction: row !important;
-    overflow-x: auto !important;
-    gap: 10px !important;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 4px !important;
-  }
+  .settings-layout { flex-direction: column !important; padding: 24px 16px !important; gap: 20px !important; }
+  .settings-sidebar { width: 100% !important; }
+  .settings-sidebar > div:first-child { margin-bottom: 20px !important; }
+  .settings-sidebar h1 { font-size: 26px !important; margin-bottom: 6px !important; }
+  .settings-sidebar .settings-tabs { flex-direction: row !important; overflow-x: auto !important; gap: 10px !important; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px !important; }
   .settings-sidebar .settings-tabs::-webkit-scrollbar { display: none; }
-  .settings-sidebar .settings-tabs button {
-    white-space: nowrap;
-    padding: 12px 18px !important;
-    font-size: 14px !important;
-    border-radius: 12px !important;
-    gap: 10px !important;
-  }
+  .settings-sidebar .settings-tabs button { white-space: nowrap; padding: 12px 18px !important; font-size: 14px !important; border-radius: 12px !important; gap: 10px !important; }
   .settings-sidebar .settings-tabs .tab-chevron { display: none !important; }
   .settings-sidebar .settings-logout { display: none; }
-
-  .settings-content .tab-header {
-    padding: 24px 20px !important;
-    border-radius: 16px 16px 0 0 !important;
-  }
-  .settings-content .tab-header h2 {
-    font-size: 20px !important;
-  }
-  .settings-content .tab-header p {
-    font-size: 14px !important;
-    margin-top: 8px !important;
-  }
-
-  .setting-row {
-    padding: 20px !important;
-    gap: 16px !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    background: rgba(255,255,255,0.02) !important;
-    border-radius: 16px !important;
-    margin: 12px !important;
-    border: 1px solid rgba(255,255,255,0.05) !important;
-  }
-  .setting-row > div:first-child {
-    gap: 14px !important;
-    width: 100% !important;
-  }
-  .setting-row > div:first-child > div:first-child {
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
-    border-radius: 12px !important;
-  }
-  .setting-row > div:first-child > div:last-child > div:first-child {
-    font-size: 15px !important;
-    margin-bottom: 6px !important;
-  }
-  .setting-row > div:first-child > div:last-child > div:last-child {
-    font-size: 13px !important;
-    line-height: 1.4 !important;
-  }
-  .setting-row select,
-  .setting-row button {
-    width: 100% !important;
-    min-width: unset !important;
-    font-size: 14px !important;
-    padding: 12px 16px !important;
-    border-radius: 12px !important;
-  }
-
-  /* ===== GENERAL ===== */
-  nav {
-    padding: 0 16px !important;
-  }
+  .settings-content .tab-header { padding: 24px 20px !important; border-radius: 16px 16px 0 0 !important; }
+  .settings-content .tab-header h2 { font-size: 20px !important; }
+  .settings-content .tab-header p { font-size: 14px !important; margin-top: 8px !important; }
+  .setting-row { padding: 20px !important; gap: 16px !important; flex-direction: column !important; align-items: flex-start !important; background: rgba(255,255,255,0.02) !important; border-radius: 16px !important; margin: 12px !important; border: 1px solid rgba(255,255,255,0.05) !important; }
+  .setting-row > div:first-child { gap: 14px !important; width: 100% !important; }
+  .setting-row > div:first-child > div:first-child { width: 44px !important; height: 44px !important; min-width: 44px !important; border-radius: 12px !important; }
+  .setting-row > div:first-child > div:last-child > div:first-child { font-size: 15px !important; margin-bottom: 6px !important; }
+  .setting-row > div:first-child > div:last-child > div:last-child { font-size: 13px !important; line-height: 1.4 !important; }
+  .setting-row select, .setting-row button { width: 100% !important; min-width: unset !important; font-size: 14px !important; padding: 12px 16px !important; border-radius: 12px !important; }
+  nav { padding: 0 16px !important; }
 }
 
 /* ---- SMALL MOBILE (< 480px) ---- */
 @media (max-width: 480px) {
-  .global-rank-badge {
-    position: static !important;
-    text-align: left !important;
-    margin-top: 16px !important;
-  }
-
-  .profile-main-grid {
-    padding: 16px 12px 60px !important;
-    gap: 16px !important;
-  }
-  .profile-stats-overview {
-    padding: 20px 16px !important;
-  }
-  .profile-badges-card {
-    padding: 20px 16px !important;
-  }
-  .profile-activity-card {
-    padding: 20px 12px !important;
-  }
-
-  .settings-layout {
-    padding: 16px 12px !important;
-  }
-  .settings-content .tab-header {
-    padding: 20px 16px !important;
-  }
-  .setting-row {
-    margin: 8px !important;
-    padding: 16px !important;
-  }
-
-  /* Battle row cards tighter */
-  .battle-row {
-    padding: 16px !important;
-    gap: 10px !important;
-  }
+  .global-rank-badge { position: static !important; text-align: left !important; margin-top: 16px !important; }
+  .profile-main-grid { padding: 16px 12px 60px !important; gap: 16px !important; }
+  .profile-stats-overview { padding: 20px 16px !important; }
+  .profile-badges-card { padding: 20px 16px !important; }
+  .profile-activity-card { padding: 20px 12px !important; }
+  .settings-layout { padding: 16px 12px !important; }
+  .settings-content .tab-header { padding: 20px 16px !important; }
+  .setting-row { margin: 8px !important; padding: 16px !important; }
+  .battle-row { padding: 16px !important; gap: 10px !important; }
 }

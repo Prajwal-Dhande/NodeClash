@@ -429,6 +429,35 @@ export default function Lobby() {
 
   return (
     <div className="lobby-wrapper">
+      <style>{`
+        .quickplay-layout {
+          display: grid;
+          grid-template-columns: 1fr 300px;
+          gap: 24px;
+          margin-top: 32px;
+        }
+        .quickplay-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
+        }
+        .col-span-2 {
+          grid-column: span 2;
+        }
+        @media (max-width: 1024px) {
+          .quickplay-layout {
+            grid-template-columns: 1fr;
+          }
+        }
+        @media (max-width: 600px) {
+          .quickplay-grid {
+            grid-template-columns: 1fr;
+          }
+          .col-span-2 {
+            grid-column: span 1;
+          }
+        }
+      `}</style>
 
       <Helmet>
         <title>{tab === 'puzzles' ? 'Daily Puzzles | NodeClash' : 'Battle Arena | NodeClash'}</title>
@@ -666,17 +695,16 @@ export default function Lobby() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 24, marginTop: 32 }}
+            className="quickplay-layout"
           >
             {/* LEFT: Main content grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+            <div className="quickplay-grid">
             
             {/* 🔥 Interview Pro Vault Card (INLINE POSTER - RELIABLE IMAGE) */}
             <motion.div
               whileHover={{ y: -4 }}
               onClick={() => user?.isPremium ? navigate('/interview-dsa') : navigate('/premium')}
-              className="game-mode-card"
-              style={{ gridColumn: 'span 2', gridRow: 'span 2' }}
+              className="game-mode-card col-span-2"
             >
               <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <div style={{ padding: '6px 12px', background: 'rgba(236,72,153,0.1)', color: '#ec4899', border: '1px solid rgba(236,72,153,0.2)', borderRadius: 6, fontSize: 11, fontWeight: 700, width: 'fit-content', marginBottom: 16 }}>
@@ -778,8 +806,8 @@ export default function Lobby() {
             <motion.div
               whileHover={{ y: -4 }}
               onClick={handlePracticeClick}
-              className="game-mode-card"
-              style={{ display: 'flex', flexDirection: 'column', gridColumn: 'span 2' }}
+              className="game-mode-card col-span-2"
+              style={{ display: 'flex', flexDirection: 'column' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
                 <div className="mode-icon" style={{ background: 'rgba(34,197,94,0.1)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.2)' }}><Bot size={24} /></div>

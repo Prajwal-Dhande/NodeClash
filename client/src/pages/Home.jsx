@@ -1,12 +1,16 @@
-import { useState } from 'react'
-import { Helmet } from 'react-helmet-async' // 🔥 Helmet import kar liya
-import { motion, AnimatePresence } from 'framer-motion'
-import Navbar from '../components/ui/Navbar'
-import Hero from '../components/ui/Hero'
-import Features from '../components/ui/Features'
-import HowItWorks from '../components/ui/HowItWorks'
-import PricingTeaser from '../components/ui/PricingTeaser'
-import Footer from '../components/ui/Footer'
+import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { motion, AnimatePresence } from 'framer-motion';
+import Navbar from '../components/ui/Navbar';
+import Hero from '../components/ui/Hero';
+import ProductEvidence from '../components/ui/ProductEvidence';
+import Testimonials from '../components/ui/Testimonials';
+import Features from '../components/ui/Features';
+import HowItWorks from '../components/ui/HowItWorks';
+import PricingTeaser from '../components/ui/PricingTeaser';
+import CompanyLogos from '../components/ui/CompanyLogos';
+import Newsletter from '../components/ui/Newsletter';
+import Footer from '../components/ui/Footer';
 
 const FAQS = [
   { question: "Is NodeClash free to use?", answer: "Yes! Core features like random match-making, practice rooms, and the public leaderboard are completely free." },
@@ -14,114 +18,114 @@ const FAQS = [
   { question: "How does the ELO ranking system work?", answer: "You gain or lose points based on match outcomes. Beating higher-ranked players yields more points, ensuring a fair reflection of your skill." },
   { question: "What is Clara AI?", answer: "Clara is our AI interviewer that acts as your opponent or mentor. She injects dynamic constraints mid-battle and provides code reviews in the Pro tier." },
   { question: "Can I cancel my Pro subscription anytime?", answer: "Absolutely. You can manage or cancel your subscription at any time from your billing settings without any hidden fees." }
-]
+];
 
 export default function Home() {
-  const [openFaqIndex, setOpenFaqIndex] = useState(null)
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
 
   return (
-    <div>
-      {/* 👇🔥 MAIN LANDING PAGE SEO 🔥👇 */}
+    <div style={{ 
+      background: '#09090B', /* Slightly lighter than pitch black (Zinc 950) */
+      backgroundImage: `
+        radial-gradient(ellipse at 50% 0%, rgba(229, 77, 46, 0.15) 0%, rgba(229, 77, 46, 0.02) 30%, transparent 70%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
+      `,
+      backgroundSize: '100% 100%, 50px 50px, 50px 50px',
+      backgroundPosition: 'center top',
+      minHeight: '100vh', 
+      color: '#FAFAFA', 
+      fontFamily: 'Inter, sans-serif' 
+    }}>
       <Helmet>
         <title>NodeClash | Real-time 1v1 Coding Battles</title>
         <meta name="description" content="Compete against other developers in real-time coding challenges. Practice DSA, climb the global leaderboard, and prove your skills on NodeClash." />
         <meta name="keywords" content="coding platform, competitive programming, 1v1 coding, dsa practice, leetcode alternative, multiplayer coding" />
-        
-        {/* Social Media Share Preview Tags */}
         <meta property="og:title" content="NodeClash | Real-time 1v1 Coding Battles" />
         <meta property="og:description" content="Compete against other developers in real-time coding challenges. Practice DSA and climb the leaderboard!" />
         <meta property="og:type" content="website" />
       </Helmet>
-      {/* 👆🔥 MAIN LANDING PAGE SEO 🔥👆 */}
-
-      <div className="ambient-glow" />
 
       <Navbar />
       <Hero />
+      <ProductEvidence />
       <div id="features"><Features /></div>
+      <CompanyLogos />
+      <Testimonials />
       <div id="how-it-works"><HowItWorks /></div>
-      
       <PricingTeaser />
 
       {/* FAQ SECTION */}
-      <div className="faq-section" style={{ padding: '80px 20px' }}>
-        <h2 className="faq-title">Frequently Asked Questions</h2>
-        <div className="faq-list">
-          {FAQS.map((faq, index) => (
-            <div key={index} className="faq-item">
-              <button 
-                className="faq-question" 
-                onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
-              >
-                <span>{faq.question}</span>
-                <motion.svg 
-                  width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                  animate={{ rotate: openFaqIndex === index ? 180 : 0 }}
-                  transition={{ duration: 0.2 }}
+      <section style={{
+        width: '100%', background: 'transparent', padding: '100px 0',
+        borderTop: '1px solid #1A1A1C',
+      }}>
+        <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 40px' }}>
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 11,
+            color: '#52525B', letterSpacing: '3px', textTransform: 'uppercase',
+            display: 'block', marginBottom: 16,
+          }}>SUPPORT</span>
+          <h2 style={{
+            fontFamily: "'Outfit', sans-serif", fontSize: 32, fontWeight: 800,
+            color: '#FAFAFA', letterSpacing: '-1.5px', marginBottom: 48,
+          }}>
+            Frequently Asked Questions
+          </h2>
+
+          <div style={{ borderTop: '1px solid #1A1A1C' }}>
+            {FAQS.map((faq, index) => (
+              <div key={index} style={{ borderBottom: '1px solid #1A1A1C' }}>
+                <button
+                  onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
+                  aria-expanded={openFaqIndex === index}
+                  aria-controls={`faq-answer-${index}`}
+                  style={{
+                    width: '100%', display: 'flex', justifyContent: 'space-between',
+                    alignItems: 'center', padding: '24px 0', background: 'transparent',
+                    border: 'none', color: '#FAFAFA', fontSize: 15, fontWeight: 500,
+                    fontFamily: 'Inter, sans-serif', textAlign: 'left', cursor: 'pointer',
+                    transition: 'color 0.2s',
+                  }}
                 >
-                  <path d="m6 9 6 6 6-6"/>
-                </motion.svg>
-              </button>
-              <AnimatePresence>
-                {openFaqIndex === index && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    style={{ overflow: 'hidden' }}
+                  <span>{faq.question}</span>
+                  <motion.svg
+                    width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="#52525B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                    animate={{ rotate: openFaqIndex === index ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                    style={{ flexShrink: 0, marginLeft: 16 }}
                   >
-                    <div className="faq-answer">
-                      {faq.answer}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
+                    <path d="m6 9 6 6 6-6"/>
+                  </motion.svg>
+                </button>
+                <AnimatePresence>
+                  {openFaqIndex === index && (
+                    <motion.div
+                      id={`faq-answer-${index}`}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <div style={{
+                        paddingBottom: 24, fontSize: 14, color: '#71717A',
+                        lineHeight: 1.7, maxWidth: 600,
+                      }}>
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
+      <Newsletter />
       <Footer />
-
-      <style>{`
-        /* ── FAQ SECTION ── */
-        .ambient-glow { 
-          position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; 
-          background: 
-            radial-gradient(circle at 50% -20%, rgba(255, 107, 53, 0.25) 0%, rgba(255, 107, 53, 0.08) 40%, transparent 70%),
-            radial-gradient(circle at 100% 100%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 0% 100%, rgba(255, 107, 53, 0.1) 0%, transparent 50%);
-          animation: pulseGlow 8s ease-in-out infinite alternate;
-        }
-        @keyframes pulseGlow {
-          0% { opacity: 0.8; }
-          100% { opacity: 1.2; }
-        }
-        .faq-section {
-          position: relative; z-index: 1; width: 100%; max-width: 800px; margin: 0 auto;
-        }
-        .faq-title {
-          font-family: Outfit, sans-serif; font-size: 32px; font-weight: 800; color: var(--text-main); text-align: center; margin-bottom: 40px; letter-spacing: -1px;
-        }
-        .faq-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--glass-border); }
-        .faq-item {
-          background: transparent; backdrop-filter: none;
-          border: none; border-bottom: 1px solid var(--glass-border);
-          border-radius: 0; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: none;
-        }
-        .faq-item:hover { background: var(--glass-overlay); }
-        .faq-question {
-          width: 100%; display: flex; justify-content: space-between; align-items: center;
-          padding: 24px 16px; background: transparent; border: none; color: var(--text-main);
-          font-family: Inter, sans-serif; font-size: 17px; font-weight: 500; text-align: left;
-          cursor: pointer; letter-spacing: -0.3px;
-        }
-        .faq-answer {
-          padding: 0 16px 24px; color: var(--text-dim); font-size: 15px; line-height: 1.7;
-        }
-      `}</style>
     </div>
-  )
+  );
 }

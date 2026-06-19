@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+
 const steps = [
   { num: '01', title: 'JOIN A ROOM', desc: 'Create or join a live battle room. Matchmaking pairs you by ELO rating within seconds.', color: '#00ff9d' },
   { num: '02', title: 'CODE HEAD-TO-HEAD', desc: 'Same problem loads for both. Your keystrokes sync live. You see their progress. They see yours.', color: '#00d4ff' },
@@ -10,18 +12,32 @@ export default function HowItWorks() {
     <section id="how-it-works" className="hiw-section">
       <div className="hiw-container">
         
-        <div className="hiw-left">
+        <motion.div 
+          className="hiw-left"
+          initial={{ opacity: 0, x: -40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           <span className="hiw-tag">BATTLE PROTOCOL</span>
           <h2 className="hiw-title">The path to<br />victory.</h2>
           <p className="hiw-desc">Four simple steps. One winner. No second chances.</p>
-        </div>
+        </motion.div>
 
         <div className="hiw-right">
           <div className="timeline-line" />
           
           <div className="steps-wrapper">
             {steps.map(({ num, title, desc, color }, index) => (
-              <div key={num} className="step-card" style={{ '--accent': color }}>
+              <motion.div 
+                key={num} 
+                className="step-card" 
+                style={{ '--accent': color }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.15 }}
+              >
                 {/* Huge Background Number */}
                 <span className="bg-num">{num}</span>
                 
@@ -30,7 +46,7 @@ export default function HowItWorks() {
                   <h3 className="step-title" style={{ color }}>{title}</h3>
                   <p className="step-desc">{desc}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

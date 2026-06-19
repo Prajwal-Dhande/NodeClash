@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import API_URL from '../../config/api';
 import { Mail, MessageSquare, CheckCircle2 } from 'lucide-react';
 
 export default function Contact() {
@@ -12,18 +13,35 @@ export default function Contact() {
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState('idle'); // idle, loading, success
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !message) return;
     setStatus('loading');
     
-    // Simulate API call
-    setTimeout(() => {
-      setStatus('success');
-      setEmail('');
-      setMessage('');
-      setTimeout(() => setStatus('idle'), 4000);
-    }, 1500);
+    try {
+      const response = await fetch(`${API_URL}/api/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, message })
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        setEmail('');
+        setMessage('');
+      } else {
+        // Fallback if error (can show error state if we add it, but for now just idle)
+        console.error('Contact form submission failed');
+        setStatus('idle');
+        alert('Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      setStatus('idle');
+      alert('Network error. Please try again later.');
+    }
   };
 
   return (

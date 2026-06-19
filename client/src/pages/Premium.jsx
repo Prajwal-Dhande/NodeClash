@@ -51,7 +51,6 @@ const PLANS = [
     glow: 'rgba(96,165,250,0.1)',
     border: 'rgba(96,165,250,0.35)',
     features: [
-      { label: 'Cancel Anytime', included: true },
       { label: 'Exclusive The Elite Archive Problems', included: true },
       { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
       { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
@@ -78,7 +77,6 @@ const PLANS = [
     glow: 'rgba(255,107,53,0.12)',
     border: 'rgba(255,107,53,0.5)',
     features: [
-      { label: 'Cancel Anytime', included: true },
       { label: 'Exclusive The Elite Archive Problems', included: true },
       { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
       { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
@@ -707,7 +705,7 @@ export default function Premium() {
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(255,107,53,0.35)' }}>
               ✨ Unlock Pro — ₹1,199 for 6 months
             </button>
-            <div style={{ marginTop: 16, fontSize: 12, color: 'var(--text-muted)' }}>Cancel anytime. Secure payments via Razorpay.</div>
+            <div style={{ marginTop: 16, fontSize: 12, color: 'var(--text-muted)' }}>Secure payments via Razorpay.</div>
           </motion.div>
         )}
 

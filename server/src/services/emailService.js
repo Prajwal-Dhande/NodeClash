@@ -1,4 +1,6 @@
 require('dotenv').config()
+const nodemailer = require('nodemailer');
+
 const sendBrevoEmail = async (toEmail, subject, htmlContent) => {
   const apiKey = process.env.BREVO_API_KEY
   if (!apiKey) {
@@ -258,4 +260,90 @@ const sendExpiryEmail = async (toEmail, username, daysLeft) => {
   }
 }
 
-module.exports = { sendOtpEmail, sendWelcomeEmail, sendExpiryEmail }
+// 🔥 Newsletter Notification Email (Sent to Admin)
+const sendNewsletterNotificationEmail = async (subscriberEmail, preferences) => {
+  const adminEmail = 'nodeclash.admin@gmail.com'; // Hardcoded admin email as requested
+  if (!adminEmail) return;
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; background:#09090b; padding:40px; color:#fff;">
+      <div style="max-width:500px; margin:0 auto; background:#111; padding:30px; border-radius:12px; border:1px solid #27272a;">
+        <h2 style="color:#ff6b35; margin-top:0;">New Newsletter Subscriber! 🎉</h2>
+        <p style="color:#ccc;">A new user has just subscribed to the CodeArena newsletter.</p>
+        <div style="background:#1a1a1a; padding:15px; border-radius:8px; margin:20px 0;">
+          <p style="margin:5px 0;"><strong>Email:</strong> <span style="color:#22c55e;">${subscriberEmail}</span></p>
+          <p style="margin:5px 0;"><strong>General Newsletter:</strong> ${preferences.general ? '✅ Yes' : '❌ No'}</p>
+          <p style="margin:5px 0;"><strong>Biweekly Digest:</strong> ${preferences.digest ? '✅ Yes' : '❌ No'}</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    const mailOptions = {
+      from: `"CodeArena Bot" <${process.env.EMAIL_USER}>`,
+      to: adminEmail,
+      subject: `🚀 New Subscriber: ${subscriberEmail}`,
+      html: html
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`✅ Newsletter notification sent for ${subscriberEmail} via Nodemailer`);
+  } catch (error) {
+    console.error('❌ Newsletter notification failed:', error.message);
+  }
+}
+
+// 🔥 Contact Us Email (Sent to Admin)
+const sendContactEmail = async (senderEmail, message) => {
+  const adminEmail = 'nodeclash.admin@gmail.com'; 
+  if (!adminEmail) return;
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; background:#09090b; padding:40px; color:#fff;">
+      <div style="max-width:500px; margin:0 auto; background:#111; padding:30px; border-radius:12px; border:1px solid #27272a;">
+        <h2 style="color:#ff6b35; margin-top:0;">New Contact Form Message! 📩</h2>
+        <p style="color:#ccc;">Someone has reached out via the CodeArena contact form.</p>
+        <div style="background:#1a1a1a; padding:15px; border-radius:8px; margin:20px 0;">
+          <p style="margin:5px 0;"><strong>From:</strong> <span style="color:#22c55e;">${senderEmail}</span></p>
+          <div style="margin-top:15px; padding-top:15px; border-top:1px solid #333;">
+            <p style="margin:0 0 10px 0; color:#888;"><strong>Message:</strong></p>
+            <p style="margin:0; white-space: pre-wrap; line-height:1.5;">${message}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    const mailOptions = {
+      from: `"CodeArena Bot" <${process.env.EMAIL_USER}>`,
+      to: adminEmail,
+      subject: `📩 New Message from ${senderEmail}`,
+      html: html
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`✅ Contact email sent from ${senderEmail} via Nodemailer`);
+  } catch (error) {
+    console.error('❌ Contact email failed:', error.message);
+  }
+}
+
+module.exports = { sendOtpEmail, sendWelcomeEmail, sendExpiryEmail, sendNewsletterNotificationEmail, sendContactEmail }

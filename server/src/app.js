@@ -46,6 +46,8 @@ app.use('/api/puzzles', require('./routes/puzzleRoutes'));
 app.use('/api/payment', paymentRoutes);
 app.use('/api/daily-quest', require('./routes/dailyQuestRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/newsletter', require('./routes/newsletterRoutes'));
+app.use('/api/contact', require('./routes/contactRoutes'));
 
 
 app.get('/api/health', (req, res) => {

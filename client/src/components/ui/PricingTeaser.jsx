@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import { motion } from 'framer-motion';
 
 const CHECK = (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -42,7 +43,6 @@ const PLANS = [
     glow: 'rgba(96,165,250,0.08)',
     border: 'rgba(96,165,250,0.25)',
     features: [
-      { label: 'Cancel Anytime', included: true },
       { label: 'Exclusive The Elite Archive Problems', included: true },
       { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
       { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
@@ -64,7 +64,6 @@ const PLANS = [
     glow: 'rgba(255,107,53,0.1)',
     border: 'rgba(255,107,53,0.3)',
     features: [
-      { label: 'Cancel Anytime', included: true },
       { label: 'Exclusive The Elite Archive Problems', included: true },
       { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
       { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
@@ -77,16 +76,26 @@ const PLANS = [
 export default function PricingTeaser() {
   return (
     <section className="pricing-teaser-section">
-      <div className="pricing-teaser-header">
+      <motion.div 
+        className="pricing-teaser-header"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
         <span className="pricing-tag">UPGRADE YOUR ARENA</span>
         <h2 className="pricing-title">Simple pricing. <span style={{ color: 'var(--orange)' }}>No surprises.</span></h2>
         <p className="pricing-desc">Choose the plan that fits your ambition. Upgrade to PRO to unlock Clara AI and The Elite Archive.</p>
-      </div>
+      </motion.div>
 
       <div className="pricing-grid">
-        {PLANS.map((plan) => (
-          <div
+        {PLANS.map((plan, index) => (
+          <motion.div
             key={plan.id}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.15 }}
             className={`pricing-card ${plan.popular ? 'popular' : ''}`}
             style={{
               '--card-glow': plan.glow,
@@ -128,7 +137,7 @@ export default function PricingTeaser() {
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
         ))}
       </div>
 
