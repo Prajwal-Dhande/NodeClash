@@ -300,11 +300,26 @@ export default function Profile() {
     }
   }
 
-  const handleShare = () => {
+  const handleShare = async () => {
     const tier = getTier(elo)
-    navigator.clipboard.writeText(`🏆 ${username} on NodeClash | ${tier.icon} ${tier.name} | Rank #${globalRank} | ELO: ${elo} | ${wins}W-${losses}L`)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    const shareText = `⚔️ ${username} on NodeClash | ${tier.icon} ${tier.name} | Rank #${globalRank} | ELO: ${elo} | ${wins}W-${losses}L`
+    const shareUrl = window.location.href
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${username}'s NodeClash Profile`,
+          text: shareText,
+          url: shareUrl
+        })
+      } catch (err) {
+        console.error('Error sharing:', err)
+      }
+    } else {
+      navigator.clipboard.writeText(`${shareText}\n${shareUrl}`)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
   }
 
   const formatTime = (s) => s ? `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}` : '-'
@@ -518,7 +533,7 @@ export default function Profile() {
 
       {/* NAV */}
       <nav style={{ height: 64, background: 'var(--nav-bg)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', padding: '0 32px', gap: 16, position: 'sticky', top: 0, zIndex: 50, transition: 'background-color 0.3s' }} className="profile-nav">
-        <span onClick={() => navigate('/')} className="logo">
+        <span onClick={() => navigate('/')} className="logo" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
           <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span>
           <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span>
         </span>
@@ -552,7 +567,7 @@ export default function Profile() {
             className="mobile-drawer"
           >
             <div className="drawer-header">
-              <span className="logo" onClick={() => { setIsMobileMenuOpen(false); navigate('/') }}>
+              <span className="logo" onClick={() => { setIsMobileMenuOpen(false); navigate('/') }} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                 <span style={{ color: '#ff6b35', marginRight: '6px' }}>{'{N}'}</span>
                 <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>NodeClash</span>
               </span>
