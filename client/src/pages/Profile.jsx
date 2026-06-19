@@ -301,22 +301,18 @@ export default function Profile() {
   }
 
   const handleShare = async () => {
-    const tier = getTier(elo)
-    const shareText = `⚔️ ${username} on NodeClash | ${tier.icon} ${tier.name} | Rank #${globalRank} | ELO: ${elo} | ${wins}W-${losses}L`
     const shareUrl = window.location.href
     
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${username}'s NodeClash Profile`,
-          text: shareText,
           url: shareUrl
         })
       } catch (err) {
         console.error('Error sharing:', err)
       }
     } else {
-      navigator.clipboard.writeText(`${shareText}\n${shareUrl}`)
+      navigator.clipboard.writeText(shareUrl)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     }
