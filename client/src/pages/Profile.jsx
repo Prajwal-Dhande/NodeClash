@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async' 
-import { ThemeToggle } from '../context/ThemeContext'
+import { ThemeToggle, useTheme } from '../context/ThemeContext'
 import API_URL from '../config/api'
 import { Crown, Diamond, Medal, Zap, Target, Dumbbell, Brain, ShieldCheck, Moon, Swords, Rocket, MapPin, GraduationCap, Briefcase, Calendar, Award, Edit2, GitBranch, Globe, Search, Flame, Lock } from 'lucide-react'
 
@@ -112,10 +112,10 @@ const TopicRadarChart = ({ data }) => {
     </div>
   )
 }
-const HexagonBadge = ({ title, type, unlocked, value, label }) => {
-  let borderGradient = 'linear-gradient(135deg, #3f3f46, #18181b)';
-  let innerGradient = 'linear-gradient(135deg, #27272a, #18181b)';
-  let textColor = '#52525b';
+const HexagonBadge = ({ title, type, unlocked, value, label, isDark }) => {
+    let borderGradient = isDark ? 'linear-gradient(135deg, #3f3f46, #18181b)' : 'linear-gradient(135deg, #e2e8f0, #cbd5e1)';
+    let innerGradient = isDark ? 'linear-gradient(135deg, #27272a, #18181b)' : 'linear-gradient(135deg, #f1f5f9, #e2e8f0)';
+    let textColor = isDark ? '#52525b' : '#94a3b8';
   
   if (unlocked) {
     if (type === 'premium') {
@@ -163,7 +163,7 @@ const HexagonBadge = ({ title, type, unlocked, value, label }) => {
                 <span style={{ fontSize: 9, fontWeight: 800, color: textColor, opacity: 0.9, letterSpacing: 1, marginTop: 2 }}>{label}</span>
               </>
             ) : (
-              <Lock size={24} color="#52525b" strokeWidth={2.5} />
+              <Lock size={24} color={textColor} strokeWidth={2.5} />
             )}
           </div>
         </div>
@@ -177,7 +177,8 @@ const HexagonBadge = ({ title, type, unlocked, value, label }) => {
 }
 
 export default function Profile() {
-  const navigate = useNavigate()
+    const { isDark } = useTheme()
+    const navigate = useNavigate()
   const { username: routeUsername } = useParams() 
   
   const [activeTab, setActiveTab] = useState('battles')
@@ -794,7 +795,7 @@ export default function Profile() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 {[
                   { label: 'Win Rate', val: `${winRate}%`, color: '#fb923c' },
-                  { label: <><Flame size={14} style={{ marginRight: 4, verticalAlign: 'text-bottom' }} color="#ff6b35" /> Streak</>, val: user?.stats?.streak || 0, color: '#fb923c' },
+                  { label: <><Flame size={18} style={{ marginRight: 4, verticalAlign: 'text-bottom' }} color="#ff6b35" /> Streak</>, val: user?.stats?.streak || 0, color: '#fb923c' },
                   { label: 'Peak ELO', val: Math.max(peakElo, elo), color: 'var(--text-muted)' },
                   { label: 'Battles', val: total, color: 'var(--text-muted)' },
                 ].map(({ label, val, color }) => (
@@ -831,7 +832,7 @@ export default function Profile() {
                 { value: 50, label: 'STREAK', title: '50 Win Streak', type: 'silver', unlocked: (user?.stats?.streak || 0) >= 50 },
                 { value: 100, label: 'STREAK', title: '100 Win Streak', type: 'premium', unlocked: (user?.stats?.streak || 0) >= 100 }
               ].map((b, idx) => (
-                <HexagonBadge key={idx} {...b} />
+                <HexagonBadge key={idx} {...b} isDark={isDark} />
               ))}
             </div>
           </div>
