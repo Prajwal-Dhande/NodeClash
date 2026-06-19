@@ -10,7 +10,7 @@ const EVIDENCE_DATA = [
   {
     value: "5",
     title: "LANGUAGES",
-    desc: "from Python and JavaScript to C++, Rust, and Go"
+    desc: "from Python and JavaScript to C++, TypeScript, and Java"
   },
   {
     value: "Live",
