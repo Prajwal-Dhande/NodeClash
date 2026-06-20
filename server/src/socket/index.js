@@ -99,9 +99,9 @@ function initSocket(server) {
   io.on('connection', (socket) => {
     console.log(`⚡ Connected: ${socket.id}`)
 
-    // ✅ MATCHMAKING — now accepts mode (quick_play / ranked)
-    socket.on('find_match', ({ username, elo, problemSlug, mode }) => {
-      console.log(`🔍 ${username} looking for ${mode || 'quick_play'} match...`)
+    // ✅ MATCHMAKING — smart problem selection for fair battles
+    socket.on('find_match', ({ username, elo, problemSlug, mode, solvedProblems }) => {
+      console.log(`🔍 ${username} looking for ${mode || 'quick_play'} match... (solved: ${(solvedProblems || []).length})`)
 
       const alreadyInQueue = matchmakingQueue.findIndex(p => p.username === username)
       if (alreadyInQueue !== -1) matchmakingQueue.splice(alreadyInQueue, 1)
@@ -111,38 +111,76 @@ function initSocket(server) {
 
         if (opponent.username === username) {
           matchmakingQueue.push(opponent)
-          matchmakingQueue.push({ socket, username, elo, problemSlug, mode })
+          matchmakingQueue.push({ socket, username, elo, problemSlug, mode, solvedProblems })
           socket.emit('waiting_in_queue', { position: matchmakingQueue.length })
           return
         }
 
         const roomId = `room_${Date.now()}`
-        const sharedProblemSlug = opponent.problemSlug || problemSlug || 'contains-duplicate'
         const matchMode = mode || opponent.mode || 'quick_play'
 
-        socket.join(roomId)
-        opponent.socket.join(roomId)
+        // Smart problem selection: find a problem NEITHER player has solved
+        const pickFairProblem = async () => {
+          try {
+            const Problem = require('../models/Problem')
+            const mySolved = new Set(solvedProblems || [])
+            const oppSolved = new Set(opponent.solvedProblems || [])
 
-        rooms.set(roomId, {
-          players: [
-            { username, socketId: socket.id },
-            { username: opponent.username, socketId: opponent.socket.id }
-          ],
-          battleStarted: true,
-          mode: matchMode
-        })
+            // Get all free (non-premium) active problems
+            const allProblems = await Problem.find({ isActive: true, isPremium: { $ne: true } }).select('slug').lean()
+            
+            // Filter: problems unsolved by BOTH players
+            const fairProblems = allProblems.filter(p => !mySolved.has(p.slug) && !oppSolved.has(p.slug))
+            
+            if (fairProblems.length > 0) {
+              return fairProblems[Math.floor(Math.random() * fairProblems.length)].slug
+            }
 
-        socket.emit('match_found', {
-          roomId, problem: sharedProblemSlug, opponent: opponent.username, elo: opponent.elo, mode: matchMode
-        })
-        opponent.socket.emit('match_found', {
-          roomId, problem: sharedProblemSlug, opponent: username, elo: elo, mode: matchMode
-        })
+            // Fallback: problems unsolved by at least one player
+            const partialFair = allProblems.filter(p => !mySolved.has(p.slug) || !oppSolved.has(p.slug))
+            if (partialFair.length > 0) {
+              return partialFair[Math.floor(Math.random() * partialFair.length)].slug
+            }
 
-        io.to(roomId).emit('battle_start', { players: rooms.get(roomId).players })
+            // Final fallback: any problem
+            if (allProblems.length > 0) {
+              return allProblems[Math.floor(Math.random() * allProblems.length)].slug
+            }
+
+            return 'contains-duplicate'
+          } catch (err) {
+            console.error('Fair problem selection failed:', err.message)
+            return opponent.problemSlug || problemSlug || 'contains-duplicate'
+          }
+        }
+
+        pickFairProblem().then(sharedProblemSlug => {
+          console.log(`⚔️ Matched ${username} vs ${opponent.username} on problem: ${sharedProblemSlug}`)
+
+          socket.join(roomId)
+          opponent.socket.join(roomId)
+
+          rooms.set(roomId, {
+            players: [
+              { username, socketId: socket.id },
+              { username: opponent.username, socketId: opponent.socket.id }
+            ],
+            battleStarted: true,
+            mode: matchMode
+          })
+
+          socket.emit('match_found', {
+            roomId, problem: sharedProblemSlug, opponent: opponent.username, elo: opponent.elo, mode: matchMode
+          })
+          opponent.socket.emit('match_found', {
+            roomId, problem: sharedProblemSlug, opponent: username, elo: elo, mode: matchMode
+          })
+
+          io.to(roomId).emit('battle_start', { players: rooms.get(roomId).players })
+        })
 
       } else {
-        matchmakingQueue.push({ socket, username, elo, problemSlug, mode })
+        matchmakingQueue.push({ socket, username, elo, problemSlug, mode, solvedProblems })
         socket.emit('waiting_in_queue', { position: matchmakingQueue.length })
       }
     })

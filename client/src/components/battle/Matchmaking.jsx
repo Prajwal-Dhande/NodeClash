@@ -75,7 +75,8 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
         username: user?.username || 'Player',
         elo: userElo,
         problemSlug: selectedProblem?.slug || null,
-        mode: mode || 'quick_play'
+        mode: mode || 'quick_play',
+        solvedProblems: (user?.solvedProblems || []).map(sp => typeof sp === 'string' ? sp : (sp?.slug || sp?.problemId || ''))
       })
 
       // After connecting, wait 20s for a real match before bot fallback
