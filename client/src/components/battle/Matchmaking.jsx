@@ -39,6 +39,25 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
     socketRef.current = socket
     cancelledRef.current = false
 
+    // Start fallback bot timer immediately (guarantees match even if server is down)
+    botTimerRef.current = setTimeout(() => {
+      if (matchFoundRef.current || cancelledRef.current) return
+      matchFoundRef.current = true
+
+      const bot = FAKE_PLAYERS[Math.floor(Math.random() * FAKE_PLAYERS.length)]
+      setMatchedPlayer(bot)
+      setPhase('found')
+
+      addTimer(() => {
+        if (cancelledRef.current) return
+        setPhase('starting')
+        addTimer(() => {
+          if (cancelledRef.current) return
+          onMatchFound(bot)
+        }, 1500)
+      }, 2000)
+    }, 8000)
+
     socket.on('connect', () => {
       socket.emit('find_match', {
         username: user?.username || 'Player',
@@ -81,23 +100,8 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
     })
 
     socket.on('waiting_in_queue', ({ position }) => {
-      botTimerRef.current = setTimeout(() => {
-        if (matchFoundRef.current || cancelledRef.current) return
-        matchFoundRef.current = true
-
-        const bot = FAKE_PLAYERS[Math.floor(Math.random() * FAKE_PLAYERS.length)]
-        setMatchedPlayer(bot)
-        setPhase('found')
-
-        addTimer(() => {
-          if (cancelledRef.current) return
-          setPhase('starting')
-          addTimer(() => {
-            if (cancelledRef.current) return
-            onMatchFound(bot)
-          }, 1500)
-        }, 2000)
-      }, 8000)
+      // Logic handled by the immediate timer now. We can log or update position UI here if we want.
+      console.log('Waiting in queue, position:', position)
     })
 
     // ✅ CRITICAL BUG FIX: Socket disconnects and clears memory on unmount
