@@ -34,37 +34,54 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
     return timerId
   }
 
+  // Helper: trigger bot match fallback
+  const triggerBotFallback = () => {
+    if (matchFoundRef.current || cancelledRef.current) return
+    matchFoundRef.current = true
+
+    const bot = FAKE_PLAYERS[Math.floor(Math.random() * FAKE_PLAYERS.length)]
+    setMatchedPlayer(bot)
+    setPhase('found')
+
+    addTimer(() => {
+      if (cancelledRef.current) return
+      setPhase('starting')
+      addTimer(() => {
+        if (cancelledRef.current) return
+        onMatchFound(bot)
+      }, 1500)
+    }, 2000)
+  }
+
   useEffect(() => {
     const socket = io(API_URL)
     socketRef.current = socket
     cancelledRef.current = false
+    let serverConnected = false
 
-    // Start fallback bot timer immediately (guarantees match even if server is down)
-    botTimerRef.current = setTimeout(() => {
-      if (matchFoundRef.current || cancelledRef.current) return
-      matchFoundRef.current = true
-
-      const bot = FAKE_PLAYERS[Math.floor(Math.random() * FAKE_PLAYERS.length)]
-      setMatchedPlayer(bot)
-      setPhase('found')
-
-      addTimer(() => {
-        if (cancelledRef.current) return
-        setPhase('starting')
-        addTimer(() => {
-          if (cancelledRef.current) return
-          onMatchFound(bot)
-        }, 1500)
-      }, 2000)
-    }, 8000)
+    // Safety net: if server doesn't connect within 15s, start bot fallback
+    const connectionTimeout = setTimeout(() => {
+      if (!serverConnected && !matchFoundRef.current && !cancelledRef.current) {
+        console.log('[Matchmaking] Server connection timeout, falling back to bot')
+        triggerBotFallback()
+      }
+    }, 15000)
 
     socket.on('connect', () => {
+      serverConnected = true
+      clearTimeout(connectionTimeout)
+
       socket.emit('find_match', {
         username: user?.username || 'Player',
         elo: userElo,
         problemSlug: selectedProblem?.slug || null,
         mode: mode || 'quick_play'
       })
+
+      // After connecting, wait 20s for a real match before bot fallback
+      botTimerRef.current = setTimeout(() => {
+        triggerBotFallback()
+      }, 20000)
     })
 
     socket.on('match_found', ({ roomId, problem, opponent, elo }) => {
@@ -72,6 +89,7 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
       matchFoundRef.current = true
 
       clearTimeout(botTimerRef.current)
+      clearTimeout(connectionTimeout)
 
       const realOpponent = {
         name: opponent,
@@ -96,18 +114,18 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
             onMatchFound(realOpponent)
           }, 1500)
         }, 2000)
-      }, 3000) 
+      }, 1500) 
     })
 
     socket.on('waiting_in_queue', ({ position }) => {
-      // Logic handled by the immediate timer now. We can log or update position UI here if we want.
       console.log('Waiting in queue, position:', position)
     })
 
-    // ✅ CRITICAL BUG FIX: Socket disconnects and clears memory on unmount
+    // Cleanup on unmount
     return () => { 
       cancelledRef.current = true
       clearTimeout(botTimerRef.current)
+      clearTimeout(connectionTimeout)
       timersRef.current.forEach(clearTimeout)
       socket.disconnect() 
     }

@@ -378,7 +378,7 @@ export default function BattleRoom() {
   useEffect(() => {
     if (isRealMatch() || isPremiumMode() || !!getTournamentId()) return
 
-    const delay = isPracticeMode() ? 1500 : 3000
+    const delay = isPracticeMode() ? 1500 : 5000
 
     botTimeoutRef.current = setTimeout(() => {
       if (botTypingCancelRef.current) return 
@@ -1056,10 +1056,12 @@ export default function BattleRoom() {
         )}
 
         <div className="connection-status">
-          <div className={`pulse-dot ${connected ? 'green' : 'red'}`} />
-          <span style={{ color: connected ? '#22c55e' : '#ef4444', fontSize: 12, fontWeight: 600 }}>
-            {connected ? 'Live' : 'Offline'}
-          </span>
+          {(() => {
+            const isBot = opponentName.startsWith('Bot_') || new URLSearchParams(window.location.search).get('bot')
+            if (connected) return <><div className="pulse-dot green" /><span style={{ color: '#22c55e', fontSize: 12, fontWeight: 600 }}>Live</span></>
+            if (isBot && battleStarted) return <><div className="pulse-dot" style={{ background: '#60a5fa', boxShadow: '0 0 8px rgba(96,165,250,0.6)' }} /><span style={{ color: '#60a5fa', fontSize: 12, fontWeight: 600 }}>Bot</span></>
+            return <><div className="pulse-dot red" /><span style={{ color: '#ef4444', fontSize: 12, fontWeight: 600 }}>Offline</span></>
+          })()}
         </div>
 
         {!premiumMode && !isAlreadySolved && (
