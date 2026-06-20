@@ -372,10 +372,38 @@ export default function BattleRoom() {
     return () => { clearTimeout(startDelay); clearTimeout(typingTimer); }
   }, [battleStarted, opponentName])
 
+  const botNameFromUrl = new URLSearchParams(window.location.search).get('bot')
+
+  // Bot Injection Logic (Runs independently of socket connection)
+  useEffect(() => {
+    if (isRealMatch() || isPremiumMode() || !!getTournamentId()) return
+
+    const delay = isPracticeMode() ? 1500 : 3000
+
+    botTimeoutRef.current = setTimeout(() => {
+      if (botTypingCancelRef.current) return 
+      const botName = botNameFromUrl || `Bot_${Math.floor(Math.random() * 999)}`
+      
+      setRoomPlayers(prev => {
+        if (prev.find(p => p.username === botName)) return prev;
+        return [...prev, { username: botName, isBot: true }]
+      })
+      setOpponentName(botName)
+      setOpponentCode(`function solution() {\n  // Thinking...\n}`)
+
+      setTimeout(() => {
+        if (!battleStartedRef.current) {
+          battleStartedRef.current = true; setBattleStarted(true); startTimeRef.current = Date.now()
+        }
+      }, 1000)
+    }, delay)
+
+    return () => clearTimeout(botTimeoutRef.current)
+  }, [botNameFromUrl])
+
   useEffect(() => {
     const socket = io(API_URL)
     socketRef.current = socket
-    const botNameFromUrl = new URLSearchParams(window.location.search).get('bot')
 
     socket.on('connect', () => {
       setConnected(true)
@@ -406,7 +434,15 @@ export default function BattleRoom() {
 
     socket.on('room_update', ({ players }) => {
       const uniquePlayers = Array.from(new Map(players.map(p => [p.username, p])).values());
-      setRoomPlayers(uniquePlayers)
+      
+      setRoomPlayers(prev => {
+        const botPlayer = prev.find(p => p.isBot)
+        if (botPlayer && !uniquePlayers.find(p => p.username === botPlayer.username)) {
+          return [...uniquePlayers, botPlayer]
+        }
+        return uniquePlayers
+      })
+
       const opp = uniquePlayers.find(p => p.username !== currentUser?.username)
 
       if (opp) {
@@ -416,31 +452,6 @@ export default function BattleRoom() {
 
         if (!battleStartedRef.current) {
           battleStartedRef.current = true; setBattleStarted(true); startTimeRef.current = Date.now()
-        }
-      } else if (uniquePlayers.length === 1) {
-        if (isPracticeMode()) {
-          setTimeout(() => {
-            if (!battleStartedRef.current) {
-              battleStartedRef.current = true; setBattleStarted(true); startTimeRef.current = Date.now()
-            }
-          }, 1500)
-        } else if (!isRealMatch()) {
-          botTimeoutRef.current = setTimeout(() => {
-            if (botTypingCancelRef.current) return 
-            const botName = botNameFromUrl || `Bot_${Math.floor(Math.random() * 999)}`
-            setRoomPlayers(prev => {
-              if (prev.find(p => p.username === botName)) return prev;
-              return [...prev, { username: botName, isBot: true }]
-            })
-            setOpponentName(botName)
-            setOpponentCode(`function solution() {\n  // Thinking...\n}`)
-
-            setTimeout(() => {
-              if (!battleStartedRef.current) {
-                battleStartedRef.current = true; setBattleStarted(true); startTimeRef.current = Date.now()
-              }
-            }, 1000)
-          }, 8000)
         }
       }
     })
