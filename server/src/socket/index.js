@@ -88,7 +88,9 @@ function initSocket(server) {
         'http://localhost:5173', 
         'http://localhost:5174',
         'http://localhost:5175',
-        'https://code-arena-virid.vercel.app'
+        'https://code-arena-virid.vercel.app',
+        'https://nodeclash.in',
+        'https://www.nodeclash.in'
       ], 
       methods: ['GET', 'POST'] 
     }
