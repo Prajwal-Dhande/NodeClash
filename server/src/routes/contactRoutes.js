@@ -13,13 +13,18 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email and message are required' });
     }
 
-    // Send contact email to admin
-    await sendContactEmail(email, message);
-
+    // Respond immediately to the user
     res.status(200).json({ success: true, message: 'Message sent successfully!' });
+
+    // Send contact email to admin in background (fire-and-forget)
+    sendContactEmail(email, message)
+      .catch(err => console.error('Background contact email failed:', err.message));
   } catch (error) {
     console.error('Contact form error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    // Only send error if headers haven't been sent yet
+    if (!res.headersSent) {
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
   }
 });
 

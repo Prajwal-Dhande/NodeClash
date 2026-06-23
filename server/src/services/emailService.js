@@ -310,23 +310,8 @@ const sendContactEmail = async (senderEmail, message) => {
   `;
 
   try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-
-    const mailOptions = {
-      from: `"CodeArena Bot" <${process.env.EMAIL_USER}>`,
-      to: adminEmail,
-      subject: `📩 New Message from ${senderEmail}`,
-      html: html
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ Contact email sent from ${senderEmail} via Nodemailer`);
+    await sendBrevoEmail(adminEmail, `📩 New Message from ${senderEmail}`, html);
+    console.log(`✅ Contact email sent from ${senderEmail} via Brevo`);
   } catch (error) {
     console.error('❌ Contact email failed:', error.message);
   }
