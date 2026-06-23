@@ -50,6 +50,8 @@ const userSchema = new mongoose.Schema({
   education: { type: String, default: '' },
   company: { type: String, default: '' },
   languages: { type: [String], default: ['javascript'] },
+  customLinks: [{ label: { type: String }, url: { type: String } }],
+  customLanguages: { type: [String], default: [] },
   stats: {
     wins: { type: Number, default: 0 },
     losses: { type: Number, default: 0 },

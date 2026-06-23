@@ -207,6 +207,11 @@ export default function Profile() {
   const [education, setEducation] = useState('')
   const [company, setCompany] = useState('')
   const [selectedLangs, setSelectedLangs] = useState(['javascript'])
+  const [customLinks, setCustomLinks] = useState([])
+  const [customLanguages, setCustomLanguages] = useState([])
+  const [newLinkLabel, setNewLinkLabel] = useState('')
+  const [newLinkUrl, setNewLinkUrl] = useState('')
+  const [newLangName, setNewLangName] = useState('')
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -231,6 +236,8 @@ export default function Profile() {
           setEducation(pData.user.education || '')
           setCompany(pData.user.company || '')
           setSelectedLangs(pData.user.languages?.length ? pData.user.languages : ['javascript'])
+            setCustomLinks(pData.user.customLinks || [])
+            setCustomLanguages(pData.user.customLanguages || [])
           
           setGlobalRank(pData.globalRank || 0)
 
@@ -263,7 +270,7 @@ export default function Profile() {
       const res = await fetch(`${API_URL}/api/users/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ username, bio, github, linkedin, website, education, company, languages: selectedLangs })
+        body: JSON.stringify({ username, bio, github, linkedin, website, education, company, languages: selectedLangs, customLinks, customLanguages })
       })
       const data = await res.json()
       if (data.user) { 
@@ -459,74 +466,430 @@ export default function Profile() {
         <div className="ambient-glow-2" style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '60vw', height: '60vw', minWidth: '700px', minHeight: '700px', background: 'radial-gradient(circle, rgba(247,69,29,0.15) 0%, transparent 70%)', filter: 'blur(100px)', borderRadius: '50%' }} />
       </div>
 
-      {/* Edit Profile Modal */}
+      {/* Edit Profile Modal — Premium Redesign */}
+      <AnimatePresence>
       {showEditProfile && isOwnProfile && (
-        <div style={{ position: 'fixed', inset: 0, background: 'var(--modal-overlay)', backdropFilter: 'blur(16px)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: 'var(--modal-bg)', border: '1px solid var(--glass-border)', borderRadius: 20, width: '90%', maxWidth: 540, maxHeight: '90vh', overflowY: 'auto' }}>
-            <div style={{ padding: '22px 28px', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: 18, color: 'var(--text-main)' }}>Edit Profile</span>
-              <button onClick={() => setShowEditProfile(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 20, cursor: 'pointer' }}>✕</button>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+          onClick={e => e.target === e.currentTarget && setShowEditProfile(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 30 }}
+            transition={{ type: 'spring', bounce: 0.15, duration: 0.5 }}
+            style={{
+              background: isDark
+                ? 'linear-gradient(165deg, #141416 0%, #0c0c0e 100%)'
+                : 'linear-gradient(165deg, #ffffff 0%, #f8f9fa 100%)',
+              border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}`,
+              borderRadius: 24, width: '100%', maxWidth: 520, maxHeight: '88vh', overflowY: 'auto',
+              boxShadow: isDark
+                ? '0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,107,53,0.05), inset 0 1px 0 rgba(255,255,255,0.03)'
+                : '0 40px 80px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05)'
+            }}
+          >
+            {/* Header with avatar */}
+            <div style={{
+              position: 'relative', padding: '32px 32px 24px',
+              borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}`,
+              background: isDark
+                ? 'linear-gradient(180deg, rgba(255,107,53,0.04) 0%, transparent 100%)'
+                : 'linear-gradient(180deg, rgba(255,107,53,0.03) 0%, transparent 100%)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                {/* Avatar preview */}
+                <div style={{
+                  width: 64, height: 64, borderRadius: 20, flexShrink: 0,
+                  background: isDark
+                    ? 'linear-gradient(135deg, rgba(255,107,53,0.12), rgba(247,69,29,0.08))'
+                    : 'linear-gradient(135deg, rgba(255,107,53,0.08), rgba(247,69,29,0.04))',
+                  border: `2px solid ${isDark ? 'rgba(255,107,53,0.2)' : 'rgba(255,107,53,0.15)'}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: 'Outfit', fontSize: 22, fontWeight: 800, color: '#ff6b35',
+                  letterSpacing: '-0.5px'
+                }}>
+                  {(username || 'P').slice(0, 2).toUpperCase()}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <h2 style={{
+                    fontFamily: 'Outfit', fontWeight: 800, fontSize: 20, color: 'var(--text-main)',
+                    margin: '0 0 4px 0', letterSpacing: '-0.3px'
+                  }}>Edit Profile</h2>
+                  <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0, fontWeight: 500 }}>
+                    Customize how warriors see you in the arena
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowEditProfile(false)}
+                  style={{
+                    width: 36, height: 36, borderRadius: 12, border: 'none',
+                    background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+                    color: 'var(--text-muted)', fontSize: 16, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'; e.currentTarget.style.color = 'var(--text-main)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'; e.currentTarget.style.color = 'var(--text-muted)' }}
+                >✕</button>
+              </div>
             </div>
-            <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+
+            {/* Form body */}
+            <div style={{ padding: '28px 32px 32px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+              {/* Identity Section */}
               <div>
-                <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 1, display: 'block', marginBottom: 8 }}>USERNAME</label>
-                <input value={username} onChange={e => setUsername(e.target.value)}
-                  style={{ width: '100%', background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 10, padding: '10px 14px', fontSize: 14, color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter', boxSizing: 'border-box' }} />
-              </div>
-              <div>
-                <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 1, display: 'block', marginBottom: 8 }}>BIO</label>
-                <textarea value={bio} onChange={e => setBio(e.target.value)} placeholder="Tell the arena about yourself..." rows={3}
-                  style={{ width: '100%', background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-main)', outline: 'none', resize: 'none', fontFamily: 'Inter', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                {[
-                  { label: 'EDUCATION', val: education, set: setEducation, ph: 'e.g. IIT Bombay' },
-                  { label: 'COMPANY', val: company, set: setCompany, ph: 'e.g. Google' },
-                ].map(({ label, val, set, ph }) => (
-                  <div key={label}>
-                    <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 1, display: 'block', marginBottom: 8 }}>{label}</label>
-                    <input value={val} onChange={e => set(e.target.value)} placeholder={ph}
-                      style={{ width: '100%', background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter', boxSizing: 'border-box' }} />
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16,
+                  fontSize: 11, fontWeight: 700, color: '#ff6b35', letterSpacing: '1.5px', textTransform: 'uppercase'
+                }}>
+                  <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(255,107,53,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Edit2 size={11} color="#ff6b35" />
                   </div>
-                ))}
-              </div>
-              <div>
-                <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 1, display: 'block', marginBottom: 10 }}>SOCIAL LINKS</label>
-                {[
-                  { emoji: '🐙', label: 'GitHub', val: github, set: setGithub, ph: 'github.com/username' },
-                  { emoji: '💼', label: 'LinkedIn', val: linkedin, set: setLinkedin, ph: 'linkedin.com/in/username' },
-                  { emoji: '🌐', label: 'Website', val: website, set: setWebsite, ph: 'yourportfolio.dev' },
-                ].map(({ emoji, label, val, set, ph }) => (
-                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                    <span style={{ fontSize: 14, width: 80, color: 'var(--text-muted)', flexShrink: 0 }}>{emoji} {label}</span>
-                    <input value={val} onChange={e => set(e.target.value)} placeholder={ph}
-                      style={{ flex: 1, background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter' }} />
-                  </div>
-                ))}
-              </div>
-              <div>
-                <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 1, display: 'block', marginBottom: 10 }}>LANGUAGES</label>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {LANGS.map(l => (
-                    <button key={l.id} onClick={() => setSelectedLangs(prev => prev.includes(l.id) ? prev.filter(x => x !== l.id) : [...prev, l.id])}
+                  IDENTITY
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {/* Username */}
+                  <div>
+                    <label style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: 6 }}>Username</label>
+                    <input value={username} onChange={e => setUsername(e.target.value)}
                       style={{
-                        padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter',
-                        background: selectedLangs.includes(l.id) ? `${l.color}20` : 'var(--glass-overlay)',
-                        color: selectedLangs.includes(l.id) ? l.color : 'var(--text-muted)',
-                        border: `1px solid ${selectedLangs.includes(l.id) ? l.color + '50' : 'var(--glass-border)'}`,
+                        width: '100%', boxSizing: 'border-box',
+                        background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                        border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)'}`,
+                        borderRadius: 12, padding: '12px 16px', fontSize: 14, fontWeight: 600,
+                        color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter',
                         transition: 'all 0.2s'
-                      }}>{l.label}</button>
+                      }}
+                      onFocus={e => { e.target.style.borderColor = 'rgba(255,107,53,0.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(255,107,53,0.08)' }}
+                      onBlur={e => { e.target.style.borderColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)'; e.target.style.boxShadow = 'none' }}
+                    />
+                  </div>
+
+                  {/* Bio */}
+                  <div>
+                    <label style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: 6 }}>Bio</label>
+                    <textarea value={bio} onChange={e => setBio(e.target.value)} placeholder="Tell the arena about yourself..." rows={3}
+                      style={{
+                        width: '100%', boxSizing: 'border-box',
+                        background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                        border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)'}`,
+                        borderRadius: 12, padding: '12px 16px', fontSize: 13, lineHeight: 1.6,
+                        color: 'var(--text-main)', outline: 'none', resize: 'none', fontFamily: 'Inter',
+                        transition: 'all 0.2s'
+                      }}
+                      onFocus={e => { e.target.style.borderColor = 'rgba(255,107,53,0.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(255,107,53,0.08)' }}
+                      onBlur={e => { e.target.style.borderColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)'; e.target.style.boxShadow = 'none' }}
+                    />
+                    <div style={{ textAlign: 'right', fontSize: 11, color: 'var(--text-muted)', marginTop: 4, opacity: 0.6 }}>
+                      {(bio || '').length}/150
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div style={{ height: 1, background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)' }} />
+
+              {/* Details Section */}
+              <div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16,
+                  fontSize: 11, fontWeight: 700, color: '#ff6b35', letterSpacing: '1.5px', textTransform: 'uppercase'
+                }}>
+                  <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(255,107,53,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Briefcase size={11} color="#ff6b35" />
+                  </div>
+                  DETAILS
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  {[
+                    { label: 'Education', val: education, set: setEducation, ph: 'e.g. IIT Bombay', icon: <GraduationCap size={14} /> },
+                    { label: 'Company', val: company, set: setCompany, ph: 'e.g. Google', icon: <Briefcase size={14} /> },
+                  ].map(({ label, val, set, ph, icon }) => (
+                    <div key={label}>
+                      <label style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                        <span style={{ color: 'var(--text-muted)', opacity: 0.5 }}>{icon}</span> {label}
+                      </label>
+                      <input value={val} onChange={e => set(e.target.value)} placeholder={ph}
+                        style={{
+                          width: '100%', boxSizing: 'border-box',
+                          background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                          border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)'}`,
+                          borderRadius: 12, padding: '11px 14px', fontSize: 13,
+                          color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter',
+                          transition: 'all 0.2s'
+                        }}
+                        onFocus={e => { e.target.style.borderColor = 'rgba(255,107,53,0.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(255,107,53,0.08)' }}
+                        onBlur={e => { e.target.style.borderColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)'; e.target.style.boxShadow = 'none' }}
+                      />
+                    </div>
                   ))}
                 </div>
               </div>
-              <button onClick={saveProfile} disabled={saving} style={{
-                background: 'linear-gradient(135deg, #ff6b35, #f7451d)', color: '#fff', border: 'none',
-                borderRadius: 12, padding: '14px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter', marginTop: 4
-              }}>{saving ? '⟳ Saving...' : '✓ Save Changes'}</button>
+
+              {/* Divider */}
+              <div style={{ height: 1, background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)' }} />
+
+              {/* Social Links Section */}
+              <div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16,
+                  fontSize: 11, fontWeight: 700, color: '#ff6b35', letterSpacing: '1.5px', textTransform: 'uppercase'
+                }}>
+                  <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(255,107,53,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Globe size={11} color="#ff6b35" />
+                  </div>
+                  SOCIAL LINKS
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {[
+                    { icon: <GitBranch size={16} />, label: 'GitHub', val: github, set: setGithub, ph: 'github.com/username', color: isDark ? '#e2e8f0' : '#1f2937' },
+                    { icon: <Briefcase size={16} />, label: 'LinkedIn', val: linkedin, set: setLinkedin, ph: 'linkedin.com/in/username', color: '#0a66c2' },
+                    { icon: <Globe size={16} />, label: 'Website', val: website, set: setWebsite, ph: 'yourportfolio.dev', color: '#22c55e' },
+                  ].map(({ icon, label, val, set, ph, color }) => (
+                    <div key={label} style={{
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.015)',
+                      border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}`,
+                      borderRadius: 12, padding: '4px 4px 4px 14px',
+                      transition: 'all 0.2s'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, minWidth: 90 }}>
+                        <span style={{ color, opacity: 0.7 }}>{icon}</span>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)' }}>{label}</span>
+                      </div>
+                      <input value={val} onChange={e => set(e.target.value)} placeholder={ph}
+                        style={{
+                          flex: 1, background: 'transparent', border: 'none',
+                          padding: '10px 12px', fontSize: 13,
+                          color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter'
+                        }}
+                      />
+                    </div>
+                  ))}
+
+                  {/* Custom Links */}
+                  {customLinks.map((link, idx) => (
+                    <div key={`custom-${idx}`} style={{
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.015)',
+                      border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}`,
+                      borderRadius: 12, padding: '4px 4px 4px 14px'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, minWidth: 90 }}>
+                        <Globe size={16} style={{ color: '#a855f7', opacity: 0.7 }} />
+                        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)' }}>{link.label}</span>
+                      </div>
+                      <input value={link.url} onChange={e => {
+                        const updated = [...customLinks]; updated[idx] = { ...updated[idx], url: e.target.value }; setCustomLinks(updated)
+                      }} placeholder="https://..."
+                        style={{ flex: 1, background: 'transparent', border: 'none', padding: '10px 12px', fontSize: 13, color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter' }}
+                      />
+                      <button onClick={() => setCustomLinks(prev => prev.filter((_, i) => i !== idx))}
+                        style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 14, padding: '8px', opacity: 0.6 }}
+                        onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+                        onMouseLeave={e => e.currentTarget.style.opacity = '0.6'}
+                      >✕</button>
+                    </div>
+                  ))}
+
+                  {/* Add Link inline form */}
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    background: isDark ? 'rgba(255,255,255,0.015)' : 'rgba(0,0,0,0.01)',
+                    border: `1.5px dashed ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+                    borderRadius: 12, padding: '4px 8px 4px 14px',
+                    transition: 'all 0.2s'
+                  }}>
+                    <input value={newLinkLabel} onChange={e => setNewLinkLabel(e.target.value)} placeholder="Label"
+                      style={{ width: 70, background: 'transparent', border: 'none', padding: '10px 0', fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', outline: 'none', fontFamily: 'Inter' }}
+                    />
+                    <input value={newLinkUrl} onChange={e => setNewLinkUrl(e.target.value)} placeholder="https://..."
+                      style={{ flex: 1, background: 'transparent', border: 'none', padding: '10px 6px', fontSize: 13, color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter' }}
+                    />
+                    <button onClick={() => {
+                      if (newLinkLabel.trim() && newLinkUrl.trim()) {
+                        setCustomLinks(prev => [...prev, { label: newLinkLabel.trim(), url: newLinkUrl.trim() }])
+                        setNewLinkLabel(''); setNewLinkUrl('')
+                      }
+                    }}
+                      style={{
+                        background: (newLinkLabel.trim() && newLinkUrl.trim()) ? 'rgba(255,107,53,0.1)' : 'transparent',
+                        border: `1px solid ${(newLinkLabel.trim() && newLinkUrl.trim()) ? 'rgba(255,107,53,0.3)' : 'transparent'}`,
+                        color: (newLinkLabel.trim() && newLinkUrl.trim()) ? '#ff6b35' : 'var(--text-muted)',
+                        borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                        fontFamily: 'Inter', transition: 'all 0.2s', whiteSpace: 'nowrap'
+                      }}
+                    >+ Add</button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div style={{ height: 1, background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)' }} />
+
+              {/* Languages Section */}
+              <div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14
+                }}>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    fontSize: 11, fontWeight: 700, color: '#ff6b35', letterSpacing: '1.5px', textTransform: 'uppercase'
+                  }}>
+                    <div style={{ width: 20, height: 20, borderRadius: 6, background: 'rgba(255,107,53,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Zap size={11} color="#ff6b35" />
+                    </div>
+                    LANGUAGES
+                  </div>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', opacity: 0.5, fontWeight: 500 }}>
+                    {selectedLangs.length} selected
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {LANGS.map(l => {
+                    const isSelected = selectedLangs.includes(l.id)
+                    return (
+                      <button key={l.id}
+                        onClick={() => setSelectedLangs(prev => prev.includes(l.id) ? prev.filter(x => x !== l.id) : [...prev, l.id])}
+                        style={{
+                          padding: '8px 16px', borderRadius: 10, fontSize: 12, fontWeight: 600,
+                          cursor: 'pointer', fontFamily: 'Inter', transition: 'all 0.2s',
+                          background: isSelected
+                            ? `linear-gradient(135deg, ${l.color}18, ${l.color}08)`
+                            : isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                          color: isSelected ? l.color : 'var(--text-muted)',
+                          border: `1.5px solid ${isSelected ? l.color + '40' : isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
+                          boxShadow: isSelected ? `0 2px 8px ${l.color}10` : 'none',
+                          transform: isSelected ? 'scale(1.02)' : 'scale(1)'
+                        }}
+                        onMouseEnter={e => {
+                          if (!isSelected) {
+                            e.currentTarget.style.borderColor = l.color + '30'
+                            e.currentTarget.style.color = l.color
+                          }
+                        }}
+                        onMouseLeave={e => {
+                          if (!isSelected) {
+                            e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'
+                            e.currentTarget.style.color = 'var(--text-muted)'
+                          }
+                        }}
+                      >
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{
+                            width: 7, height: 7, borderRadius: '50%', background: l.color,
+                            opacity: isSelected ? 1 : 0.4, transition: 'opacity 0.2s',
+                            boxShadow: isSelected ? `0 0 6px ${l.color}60` : 'none'
+                          }} />
+                          {l.label}
+                        </span>
+                      </button>
+                    )
+                  })}
+
+                  {/* Custom Languages */}
+                  {customLanguages.map((lang, idx) => (
+                    <span key={`custom-lang-${idx}`} style={{
+                      padding: '8px 14px', borderRadius: 10, fontSize: 12, fontWeight: 600,
+                      fontFamily: 'Inter', display: 'inline-flex', alignItems: 'center', gap: 6,
+                      background: isDark ? 'rgba(168,85,247,0.08)' : 'rgba(168,85,247,0.06)',
+                      color: '#a855f7',
+                      border: '1.5px solid rgba(168,85,247,0.25)'
+                    }}>
+                      <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#a855f7' }} />
+                      {lang}
+                      <button onClick={() => setCustomLanguages(prev => prev.filter((_, i) => i !== idx))}
+                        style={{ background: 'none', border: 'none', color: '#a855f7', cursor: 'pointer', fontSize: 12, padding: '0 0 0 4px', opacity: 0.6, lineHeight: 1 }}
+                        onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+                        onMouseLeave={e => e.currentTarget.style.opacity = '0.6'}
+                      >✕</button>
+                    </span>
+                  ))}
+
+                  {/* Add Language inline */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <input value={newLangName} onChange={e => setNewLangName(e.target.value)}
+                      placeholder="+ Add"
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' && newLangName.trim()) {
+                          const name = newLangName.trim()
+                          if (!selectedLangs.includes(name.toLowerCase()) && !customLanguages.includes(name)) {
+                            setCustomLanguages(prev => [...prev, name])
+                          }
+                          setNewLangName('')
+                        }
+                      }}
+                      style={{
+                        width: 70, background: 'transparent',
+                        border: `1.5px dashed ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+                        borderRadius: 10, padding: '8px 12px', fontSize: 12, fontWeight: 600,
+                        color: 'var(--text-muted)', outline: 'none', fontFamily: 'Inter',
+                        transition: 'all 0.2s'
+                      }}
+                      onFocus={e => { e.target.style.borderColor = 'rgba(255,107,53,0.4)'; e.target.style.width = '120px' }}
+                      onBlur={e => { e.target.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'; if (!newLangName) e.target.style.width = '70px' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
+                <button
+                  onClick={() => setShowEditProfile(false)}
+                  style={{
+                    flex: 1, background: 'transparent',
+                    border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+                    borderRadius: 14, padding: '14px', fontSize: 13, fontWeight: 600,
+                    color: 'var(--text-muted)', cursor: 'pointer', fontFamily: 'Inter',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'; e.currentTarget.style.color = 'var(--text-main)' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'; e.currentTarget.style.color = 'var(--text-muted)' }}
+                >Cancel</button>
+                <button onClick={saveProfile} disabled={saving}
+                  style={{
+                    flex: 2,
+                    background: saving
+                      ? isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'
+                      : 'linear-gradient(135deg, #ff6b35 0%, #f7451d 100%)',
+                    color: saving ? 'var(--text-muted)' : '#fff', border: 'none',
+                    borderRadius: 14, padding: '14px', fontSize: 14, fontWeight: 700,
+                    cursor: saving ? 'not-allowed' : 'pointer', fontFamily: 'Inter',
+                    boxShadow: saving ? 'none' : '0 4px 20px rgba(255,107,53,0.25), 0 0 0 1px rgba(255,107,53,0.1)',
+                    transition: 'all 0.3s', letterSpacing: '-0.2px'
+                  }}
+                  onMouseEnter={e => { if (!saving) { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 28px rgba(255,107,53,0.35), 0 0 0 1px rgba(255,107,53,0.15)' } }}
+                  onMouseLeave={e => { if (!saving) { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(255,107,53,0.25), 0 0 0 1px rgba(255,107,53,0.1)' } }}
+                >
+                  {saving ? (
+                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                      <span style={{ display: 'inline-block', width: 14, height: 14, border: '2px solid rgba(255,255,255,0.2)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
+                      Saving...
+                    </span>
+                  ) : (
+                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                      ✓ Save Changes
+                    </span>
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* NAV */}
       <nav style={{ height: 64, background: 'var(--nav-bg)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', padding: '0 32px', gap: 16, position: 'sticky', top: 0, zIndex: 50, transition: 'background-color 0.3s' }} className="profile-nav">
@@ -676,11 +1039,16 @@ export default function Profile() {
               </div>
             ))}
 
-            {(github || linkedin || website) ? (
+            {(github || linkedin || website || customLinks.length > 0) ? (
               <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {github && <a href={`https://${github}`} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}><GitBranch size={16} /> <span style={{ color: '#60a5fa' }}>{github}</span></a>}
                 {linkedin && <a href={`https://${linkedin}`} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}><Briefcase size={16} /> <span style={{ color: '#60a5fa' }}>{linkedin}</span></a>}
                 {website && <a href={`https://${website}`} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}><Globe size={16} /> <span style={{ color: '#60a5fa' }}>{website}</span></a>}
+                {customLinks.map((link, idx) => (
+                  <a key={`cl-${idx}`} href={link.url.startsWith('http') ? link.url : `https://${link.url}`} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}>
+                    <Globe size={16} /> <span style={{ color: '#a78bfa' }}>{link.label}</span>
+                  </a>
+                ))}
               </div>
             ) : isOwnProfile && (
               <button onClick={() => setShowEditProfile(true)} style={{ marginTop: 8, fontSize: 12, color: 'var(--text-muted)', background: 'none', border: '1px dashed var(--glass-border)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontFamily: 'Inter' }}>+ Add social links</button>
@@ -703,23 +1071,31 @@ export default function Profile() {
 
             {selectedLangs.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {selectedLangs.map(id => {
-                  const l = LANGS.find(x => x.id === id)
-                  if (!l) return null
-                  const languageWins = langWinsMap[id] || 0
-                  return (
-                    <div key={id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: l.color }} />
-                        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{l.label}</span>
+                  {selectedLangs.map(id => {
+                    const l = LANGS.find(x => x.id === id)
+                    if (!l) return null
+                    const languageWins = langWinsMap[id] || 0
+                    return (
+                      <div key={id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: l.color }} />
+                          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{l.label}</span>
+                        </div>
+                        {languageWins > 0 && (
+                          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{languageWins} wins</span>
+                        )}
                       </div>
-                      {languageWins > 0 && (
-                        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{languageWins} wins</span>
-                      )}
+                    )
+                  })}
+                  {customLanguages && customLanguages.map((lang, idx) => (
+                    <div key={`cl-${idx}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#a855f7' }} />
+                        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{lang}</span>
+                      </div>
                     </div>
-                  )
-                })}
-              </div>
+                  ))}
+                </div>
             ) : isOwnProfile && (
               <button onClick={() => setShowEditProfile(true)} style={{ fontSize: 12, color: 'var(--text-muted)', background: 'none', border: '1px dashed var(--glass-border)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontFamily: 'Inter' }}>+ Add languages</button>
             )}

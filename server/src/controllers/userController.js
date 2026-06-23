@@ -124,7 +124,7 @@ exports.getBattleHistory = async (req, res) => {
 // ✅ UPDATE Profile
 exports.updateProfile = async (req, res) => {
   try {
-    const { username, bio, github, linkedin, website, education, company, languages, publicProfile, showEloOnLeaderboard } = req.body
+    const { username, bio, github, linkedin, website, education, company, languages, customLinks, customLanguages, publicProfile, showEloOnLeaderboard } = req.body
     if (username && username.length < 3)
       return res.status(400).json({ message: 'Username too short' })
     if (username) {
@@ -134,7 +134,7 @@ exports.updateProfile = async (req, res) => {
     }
     const user = await User.findByIdAndUpdate(
       req.userId,
-      { username, bio, github, linkedin, website, education, company, languages, publicProfile, showEloOnLeaderboard },
+      { username, bio, github, linkedin, website, education, company, languages, customLinks, customLanguages, publicProfile, showEloOnLeaderboard },
       { new: true }
     ).select('-password -otp -otpExpiry')
     res.json({ message: 'Profile updated', user })
