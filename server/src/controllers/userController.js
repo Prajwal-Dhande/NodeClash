@@ -273,13 +273,70 @@ exports.updatePuzzleResult = async (req, res) => {
   }
 };
 
-// ✅ LEADERBOARD with ranks & puzzle XP
+// ✅ LEADERBOARD with ranks, pagination, & tabs (Global, Weekly, Monthly, Friends)
 exports.getLeaderboard = async (req, res) => {
   try {
-    const players = await User.find({ isVerified: true, showEloOnLeaderboard: { $ne: false } })
+    const tab = req.query.tab || 'Global'
+    const limit = parseInt(req.query.limit) || 10
+    
+    let players = []
+
+    if (tab === 'Friends') {
+      const authHeader = req.headers.authorization
+      if (!authHeader) return res.json({ success: false, message: 'Please login to see Friends leaderboard' })
+      const token = authHeader.split(' ')[1]
+      const jwt = require('jsonwebtoken')
+      const decoded = jwt.verify(token, process.env.JWT_SECRET)
+      const currentUser = await User.findById(decoded.userId)
+      if (!currentUser) return res.json({ success: false, message: 'User not found' })
+
+      players = await User.find({ 
+        _id: { $in: currentUser.following }, 
+        isVerified: true, 
+        showEloOnLeaderboard: { $ne: false } 
+      })
       .sort({ elo: -1, puzzleXp: -1 })
-      .limit(100)
+      .limit(limit)
       .select('username elo rank stats country createdAt puzzleXp')
+    } 
+    else if (tab === 'Weekly' || tab === 'Monthly') {
+      const days = tab === 'Weekly' ? 7 : 30
+      const startDate = new Date()
+      startDate.setDate(startDate.getDate() - days)
+
+      players = await User.aggregate([
+        { $match: { isVerified: true, showEloOnLeaderboard: { $ne: false }, 'matchHistory.date': { $gte: startDate } } },
+        {
+          $addFields: {
+            periodEloGain: {
+              $sum: {
+                $map: {
+                  input: {
+                    $filter: {
+                      input: { $ifNull: ['$matchHistory', []] },
+                      as: 'match',
+                      cond: { $gte: ['$$match.date', startDate] }
+                    }
+                  },
+                  as: 'validMatch',
+                  in: { $ifNull: ['$$validMatch.eloChange', 0] }
+                }
+              }
+            }
+          }
+        },
+        { $sort: { periodEloGain: -1 } },
+        { $limit: limit },
+        { $project: { username: 1, elo: 1, rank: 1, stats: 1, country: 1, puzzleXp: 1, periodEloGain: 1 } }
+      ])
+    } 
+    else {
+      // Global
+      players = await User.find({ isVerified: true, showEloOnLeaderboard: { $ne: false } })
+        .sort({ elo: -1, puzzleXp: -1 })
+        .limit(limit)
+        .select('username elo rank stats country createdAt puzzleXp')
+    }
 
     const leaderboard = players.map((p, i) => {
       const rankInfo = getRankFromElo(p.elo)
@@ -290,6 +347,7 @@ exports.getLeaderboard = async (req, res) => {
         rank: i + 1,
         username: p.username,
         elo: p.elo,
+        periodEloGain: p.periodEloGain,
         puzzleXp: p.puzzleXp || 0,
         rankName: rankInfo.name,
         rankIcon: rankInfo.icon,
@@ -303,6 +361,7 @@ exports.getLeaderboard = async (req, res) => {
     })
     res.json({ success: true, leaderboard })
   } catch (err) {
+    console.error("Leaderboard Error:", err)
     res.status(500).json({ success: false, message: 'Server error' })
   }
 }

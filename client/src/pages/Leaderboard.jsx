@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async' 
-import { Zap } from 'lucide-react'
+import { Zap, Crown, Medal, Flame } from 'lucide-react'
 import API_URL from '../config/api'
 import { ThemeToggle } from '../context/ThemeContext'
 
@@ -20,6 +20,7 @@ const TABS = ['Global', 'Weekly', 'Monthly', 'Friends']
 export default function Leaderboard() {
   const navigate = useNavigate()
   const [tab, setTab] = useState('Global')
+  const [limit, setLimit] = useState(10)
   const [search, setSearch] = useState('')
   const [players, setPlayers] = useState([])
   const [loading, setLoading] = useState(true)
@@ -28,11 +29,19 @@ export default function Leaderboard() {
   
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}')
 
+  // Reset limit when tab changes
+  useEffect(() => {
+    setLimit(10)
+  }, [tab])
+
   // 🔥 Fetch Real Leaderboard from Database
   useEffect(() => {
     const fetchLeaderboard = async () => {
+      setLoading(true)
       try {
-        const res = await fetch(`${API_URL}/api/users/leaderboard`)
+        const token = localStorage.getItem('token')
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {}
+        const res = await fetch(`${API_URL}/api/users/leaderboard?tab=${tab}&limit=${limit}`, { headers })
         const data = await res.json()
         if (data.success) {
           setPlayers(data.leaderboard)
@@ -45,6 +54,11 @@ export default function Leaderboard() {
             }, i * 100) 
             timeouts.push(t)
           })
+        } else {
+          if (data.message && tab === 'Friends') {
+            alert(data.message)
+            setTab('Global')
+          }
         }
       } catch (err) {
         console.error("Error fetching leaderboard", err)
@@ -53,7 +67,7 @@ export default function Leaderboard() {
     }
     
     fetchLeaderboard()
-  }, [])
+  }, [tab, limit])
 
   const filtered = players.filter(p =>
     (p.username || '').toLowerCase().includes(search.toLowerCase())
@@ -156,12 +170,12 @@ export default function Leaderboard() {
                   onClick={() => top3[1] && navigate(`/profile/${top3[1].username}`)}
                   style={{ cursor: top3[1] ? 'pointer' : 'default' }}
                 >
-                  <div className="medal">🥈</div>
+                  <div className="medal"><Medal size={24} color="#aaa9ad" /></div>
                   <div className="podium-avatar silver-bg">
                     {top3[1] ? top3[1].username.slice(0, 2).toUpperCase() : '?'}
                   </div>
                   <div className="podium-name">{top3[1] ? top3[1].username : 'TBD'}</div>
-                  <div className="podium-elo silver-text">{top3[1] ? (animatedElos[2] || top3[1].elo) : '-'}</div>
+                  <div className="podium-elo silver-text">{top3[1] ? ((tab === 'Weekly' || tab === 'Monthly') ? <span style={{ color: '#10b981' }}>+{top3[1].periodEloGain || 0}</span> : (animatedElos[2] || top3[1].elo)) : '-'}</div>
                   <div className="podium-label">ELO RATING</div>
                   <div className="podium-stats">
                     {top3[1] ? (
@@ -182,19 +196,19 @@ export default function Leaderboard() {
                   style={{ cursor: top3[0] ? 'pointer' : 'default' }}
                 >
                   <div className="crown-badge">
-                    <span className="crown-icon">👑</span> GRANDMASTER
+                    <Crown size={16} fill="#ffd700" color="#ffd700" className="crown-icon" style={{marginRight: 4}} /> GRANDMASTER
                   </div>
                   <div className="podium-avatar gold-bg lg-avatar">
                     {top3[0]?.username?.slice(0, 2).toUpperCase()}
                     <div className="avatar-ring"></div>
                   </div>
                   <div className="podium-name lg-name">{top3[0]?.username}</div>
-                  <div className="podium-elo gold-text lg-elo">{animatedElos[1] || top3[0]?.elo || 0}</div>
+                  <div className="podium-elo gold-text lg-elo">{(tab === 'Weekly' || tab === 'Monthly') ? <span style={{ color: '#10b981' }}>+{top3[0]?.periodEloGain || 0}</span> : (animatedElos[1] || top3[0]?.elo || 0)}</div>
                   <div className="podium-label">ELO RATING</div>
                   <div className="podium-stats lg-stats">
                     <span className="stat-pill bg-green-dim text-green">W: {top3[0]?.wins}</span>
                     <span className="stat-pill bg-red-dim text-red">L: {top3[0]?.losses}</span>
-                    <span className="stat-pill bg-orange-dim text-orange">🔥 {top3[0]?.streak}</span>
+                    <span className="stat-pill bg-orange-dim text-orange" style={{display: 'flex', alignItems: 'center', gap: 4}}><Flame size={14} color="#ff6b35" /> {top3[0]?.streak}</span>
                   </div>
                 </div>
 
@@ -204,12 +218,12 @@ export default function Leaderboard() {
                   onClick={() => top3[2] && navigate(`/profile/${top3[2].username}`)}
                   style={{ cursor: top3[2] ? 'pointer' : 'default' }}
                 >
-                  <div className="medal">🥉</div>
+                  <div className="medal"><Medal size={24} color="#cd7f32" /></div>
                   <div className="podium-avatar bronze-bg">
                     {top3[2] ? top3[2].username.slice(0, 2).toUpperCase() : '?'}
                   </div>
                   <div className="podium-name">{top3[2] ? top3[2].username : 'TBD'}</div>
-                  <div className="podium-elo bronze-text">{top3[2] ? (animatedElos[3] || top3[2].elo) : '-'}</div>
+                  <div className="podium-elo bronze-text">{top3[2] ? ((tab === 'Weekly' || tab === 'Monthly') ? <span style={{ color: '#10b981' }}>+{top3[2].periodEloGain || 0}</span> : (animatedElos[3] || top3[2].elo)) : '-'}</div>
                   <div className="podium-label">ELO RATING</div>
                   <div className="podium-stats">
                     {top3[2] ? (
@@ -239,7 +253,7 @@ export default function Leaderboard() {
 
             <div className="table-container glass-panel">
               <div className="table-header">
-                {['RANK', 'PLAYER', 'ELO', 'PUZZLE XP', 'WINS', 'WIN RATE', 'STREAK'].map(h => <div key={h}>{h}</div>)}
+                {['RANK', 'PLAYER', (tab === 'Weekly' || tab === 'Monthly') ? 'ELO GAINED' : 'ELO', 'PUZZLE XP', 'WINS', 'WIN RATE', 'STREAK'].map(h => <div key={h}>{h}</div>)}
               </div>
 
               <div className="table-body">
@@ -253,7 +267,10 @@ export default function Leaderboard() {
                     onClick={() => navigate(`/profile/${player.username}`)} // 🔥 Row is now clickable
                   >
                     <div className="col-rank">
-                      {player.rank <= 3 ? <span className="rank-badge-icon">{player.badge}</span> : <span className="rank-num">#{player.rank}</span>}
+                      {player.rank === 1 ? <Crown size={18} fill="#ffd700" color="#ffd700" /> : 
+                       player.rank === 2 ? <Medal size={18} color="#aaa9ad" /> : 
+                       player.rank === 3 ? <Medal size={18} color="#cd7f32" /> : 
+                       <span className="rank-num">#{player.rank}</span>}
                     </div>
                     <div className="col-player">
                       <div className={`row-avatar ${isMe ? 'me-bg' : 'normal-bg'}`}>{player.username.slice(0, 2).toUpperCase()}</div>
@@ -265,7 +282,11 @@ export default function Leaderboard() {
                       </div>
                     </div>
                     <div className={`col-elo ${player.rank === 1 ? 'gold-text' : player.rank === 2 ? 'silver-text' : player.rank === 3 ? 'bronze-text' : ''}`}>
-                      {animatedElos[player.rank] || player.elo}
+                      {(tab === 'Weekly' || tab === 'Monthly') ? (
+                        <span style={{ color: '#10b981' }}>+{player.periodEloGain || 0}</span>
+                      ) : (
+                        animatedElos[player.rank] || player.elo
+                      )}
                     </div>
                     <div className="col-xp font-bold" style={{ color: '#0ea5e9' }}>
                       {player.puzzleXp || 0} XP
@@ -279,12 +300,31 @@ export default function Leaderboard() {
                       <div className="wr-bar-bg"><div className={`wr-bar-fill ${player.winRate >= 80 ? 'bg-green' : player.winRate >= 65 ? 'bg-orange' : 'bg-red'}`} style={{ width: `${player.winRate}%` }} /></div>
                     </div>
                     <div className={`col-streak ${player.streak >= 5 ? 'text-orange drop-shadow-glow' : player.streak > 0 ? 'text-main' : 'text-muted'}`}>
-                      {player.streak > 0 ? `🔥 ${player.streak}` : '—'}
+                      {player.streak > 0 ? <span style={{display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'center'}}><Flame size={16} color="#ff6b35" /> {player.streak}</span> : '—'}
                     </div>
                   </div>
                 )})}
               </div>
             </div>
+
+            {/* 🔥 Premium Load More Button */}
+            {players.length >= limit && (
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>
+                <button 
+                  onClick={() => setLimit(prev => prev + 10)}
+                  style={{
+                    background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+                    color: 'var(--text-main)', padding: '12px 32px', borderRadius: 14,
+                    fontSize: 14, fontWeight: 700, cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    fontFamily: 'Inter', backdropFilter: 'blur(10px)', boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,107,53,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,107,53,0.3)'; e.currentTarget.style.color = '#ff6b35'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = 'var(--text-main)'; e.currentTarget.style.transform = 'translateY(0)' }}
+                >
+                  Load More Rankings ⬇
+                </button>
+              </div>
+            )}
             
             {myRank && myRank > 1 && (
               <div className="my-rank-callout glass-panel animate-pop-in">
