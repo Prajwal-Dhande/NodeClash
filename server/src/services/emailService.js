@@ -262,7 +262,7 @@ const sendExpiryEmail = async (toEmail, username, daysLeft) => {
 
 // 🔥 Newsletter Notification Email (Sent to Admin)
 const sendNewsletterNotificationEmail = async (subscriberEmail, preferences) => {
-  const adminEmail = 'nodeclash.admin@gmail.com'; // Hardcoded admin email as requested
+  const adminEmail = 'nodeclash.admin@gmail.com';
   if (!adminEmail) return;
 
   const html = `
@@ -280,25 +280,11 @@ const sendNewsletterNotificationEmail = async (subscriberEmail, preferences) => 
   `;
 
   try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-
-    const mailOptions = {
-      from: `"CodeArena Bot" <${process.env.EMAIL_USER}>`,
-      to: adminEmail,
-      subject: `🚀 New Subscriber: ${subscriberEmail}`,
-      html: html
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ Newsletter notification sent for ${subscriberEmail} via Nodemailer`);
+    await sendBrevoEmail(adminEmail, `🚀 New Subscriber: ${subscriberEmail}`, html);
+    console.log(`✅ Newsletter notification sent for ${subscriberEmail} via Brevo`);
   } catch (error) {
     console.error('❌ Newsletter notification failed:', error.message);
+    // Don't throw — subscription should still succeed even if admin notification fails
   }
 }
 

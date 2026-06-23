@@ -13,13 +13,18 @@ router.post('/subscribe', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email is required' });
     }
 
-    // Send notification email to admin
-    await sendNewsletterNotificationEmail(email, preferences || { general: true, digest: true });
-
+    // Respond immediately to the user
     res.status(200).json({ success: true, message: 'Successfully subscribed to the newsletter!' });
+
+    // Send admin notification in background (fire-and-forget)
+    sendNewsletterNotificationEmail(email, preferences || { general: true, digest: true })
+      .catch(err => console.error('Background newsletter notification failed:', err.message));
   } catch (error) {
     console.error('Newsletter subscription error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    // Only send error if headers haven't been sent yet
+    if (!res.headersSent) {
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
   }
 });
 
