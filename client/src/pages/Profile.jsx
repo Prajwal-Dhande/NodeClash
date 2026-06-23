@@ -213,6 +213,10 @@ export default function Profile() {
   const [newLinkUrl, setNewLinkUrl] = useState('')
   const [newLangName, setNewLangName] = useState('')
 
+  // Follow Modal State
+  const [showFollowModal, setShowFollowModal] = useState(false)
+  const [followModalType, setFollowModalType] = useState('followers')
+
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (!token && isOwnProfile) { navigate('/auth'); return }
@@ -710,26 +714,27 @@ export default function Profile() {
                     borderRadius: 12, padding: '4px 8px 4px 14px',
                     transition: 'all 0.2s'
                   }}>
-                    <input value={newLinkLabel} onChange={e => setNewLinkLabel(e.target.value)} placeholder="Label"
-                      style={{ width: 70, background: 'transparent', border: 'none', padding: '10px 0', fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', outline: 'none', fontFamily: 'Inter' }}
+                    <input value={newLinkLabel} onChange={e => setNewLinkLabel(e.target.value)} placeholder="Name"
+                      style={{ width: 60, background: 'transparent', border: 'none', padding: '10px 0', fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', outline: 'none', fontFamily: 'Inter' }}
                     />
+                    <div style={{ width: 1, height: 16, background: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }} />
                     <input value={newLinkUrl} onChange={e => setNewLinkUrl(e.target.value)} placeholder="https://..."
                       style={{ flex: 1, background: 'transparent', border: 'none', padding: '10px 6px', fontSize: 13, color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter' }}
                     />
                     <button onClick={() => {
-                      if (newLinkLabel.trim() && newLinkUrl.trim()) {
-                        setCustomLinks(prev => [...prev, { label: newLinkLabel.trim(), url: newLinkUrl.trim() }])
+                      if (newLinkUrl.trim()) {
+                        setCustomLinks(prev => [...prev, { label: newLinkLabel.trim() || 'Link', url: newLinkUrl.trim() }])
                         setNewLinkLabel(''); setNewLinkUrl('')
                       }
                     }}
                       style={{
-                        background: (newLinkLabel.trim() && newLinkUrl.trim()) ? 'rgba(255,107,53,0.1)' : 'transparent',
-                        border: `1px solid ${(newLinkLabel.trim() && newLinkUrl.trim()) ? 'rgba(255,107,53,0.3)' : 'transparent'}`,
-                        color: (newLinkLabel.trim() && newLinkUrl.trim()) ? '#ff6b35' : 'var(--text-muted)',
+                        background: newLinkUrl.trim() ? 'rgba(255,107,53,0.1)' : 'transparent',
+                        border: `1px solid ${newLinkUrl.trim() ? 'rgba(255,107,53,0.3)' : 'transparent'}`,
+                        color: newLinkUrl.trim() ? '#ff6b35' : 'var(--text-muted)',
                         borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer',
                         fontFamily: 'Inter', transition: 'all 0.2s', whiteSpace: 'nowrap'
                       }}
-                    >+ Add</button>
+                    >Add URL</button>
                   </div>
                 </div>
               </div>
@@ -818,9 +823,15 @@ export default function Profile() {
                   ))}
 
                   {/* Add Language inline */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    background: isDark ? 'rgba(255,255,255,0.015)' : 'rgba(0,0,0,0.01)',
+                    border: `1.5px dashed ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+                    borderRadius: 12, padding: '4px 8px 4px 14px',
+                    transition: 'all 0.2s'
+                  }}>
                     <input value={newLangName} onChange={e => setNewLangName(e.target.value)}
-                      placeholder="+ Add"
+                      placeholder="Add language..."
                       onKeyDown={e => {
                         if (e.key === 'Enter' && newLangName.trim()) {
                           const name = newLangName.trim()
@@ -831,15 +842,31 @@ export default function Profile() {
                         }
                       }}
                       style={{
-                        width: 70, background: 'transparent',
-                        border: `1.5px dashed ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
-                        borderRadius: 10, padding: '8px 12px', fontSize: 12, fontWeight: 600,
-                        color: 'var(--text-muted)', outline: 'none', fontFamily: 'Inter',
+                        width: 100, background: 'transparent', border: 'none',
+                        padding: '10px 0', fontSize: 13, fontWeight: 600,
+                        color: 'var(--text-main)', outline: 'none', fontFamily: 'Inter',
                         transition: 'all 0.2s'
                       }}
-                      onFocus={e => { e.target.style.borderColor = 'rgba(255,107,53,0.4)'; e.target.style.width = '120px' }}
-                      onBlur={e => { e.target.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'; if (!newLangName) e.target.style.width = '70px' }}
+                      onFocus={e => { e.target.style.width = '140px' }}
+                      onBlur={e => { if (!newLangName) e.target.style.width = '100px' }}
                     />
+                    <button onClick={() => {
+                      if (newLangName.trim()) {
+                        const name = newLangName.trim()
+                        if (!selectedLangs.includes(name.toLowerCase()) && !customLanguages.includes(name)) {
+                          setCustomLanguages(prev => [...prev, name])
+                        }
+                        setNewLangName('')
+                      }
+                    }}
+                      style={{
+                        background: newLangName.trim() ? 'rgba(255,107,53,0.1)' : 'transparent',
+                        border: `1px solid ${newLangName.trim() ? 'rgba(255,107,53,0.3)' : 'transparent'}`,
+                        color: newLangName.trim() ? '#ff6b35' : 'var(--text-muted)',
+                        borderRadius: 8, padding: '6px 12px', fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                        fontFamily: 'Inter', transition: 'all 0.2s', whiteSpace: 'nowrap'
+                      }}
+                    >Add Language</button>
                   </div>
                 </div>
               </div>
@@ -992,12 +1019,12 @@ export default function Profile() {
 
             {/* ✅ REAL Social Stats */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid var(--glass-border)' }}>
-               <div style={{ cursor: 'pointer' }}>
+               <div style={{ cursor: 'pointer' }} onClick={() => { setFollowModalType('followers'); setShowFollowModal(true) }}>
                  <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-main)', fontFamily: 'JetBrains Mono' }}>{followersCount}</div>
                  <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600 }}>Followers</div>
                </div>
                <div style={{ width: 1, background: 'var(--glass-border)' }} />
-               <div style={{ cursor: 'pointer' }}>
+               <div style={{ cursor: 'pointer' }} onClick={() => { setFollowModalType('following'); setShowFollowModal(true) }}>
                  <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-main)', fontFamily: 'JetBrains Mono' }}>{followingCount}</div>
                  <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600 }}>Following</div>
                </div>
@@ -1603,6 +1630,66 @@ export default function Profile() {
           .profile-main-grid { padding: 20px 16px 80px !important; }
         }
       `}</style>
+
+      {/* Follow Modal */}
+      <AnimatePresence>
+        {showFollowModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+            onClick={e => e.target === e.currentTarget && setShowFollowModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              style={{
+                background: 'var(--panel-bg)', backdropFilter: 'blur(30px)',
+                border: '1px solid var(--glass-border)', borderRadius: 24, padding: '24px',
+                width: '100%', maxWidth: 400, maxHeight: '80vh', display: 'flex', flexDirection: 'column',
+                boxShadow: '0 24px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
+                position: 'relative', overflow: 'hidden'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <h3 style={{ margin: 0, color: 'var(--text-main)', fontSize: 18, fontFamily: 'Outfit', textTransform: 'capitalize' }}>
+                  {followModalType}
+                </h3>
+                <button onClick={() => setShowFollowModal(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 18 }}>✕</button>
+              </div>
+
+              <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: 10, paddingRight: 4 }}>
+                {(profileData?.[followModalType] || []).length === 0 ? (
+                  <div style={{ color: 'var(--text-muted)', fontSize: 14, textAlign: 'center', padding: '20px 0' }}>
+                    No {followModalType} yet.
+                  </div>
+                ) : (
+                  (profileData?.[followModalType] || []).map((u, i) => (
+                    <div key={i} onClick={() => { setShowFollowModal(false); navigate(`/profile/${u.username}`) }}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px',
+                        background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)',
+                        borderRadius: 12, cursor: 'pointer', transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,107,53,0.3)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--glass-border)'; e.currentTarget.style.transform = 'translateY(0)' }}
+                    >
+                      <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 16 }}>
+                        {u.username.substring(0, 2).toUpperCase()}
+                      </div>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-main)' }}>{u.username}</div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
-}
+}
