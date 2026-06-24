@@ -197,7 +197,9 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 24, alignItems: 'center', marginBottom: 40, width: 520 }}>
             <div style={{ background: 'rgba(255,107,53,0.08)', border: '1px solid rgba(255,107,53,0.2)', borderRadius: 16, padding: '20px', textAlign: 'center' }}>
-              <div style={{ width: 56, height: 56, borderRadius: '50%', margin: '0 auto 12px', background: 'linear-gradient(135deg, #ff6b35, #f7451d)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit', fontWeight: 900, fontSize: 18, color: 'var(--text-main)' }}>{(user?.username || 'PL').slice(0, 2).toUpperCase()}</div>
+              <div style={{ width: 56, height: 56, borderRadius: '50%', margin: '0 auto 12px', background: 'linear-gradient(135deg, #ff6b35, #f7451d)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit', fontWeight: 900, fontSize: 18, color: 'var(--text-main)', overflow: 'hidden', padding: user?.avatar ? 0 : undefined }}>
+                {user?.avatar ? <img src={user.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (user?.username || 'PL').slice(0, 2).toUpperCase()}
+              </div>
               <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{user?.username || 'Player'}</div>
               <div style={{ fontSize: 12, color: '#ff6b35', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Star size={12} /> {userElo} ELO</div>
               <div style={{ marginTop: 8, fontSize: 10, fontWeight: 600, color: '#22c55e', letterSpacing: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}><div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 6px #22c55e' }} />READY</div>
