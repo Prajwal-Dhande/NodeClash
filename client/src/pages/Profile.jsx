@@ -200,6 +200,7 @@ export default function Profile() {
   const targetUsername = routeUsername || storedUser?.username
 
   const [username, setUsername] = useState(targetUsername || 'Player')
+  const [avatar, setAvatar] = useState('')
   const [bio, setBio] = useState('')
   const [github, setGithub] = useState('')
   const [linkedin, setLinkedin] = useState('')
@@ -233,6 +234,7 @@ export default function Profile() {
         if (pData.user) {
           setProfileData(pData.user)
           setUsername(pData.user.username || '')
+          setAvatar(pData.user.avatar || '')
           setBio(pData.user.bio || '')
           setGithub(pData.user.github || '')
           setLinkedin(pData.user.linkedin || '')
@@ -274,7 +276,7 @@ export default function Profile() {
       const res = await fetch(`${API_URL}/api/users/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ username, bio, github, linkedin, website, education, company, languages: selectedLangs, customLinks, customLanguages })
+        body: JSON.stringify({ username, avatar, bio, github, linkedin, website, education, company, languages: selectedLangs, customLinks, customLanguages })
       })
       const data = await res.json()
       if (data.user) { 
@@ -517,7 +519,7 @@ export default function Profile() {
                   fontFamily: 'Outfit', fontSize: 22, fontWeight: 800, color: '#ff6b35',
                   letterSpacing: '-0.5px'
                 }}>
-                  {(username || 'P').slice(0, 2).toUpperCase()}
+                  {avatar ? <img src={avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (username || 'P').slice(0, 2).toUpperCase()}
                 </div>
                 <div style={{ flex: 1 }}>
                   <h2 style={{
@@ -559,6 +561,23 @@ export default function Profile() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {/* Avatar Grid */}
+                  <div>
+                    <label style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: 6 }}>Choose Avatar</label>
+                    <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8 }}>
+                      {[...Array(8)].map((_, i) => (
+                        <div key={i} onClick={() => setAvatar(avatar === `/avatars/avatar_${i + 1}.png` ? '' : `/avatars/avatar_${i + 1}.png`)} style={{
+                          width: 50, height: 50, borderRadius: 12, cursor: 'pointer', flexShrink: 0,
+                          border: avatar === `/avatars/avatar_${i + 1}.png` ? '2px solid #ff6b35' : `1.5px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)'}`,
+                          overflow: 'hidden', opacity: avatar === `/avatars/avatar_${i + 1}.png` ? 1 : 0.6,
+                          transition: 'all 0.2s'
+                        }}>
+                          <img src={`/avatars/avatar_${i + 1}.png`} alt={`Avatar ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Username */}
                   <div>
                     <label style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: 6 }}>Username</label>
@@ -998,7 +1017,7 @@ export default function Profile() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontFamily: 'Inter', fontSize: 32, fontWeight: 700, color: '#ff6b35'
               }}>
-                {username.slice(0, 2).toUpperCase()}
+                {profileData?.avatar ? <img src={profileData.avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : username.slice(0, 2).toUpperCase()}
               </div>
             </div>
 
@@ -1678,8 +1697,8 @@ export default function Profile() {
                       onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,107,53,0.3)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
                       onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--glass-border)'; e.currentTarget.style.transform = 'translateY(0)' }}
                     >
-                      <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 16 }}>
-                        {u.username.substring(0, 2).toUpperCase()}
+                      <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #ff6b35, #fbbf24)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 16, overflow: 'hidden', padding: u.avatar ? 0 : undefined }}>
+                        {u.avatar ? <img src={u.avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : u.username.substring(0, 2).toUpperCase()}
                       </div>
                       <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-main)' }}>{u.username}</div>
                     </div>

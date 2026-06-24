@@ -19,8 +19,8 @@ exports.getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.userId)
       .select('-password -otp -otpExpiry')
-      .populate('followers', 'username') // Added populate
-      .populate('following', 'username') // Added populate
+      .populate('followers', 'username avatar') // Added populate
+      .populate('following', 'username avatar') // Added populate
 
     if (!user) return res.status(404).json({ message: 'User not found' })
     // Attach rank info
@@ -37,8 +37,8 @@ exports.getPublicProfile = async (req, res) => {
     const { username } = req.params;
     const user = await User.findOne({ username })
       .select('-password -otp -otpExpiry')
-      .populate('followers', 'username')
-      .populate('following', 'username');
+      .populate('followers', 'username avatar')
+      .populate('following', 'username avatar');
 
     if (!user) return res.status(404).json({ message: 'User not found' });
     if (user.publicProfile === false && req.userId !== user._id.toString()) {
@@ -124,7 +124,7 @@ exports.getBattleHistory = async (req, res) => {
 // ✅ UPDATE Profile
 exports.updateProfile = async (req, res) => {
   try {
-    const { username, bio, github, linkedin, website, education, company, languages, customLinks, customLanguages, publicProfile, showEloOnLeaderboard } = req.body
+    const { username, bio, github, linkedin, website, education, company, languages, customLinks, customLanguages, publicProfile, showEloOnLeaderboard, avatar } = req.body
     if (username && username.length < 3)
       return res.status(400).json({ message: 'Username too short' })
     if (username) {
@@ -134,7 +134,7 @@ exports.updateProfile = async (req, res) => {
     }
     const user = await User.findByIdAndUpdate(
       req.userId,
-      { username, bio, github, linkedin, website, education, company, languages, customLinks, customLanguages, publicProfile, showEloOnLeaderboard },
+      { username, bio, github, linkedin, website, education, company, languages, customLinks, customLanguages, publicProfile, showEloOnLeaderboard, avatar },
       { new: true }
     ).select('-password -otp -otpExpiry')
     res.json({ message: 'Profile updated', user })
@@ -297,7 +297,7 @@ exports.getLeaderboard = async (req, res) => {
       })
       .sort({ elo: -1, puzzleXp: -1 })
       .limit(limit)
-      .select('username elo rank stats country createdAt puzzleXp')
+      .select('username avatar elo rank stats country createdAt puzzleXp')
     } 
     else if (tab === 'Weekly' || tab === 'Monthly') {
       const days = tab === 'Weekly' ? 7 : 30
@@ -327,7 +327,7 @@ exports.getLeaderboard = async (req, res) => {
         },
         { $sort: { periodEloGain: -1 } },
         { $limit: limit },
-        { $project: { username: 1, elo: 1, rank: 1, stats: 1, country: 1, puzzleXp: 1, periodEloGain: 1 } }
+        { $project: { username: 1, avatar: 1, elo: 1, rank: 1, stats: 1, country: 1, puzzleXp: 1, periodEloGain: 1 } }
       ])
     } 
     else {
@@ -335,7 +335,7 @@ exports.getLeaderboard = async (req, res) => {
       players = await User.find({ isVerified: true, showEloOnLeaderboard: { $ne: false } })
         .sort({ elo: -1, puzzleXp: -1 })
         .limit(limit)
-        .select('username elo rank stats country createdAt puzzleXp')
+        .select('username avatar elo rank stats country createdAt puzzleXp')
     }
 
     const leaderboard = players.map((p, i) => {
@@ -346,6 +346,7 @@ exports.getLeaderboard = async (req, res) => {
       return {
         rank: i + 1,
         username: p.username,
+        avatar: p.avatar,
         elo: p.elo,
         periodEloGain: p.periodEloGain,
         puzzleXp: p.puzzleXp || 0,

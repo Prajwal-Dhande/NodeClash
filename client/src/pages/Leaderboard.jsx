@@ -171,8 +171,8 @@ export default function Leaderboard() {
                   style={{ cursor: top3[1] ? 'pointer' : 'default' }}
                 >
                   <div className="medal"><Medal size={24} color="#aaa9ad" /></div>
-                  <div className="podium-avatar silver-bg">
-                    {top3[1] ? top3[1].username.slice(0, 2).toUpperCase() : '?'}
+                  <div className="podium-avatar silver-bg" style={top3[1]?.avatar ? { padding: 0, overflow: 'hidden' } : {}}>
+                    {top3[1] ? (top3[1].avatar ? <img src={top3[1].avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : top3[1].username.slice(0, 2).toUpperCase()) : '?'}
                   </div>
                   <div className="podium-name">{top3[1] ? top3[1].username : 'TBD'}</div>
                   <div className="podium-elo silver-text">{top3[1] ? ((tab === 'Weekly' || tab === 'Monthly') ? <span style={{ color: '#10b981' }}>+{top3[1].periodEloGain || 0}</span> : (animatedElos[2] || top3[1].elo)) : '-'}</div>
@@ -198,8 +198,8 @@ export default function Leaderboard() {
                   <div className="crown-badge">
                     <Crown size={16} fill="#ffd700" color="#ffd700" className="crown-icon" style={{marginRight: 4}} /> GRANDMASTER
                   </div>
-                  <div className="podium-avatar gold-bg lg-avatar">
-                    {top3[0]?.username?.slice(0, 2).toUpperCase()}
+                  <div className="podium-avatar gold-bg lg-avatar" style={top3[0]?.avatar ? { padding: 0, overflow: 'hidden' } : {}}>
+                    {top3[0]?.avatar ? <img src={top3[0].avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : top3[0]?.username?.slice(0, 2).toUpperCase()}
                     <div className="avatar-ring"></div>
                   </div>
                   <div className="podium-name lg-name">{top3[0]?.username}</div>
@@ -219,8 +219,8 @@ export default function Leaderboard() {
                   style={{ cursor: top3[2] ? 'pointer' : 'default' }}
                 >
                   <div className="medal"><Medal size={24} color="#cd7f32" /></div>
-                  <div className="podium-avatar bronze-bg">
-                    {top3[2] ? top3[2].username.slice(0, 2).toUpperCase() : '?'}
+                  <div className="podium-avatar bronze-bg" style={top3[2]?.avatar ? { padding: 0, overflow: 'hidden' } : {}}>
+                    {top3[2] ? (top3[2].avatar ? <img src={top3[2].avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : top3[2].username.slice(0, 2).toUpperCase()) : '?'}
                   </div>
                   <div className="podium-name">{top3[2] ? top3[2].username : 'TBD'}</div>
                   <div className="podium-elo bronze-text">{top3[2] ? ((tab === 'Weekly' || tab === 'Monthly') ? <span style={{ color: '#10b981' }}>+{top3[2].periodEloGain || 0}</span> : (animatedElos[3] || top3[2].elo)) : '-'}</div>
@@ -273,7 +273,9 @@ export default function Leaderboard() {
                        <span className="rank-num">#{player.rank}</span>}
                     </div>
                     <div className="col-player">
-                      <div className={`row-avatar ${isMe ? 'me-bg' : 'normal-bg'}`}>{player.username.slice(0, 2).toUpperCase()}</div>
+                      <div className={`row-avatar ${isMe ? 'me-bg' : 'normal-bg'}`} style={player.avatar ? { padding: 0, overflow: 'hidden' } : {}}>
+                        {player.avatar ? <img src={player.avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : player.username.slice(0, 2).toUpperCase()}
+                      </div>
                       <div>
                         <div className={`row-name ${isMe ? 'text-orange font-bold' : ''}`}>
                           {player.username} {isMe && <span className="me-badge">YOU</span>}

@@ -309,8 +309,8 @@ export default function Navbar() {
                 )}
               </div>
 
-              <span onClick={() => navigate('/profile')} className="profile-btn" title="View Profile">
-                {(user?.username || 'P').slice(0, 2).toUpperCase()}
+              <span onClick={() => navigate('/profile')} className="profile-btn" title="View Profile" style={user?.avatar ? { padding: 0, overflow: 'hidden' } : {}}>
+                {user?.avatar ? <img src={user.avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (user?.username || 'P').slice(0, 2).toUpperCase()}
               </span>
               <button onClick={() => { navigate('/lobby'); window.scrollTo(0, 0); }} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Zap size={16} /> Enter Arena</button>
             </>

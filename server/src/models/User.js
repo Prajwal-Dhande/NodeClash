@@ -4,6 +4,7 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true, trim: true, minlength: 3, maxlength: 20 },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: { type: String, required: true },
+  avatar: { type: String, default: '' },
   
   // ✅ ELO starts at 0
   elo: { type: Number, default: 0 },
