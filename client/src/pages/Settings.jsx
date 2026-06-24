@@ -22,14 +22,14 @@ const PLAN_NAMES = { 'pro': 'Pro Tier', 'pro_1m': 'Pro (Monthly)', 'pro_6m': 'Pr
 const Toggle = ({ value, onChange }) => (
   <div onClick={() => onChange(!value)} style={{
     width: 48, height: 26, borderRadius: 13,
-    background: value ? 'linear-gradient(135deg, var(--orange), var(--orange2))' : 'var(--btn-bg)',
-    border: `1px solid ${value ? 'var(--orange)' : 'var(--border)'}`,
+    background: value ? 'linear-gradient(135deg, var(--orange), var(--orange2))' : 'var(--border2)',
+    border: `1px solid ${value ? 'var(--orange)' : 'var(--border2)'}`,
     position: 'relative', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', flexShrink: 0,
-    boxShadow: value ? '0 0 15px var(--orange-dim)' : 'none'
+    boxShadow: value ? '0 0 15px var(--orange-dim)' : 'inset 0 2px 4px rgba(0,0,0,0.1)'
   }}>
     <div style={{
       position: 'absolute', top: 3, left: value ? 25 : 3, width: 18, height: 18,
-      borderRadius: '50%', background: 'var(--bg2)', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      borderRadius: '50%', background: value ? '#fff' : 'var(--bg)', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
     }} />
   </div>
@@ -390,7 +390,7 @@ export default function Settings() {
                           </div>
                           <div>
                             <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-main)', marginBottom: 6, fontFamily: 'Outfit' }}>
-                              {isPro ? `${currentPlanName} Active ✅` : 'Free Tier'}
+                              {isPro ? `${currentPlanName} Active` : 'Free Tier'}
                             </div>
                             <div style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.6, maxWidth: 350 }}>
                               {isPro

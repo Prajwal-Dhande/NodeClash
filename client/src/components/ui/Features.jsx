@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Zap, Bot, Shield, ArrowRight, Terminal } from 'lucide-react';
+import { Zap, Bot, Shield, ArrowRight, Terminal, Brain } from 'lucide-react';
 
 /* ── Reusable IDE Mockup Card ── */
 function IDEMockup({ title, children, url }) {
@@ -240,8 +240,8 @@ export default function Features() {
           title="Mid-battle, the AI raises the bar."
           desc="Clara, our AI interviewer, watches your code in real-time. She analyzes your approach and injects dynamic constraints — forcing you to adapt under pressure. No preparation, pure instinct."
           badges={[
-            { text: '🧠 LLM Powered', color: '#A78BFA', bg: 'rgba(167,139,250,0.08)', border: 'rgba(167,139,250,0.25)' },
-            { text: '⚡ Real-time injection', color: '#F59E0B', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)' },
+            { text: <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}><Brain size={14} /> LLM Powered</span>, color: '#A78BFA', bg: 'rgba(167,139,250,0.08)', border: 'rgba(167,139,250,0.25)' },
+            { text: <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}><Zap size={14} /> Real-time injection</span>, color: '#F59E0B', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)' },
           ]}
           mockup={
             <IDEMockup url="https://nodeclash.in/battle">

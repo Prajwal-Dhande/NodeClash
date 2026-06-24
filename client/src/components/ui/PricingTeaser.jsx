@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Zap, Brain } from 'lucide-react';
 
 const CHECK = (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -44,8 +45,8 @@ const PLANS = [
     border: 'rgba(96,165,250,0.25)',
     features: [
       { label: 'Exclusive The Elite Archive Problems', included: true },
-      { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
-      { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
+      { label: <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}><Zap size={14} /> Live AI Interviews (Clara)</span>, included: true, highlight: true },
+      { label: <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}><Brain size={14} /> AI Code Review & Analytics</span>, included: true, highlight: true },
       { label: 'Daily Quests Access', included: true },
       { label: 'Priority Matchmaking Servers', included: true },
     ],
@@ -65,8 +66,8 @@ const PLANS = [
     border: 'rgba(255,107,53,0.3)',
     features: [
       { label: 'Exclusive The Elite Archive Problems', included: true },
-      { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
-      { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
+      { label: <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}><Zap size={14} /> Live AI Interviews (Clara)</span>, included: true, highlight: true },
+      { label: <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}><Brain size={14} /> AI Code Review & Analytics</span>, included: true, highlight: true },
       { label: 'Daily Quests Access', included: true },
       { label: 'Priority Matchmaking Servers', included: true },
     ],

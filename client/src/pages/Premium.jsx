@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import Confetti from 'react-confetti'
 import API_URL from '../config/api'
 import { ThemeToggle } from '../context/ThemeContext'
-import { Bot, BarChart, Trophy, Lock, Zap, Map, Puzzle } from 'lucide-react'
+import { Bot, BarChart, Trophy, Lock, Zap, Map, Puzzle, Crown, Hourglass, Gift, Brain } from 'lucide-react'
 const CHECK = (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12" />
@@ -52,8 +52,8 @@ const PLANS = [
     border: 'rgba(96,165,250,0.35)',
     features: [
       { label: 'Exclusive The Elite Archive Problems', included: true },
-      { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
-      { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
+      { label: <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}><Zap size={14} /> Live AI Interviews (Clara)</span>, included: true, highlight: true },
+      { label: <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}><Brain size={14} /> AI Code Review & Analytics</span>, included: true, highlight: true },
       { label: 'Daily Quests Access', included: true },
       { label: 'Daily Algorithmic Puzzles', included: true },
       { label: 'Priority Matchmaking Servers', included: true },
@@ -78,8 +78,8 @@ const PLANS = [
     border: 'rgba(255,107,53,0.5)',
     features: [
       { label: 'Exclusive The Elite Archive Problems', included: true },
-      { label: '⚡ Live AI Interviews (Clara)', included: true, highlight: true },
-      { label: '🧠 AI Code Review & Analytics', included: true, highlight: true },
+      { label: <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}><Zap size={14} /> Live AI Interviews (Clara)</span>, included: true, highlight: true },
+      { label: <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}><Brain size={14} /> AI Code Review & Analytics</span>, included: true, highlight: true },
       { label: 'Daily Quests Access', included: true },
       { label: 'Daily Algorithmic Puzzles', included: true },
       { label: 'Priority Matchmaking Servers', included: true },
@@ -428,7 +428,7 @@ export default function Premium() {
               {item.label}
             </span>
           ))}
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#ff6b35' }}>💎 Premium</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: '#ff6b35', display: 'flex', alignItems: 'center', gap: 4 }}><Crown size={14} /> Premium</span>
         </div>
         <ThemeToggle />
         <div onClick={() => navigate('/profile')} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--glass-overlay)', border: '1px solid var(--glass-border)', borderRadius: 20, padding: '4px 14px 4px 10px', cursor: 'pointer', marginLeft: 16 }}>
@@ -502,8 +502,8 @@ export default function Premium() {
 
         {/* HERO */}
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ textAlign: 'center', marginBottom: 72 }}>
-          <div style={{ display: 'inline-block', background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.25)', color: '#fbbf24', fontSize: 11, fontWeight: 800, letterSpacing: 2, padding: '6px 18px', borderRadius: 20, marginBottom: 24 }}>
-            💎 NODECLASH PRO
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.25)', color: '#fbbf24', fontSize: 11, fontWeight: 800, letterSpacing: 2, padding: '6px 18px', borderRadius: 20, marginBottom: 24 }}>
+            <Crown size={14} /> NODECLASH PRO
           </div>
           <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 56, fontWeight: 900, color: 'var(--text-main)', margin: '0 0 20px 0', letterSpacing: '-2px', lineHeight: 1.1 }}>
             The fastest path to<br />
@@ -557,7 +557,7 @@ export default function Premium() {
                     borderRadius: 10, padding: '6px 14px', marginBottom: 12,
                     display: 'flex', alignItems: 'center', gap: 8, width: 'fit-content'
                   }}>
-                    <span style={{ fontSize: 12 }}>⏳</span>
+                    <span style={{ fontSize: 12, display: 'flex', alignItems: 'center' }}><Hourglass size={14} color="#ef4444" /></span>
                     <span style={{ fontSize: 11, fontWeight: 700, color: '#ef4444', fontFamily: 'JetBrains Mono, monospace', letterSpacing: 0.5 }}>
                       Offer Expires In: {countdown}
                     </span>
@@ -572,7 +572,7 @@ export default function Premium() {
                     borderRadius: 10, padding: '8px 14px', marginBottom: 12,
                     display: 'flex', alignItems: 'center', gap: 8, width: 'fit-content'
                   }}>
-                    <span style={{ fontSize: 15 }}>🎁</span>
+                    <span style={{ fontSize: 15, display: 'flex', alignItems: 'center' }}><Gift size={16} color="#fbbf24" /></span>
                     <span style={{ fontSize: 12, fontWeight: 800, color: '#fbbf24', letterSpacing: 0.3 }}>Includes 7-Day Free Trial</span>
                   </div>
                 )}
