@@ -424,7 +424,7 @@ export default function BattleRoom() {
           rank: currentUser?.rank
         })
       } else {
-        socket.emit('join_room', { roomId, username: currentUser?.username || `Player_${socket.id?.slice(0, 4)}` })
+        socket.emit('join_room', { roomId, username: currentUser?.username || `Player_${socket.id?.slice(0, 4)}`, avatar: currentUser?.avatar })
       }
     })
 
@@ -1035,8 +1035,8 @@ export default function BattleRoom() {
           <div className={`status-pill ${battleStarted ? 'live' : 'waiting'}`}>
             {roomPlayers.map((p, i) => (
               <div key={i} className="player-mini">
-                <div className="avatar" style={{ background: i === 0 ? '#ff6b35' : '#ef4444' }}>
-                  {p.username?.slice(0, 2).toUpperCase()}
+                <div className="avatar" style={{ background: i === 0 ? '#ff6b35' : '#ef4444', overflow: 'hidden', padding: p.avatar ? 0 : undefined }}>
+                  {p.avatar ? <img src={p.avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : p.username?.slice(0, 2).toUpperCase()}
                 </div>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{p.username}</span>
                 {i === 0 && roomPlayers.length > 1 && <span className="vs">vs</span>}
@@ -1206,9 +1206,10 @@ export default function BattleRoom() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 18, fontWeight: 800, color: 'var(--text-main)',
                     boxShadow: '0 0 20px rgba(255,107,53,0.4)',
-                    animation: 'avatarPop 0.4s cubic-bezier(0.16,1,0.3,1)'
+                    animation: 'avatarPop 0.4s cubic-bezier(0.16,1,0.3,1)',
+                    overflow: 'hidden', padding: (roomPlayers[0]?.avatar || currentUser?.avatar) ? 0 : undefined
                   }}>
-                    {(roomPlayers[0]?.username || currentUser?.username || 'P').slice(0, 2).toUpperCase()}
+                    {(roomPlayers[0]?.avatar || currentUser?.avatar) ? <img src={roomPlayers[0]?.avatar || currentUser?.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (roomPlayers[0]?.username || currentUser?.username || 'P').slice(0, 2).toUpperCase()}
                   </div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: '#e5e5e5' }}>
                     {roomPlayers[0]?.username || currentUser?.username || 'You'}
@@ -1244,9 +1245,10 @@ export default function BattleRoom() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 22,
                     boxShadow: practiceMode ? '0 0 20px rgba(34,197,94,0.3)' : 'none',
-                    animation: 'avatarPop 0.4s cubic-bezier(0.16,1,0.3,1) 0.15s both'
+                    animation: 'avatarPop 0.4s cubic-bezier(0.16,1,0.3,1) 0.15s both',
+                    overflow: 'hidden', padding: roomPlayers[1]?.avatar ? 0 : undefined
                   }}>
-                    {practiceMode ? <Bot size={20}/> : '?'}
+                    {practiceMode ? <Bot size={20}/> : (roomPlayers[1]?.avatar ? <img src={roomPlayers[1].avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (roomPlayers[1] ? roomPlayers[1].username.slice(0, 2).toUpperCase() : '?'))}
                   </div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: practiceMode ? '#e5e5e5' : '#444' }}>
                     {practiceMode ? 'AI Opponent' : 'Searching...'}

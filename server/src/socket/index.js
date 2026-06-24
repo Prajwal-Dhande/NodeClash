@@ -100,7 +100,7 @@ function initSocket(server) {
     console.log(`⚡ Connected: ${socket.id}`)
 
     // ✅ MATCHMAKING — smart problem selection for fair battles
-    socket.on('find_match', ({ username, elo, problemSlug, mode, solvedProblems }) => {
+    socket.on('find_match', ({ username, avatar, elo, problemSlug, mode, solvedProblems }) => {
       console.log(`🔍 ${username} looking for ${mode || 'quick_play'} match... (solved: ${(solvedProblems || []).length})`)
 
       const alreadyInQueue = matchmakingQueue.findIndex(p => p.username === username)
@@ -111,7 +111,7 @@ function initSocket(server) {
 
         if (opponent.username === username) {
           matchmakingQueue.push(opponent)
-          matchmakingQueue.push({ socket, username, elo, problemSlug, mode, solvedProblems })
+          matchmakingQueue.push({ socket, username, avatar, elo, problemSlug, mode, solvedProblems })
           socket.emit('waiting_in_queue', { position: matchmakingQueue.length })
           return
         }
@@ -162,18 +162,18 @@ function initSocket(server) {
 
           rooms.set(roomId, {
             players: [
-              { username, socketId: socket.id },
-              { username: opponent.username, socketId: opponent.socket.id }
+              { username, avatar, socketId: socket.id },
+              { username: opponent.username, avatar: opponent.avatar, socketId: opponent.socket.id }
             ],
             battleStarted: true,
             mode: matchMode
           })
 
           socket.emit('match_found', {
-            roomId, problem: sharedProblemSlug, opponent: opponent.username, elo: opponent.elo, mode: matchMode
+            roomId, problem: sharedProblemSlug, opponent: opponent.username, elo: opponent.elo, mode: matchMode, opponentAvatar: opponent.avatar
           })
           opponent.socket.emit('match_found', {
-            roomId, problem: sharedProblemSlug, opponent: username, elo: elo, mode: matchMode
+            roomId, problem: sharedProblemSlug, opponent: username, elo: elo, mode: matchMode, opponentAvatar: avatar
           })
 
           io.to(roomId).emit('battle_start', { players: rooms.get(roomId).players })
@@ -191,7 +191,7 @@ function initSocket(server) {
     })
 
     // ✅ ROOM JOIN & RECONNECTION
-    socket.on('join_room', ({ roomId, username }) => {
+    socket.on('join_room', ({ roomId, username, avatar }) => {
       socket.join(roomId)
 
       if (!rooms.has(roomId)) {
@@ -203,6 +203,7 @@ function initSocket(server) {
       
       if (existingPlayer) {
         existingPlayer.socketId = socket.id
+        existingPlayer.avatar = avatar
         
         // Cancel disconnect grace timer if player reconnected
         if (disconnectTimers.has(username)) {
@@ -214,6 +215,7 @@ function initSocket(server) {
         if (roomData.players.length < 2) {
           roomData.players.push({ 
             username: username || `Player_${socket.id.slice(0, 4)}`, 
+            avatar,
             socketId: socket.id 
           })
         }

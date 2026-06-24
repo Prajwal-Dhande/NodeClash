@@ -73,6 +73,7 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
 
       socket.emit('find_match', {
         username: user?.username || 'Player',
+        avatar: user?.avatar || '',
         elo: userElo,
         problemSlug: selectedProblem?.slug || null,
         mode: mode || 'quick_play',
@@ -85,7 +86,7 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
       }, 20000)
     })
 
-    socket.on('match_found', ({ roomId, problem, opponent, elo }) => {
+    socket.on('match_found', ({ roomId, problem, opponent, elo, opponentAvatar }) => {
       if (matchFoundRef.current || cancelledRef.current) return
       matchFoundRef.current = true
 
@@ -95,6 +96,7 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
       const realOpponent = {
         name: opponent,
         elo: elo ?? 0, 
+        avatarUrl: opponentAvatar || null,
         avatar: opponent.slice(0, 2).toUpperCase(),
         country: '',
         isReal: true,
@@ -234,7 +236,9 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 32, alignItems: 'center', width: 480 }}>
             <div style={{ background: 'rgba(255,107,53,0.08)', border: '1px solid rgba(255,107,53,0.3)', borderRadius: 16, padding: '24px', textAlign: 'center', boxShadow: '0 0 30px rgba(255,107,53,0.1)' }}>
-              <div style={{ width: 64, height: 64, borderRadius: '50%', margin: '0 auto 12px', background: 'linear-gradient(135deg, #ff6b35, #f7451d)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit', fontWeight: 900, fontSize: 22, color: 'var(--text-main)', boxShadow: '0 0 20px rgba(255,107,53,0.4)' }}>{(user?.username || 'PL').slice(0, 2).toUpperCase()}</div>
+              <div style={{ width: 64, height: 64, borderRadius: '50%', margin: '0 auto 12px', background: 'linear-gradient(135deg, #ff6b35, #f7451d)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit', fontWeight: 900, fontSize: 22, color: 'var(--text-main)', boxShadow: '0 0 20px rgba(255,107,53,0.4)', overflow: 'hidden', padding: user?.avatar ? 0 : undefined }}>
+                {user?.avatar ? <img src={user.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (user?.username || 'PL').slice(0, 2).toUpperCase()}
+              </div>
               <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{user?.username || 'You'}</div>
               <div style={{ fontSize: 13, color: '#ff6b35', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Star size={12} /> {userElo}</div>
             </div>
@@ -242,7 +246,9 @@ export default function Matchmaking({ user, onMatchFound, onCancel, selectedProb
             <div style={{ textAlign: 'center' }}><div style={{ fontFamily: 'Outfit', fontWeight: 900, fontSize: 28, color: '#ff6b35', textShadow: '0 0 20px rgba(255,107,53,0.5)' }}>VS</div></div>
 
             <div style={{ background: matchedPlayer.isReal ? 'rgba(96,165,250,0.08)' : 'rgba(239,68,68,0.08)', border: `1px solid ${matchedPlayer.isReal ? 'rgba(96,165,250,0.3)' : 'rgba(239,68,68,0.3)'}`, borderRadius: 16, padding: '24px', textAlign: 'center', boxShadow: `0 0 30px ${matchedPlayer.isReal ? 'rgba(96,165,250,0.1)' : 'rgba(239,68,68,0.1)'}` }}>
-              <div style={{ width: 64, height: 64, borderRadius: '50%', margin: '0 auto 12px', background: matchedPlayer.isReal ? 'linear-gradient(135deg, #1e3a5f, #1e40af)' : 'linear-gradient(135deg, #374151, #1f2937)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit', fontWeight: 900, fontSize: 22, color: '#e5e5e5', boxShadow: `0 0 20px ${matchedPlayer.isReal ? 'rgba(96,165,250,0.3)' : 'rgba(239,68,68,0.3)'}` }}>{matchedPlayer.avatar}</div>
+              <div style={{ width: 64, height: 64, borderRadius: '50%', margin: '0 auto 12px', background: matchedPlayer.isReal ? 'linear-gradient(135deg, #1e3a5f, #1e40af)' : 'linear-gradient(135deg, #374151, #1f2937)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Outfit', fontWeight: 900, fontSize: 22, color: '#e5e5e5', boxShadow: `0 0 20px ${matchedPlayer.isReal ? 'rgba(96,165,250,0.3)' : 'rgba(239,68,68,0.3)'}`, overflow: 'hidden', padding: matchedPlayer.avatarUrl ? 0 : undefined }}>
+                {matchedPlayer.avatarUrl ? <img src={matchedPlayer.avatarUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : matchedPlayer.avatar}
+              </div>
               <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{matchedPlayer.name}</div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Star size={12} /> {matchedPlayer.elo} ELO</div>
             </div>
