@@ -577,7 +577,9 @@ export default function Lobby() {
           <span><span className="text-online">{onlineCount}</span> online</span>
         </div>
         <div className="user-chip desktop-only" onClick={() => navigate('/profile')}>
-          <div className="avatar">{initials}</div>
+          <div className="avatar" style={user?.avatar ? { overflow: 'hidden', padding: 0 } : {}}>
+            {user?.avatar ? <img src={user.avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initials}
+          </div>
           <span className="username">{user?.username || 'Player_01'}</span>
         </div>
 
@@ -608,7 +610,9 @@ export default function Lobby() {
             <div className="drawer-content">
               <div className="user-chip-mobile" onClick={() => { setIsMobileMenuOpen(false); navigate('/profile') }}>
                 <div className="rank-icon">{getRankFromElo(user?.elo || 0)}</div>
-                <div className="avatar">{initials}</div>
+                <div className="avatar" style={user?.avatar ? { overflow: 'hidden', padding: 0 } : {}}>
+                  {user?.avatar ? <img src={user.avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initials}
+                </div>
                 <span className="username">{user?.username || 'Player_01'}</span>
               </div>
               
