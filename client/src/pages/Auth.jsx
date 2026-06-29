@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import API_URL from '../config/api'
+import { ArrowRight, UserPlus, Loader2, Activity, Bot, Shield, BarChart3, KeyRound, Mail, MailCheck, Lock, ShieldCheck, CheckCircle2, RefreshCw, Send } from 'lucide-react'
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID || ''
@@ -351,10 +352,10 @@ export default function Auth() {
 
           <div className="feature-list">
             {[
-              { icon: '⚡', text: 'Sub-100ms real-time sync', sub: 'Socket.io powered' },
-              { icon: '🤖', text: 'AI constraint injection', sub: 'LLM mid-battle analysis' },
-              { icon: '🔒', text: 'Sandboxed execution', sub: 'Docker isolated runner' },
-              { icon: '📊', text: 'Live ELO ranking', sub: 'Skill-based matchmaking' },
+              { icon: <Activity size={20} />, text: 'Sub-100ms real-time sync', sub: 'Socket.io powered' },
+              { icon: <Bot size={20} />, text: 'AI constraint injection', sub: 'LLM mid-battle analysis' },
+              { icon: <Shield size={20} />, text: 'Sandboxed execution', sub: 'Docker isolated runner' },
+              { icon: <BarChart3 size={20} />, text: 'Live ELO ranking', sub: 'Skill-based matchmaking' },
             ].map(({ icon, text, sub }) => (
               <div key={text} className="feature-item">
                 <div className="feature-icon">{icon}</div>
@@ -388,7 +389,7 @@ export default function Auth() {
 
               {forgotStep === 'email' && (
                 <>
-                  <div className="otp-icon-box orange">🔑</div>
+                  <div className="otp-icon-box orange"><KeyRound size={28} /></div>
                   <h2 className="card-title">Forgot Password</h2>
                   <p className="card-subtitle">Enter your email to receive a reset code</p>
                   <div className="field">
@@ -400,7 +401,7 @@ export default function Auth() {
                   </div>
                   {error && <div className="error-box">⚠ {error}</div>}
                   <button onClick={handleForgotSubmit} disabled={loading} className={`submit-btn ${loading ? 'disabled' : ''}`}>
-                    {loading ? '⟳  Sending OTP...' : '📧  Send Reset Code'}
+                    {loading ? <><Loader2 size={16} className="spin-icon" /> Sending OTP...</> : <><Send size={16} /> Send Reset Code</>}
                   </button>
                 </>
               )}
@@ -408,7 +409,7 @@ export default function Auth() {
               {forgotStep === 'otp' && (
                 <>
                   <div className={`otp-icon-box ${emailSent ? 'green' : 'orange'}`}>
-                    {emailSent ? '✉️' : '📧'}
+                    {emailSent ? <MailCheck size={28} /> : <Mail size={28} />}
                   </div>
                   <h2 className="card-title">Check your email</h2>
                   <p className="card-subtitle" style={{ marginBottom: 4 }}>
@@ -430,14 +431,14 @@ export default function Auth() {
                   {error && <div className="error-box">⚠ {error}</div>}
                   <button onClick={handleForgotOtpVerify} disabled={otp.join('').length < 6}
                     className={`submit-btn ${otp.join('').length < 6 ? 'disabled' : ''}`}>
-                    ✓  Verify Code
+                    <><CheckCircle2 size={16} /> Verify Code</>
                   </button>
                 </>
               )}
 
               {forgotStep === 'newpass' && (
                 <>
-                  <div className="otp-icon-box green">🔒</div>
+                  <div className="otp-icon-box green"><Lock size={28} /></div>
                   <h2 className="card-title">Set New Password</h2>
                   <p className="card-subtitle">Create a strong new password for your account</p>
                   <div className="field">
@@ -465,7 +466,7 @@ export default function Auth() {
                   </div>
                   {error && <div className="error-box">⚠ {error}</div>}
                   <button onClick={handleResetPassword} disabled={loading} className={`submit-btn ${loading ? 'disabled' : ''}`}>
-                    {loading ? '⟳  Resetting...' : '🔐  Reset Password'}
+                    {loading ? <><Loader2 size={16} className="spin-icon" /> Resetting...</> : <><ShieldCheck size={16} /> Reset Password</>}
                   </button>
                 </>
               )}
@@ -586,7 +587,7 @@ export default function Auth() {
               {error && <div className="error-box">⚠ {error}</div>}
 
               <button onClick={handleSubmit} disabled={loading} className={`submit-btn ${loading ? 'disabled' : ''}`}>
-                {loading ? (mode === 'login' ? '⟳  Logging in...' : '⟳  Sending OTP...') : mode === 'login' ? '⚡  Log In' : '🚀  Create Account'}
+                {loading ? (mode === 'login' ? <><Loader2 size={16} className="spin-icon" /> Logging in...</> : <><Loader2 size={16} className="spin-icon" /> Sending OTP...</>) : mode === 'login' ? <><ArrowRight size={16} /> Log In</> : <><UserPlus size={16} /> Create Account</>}
               </button>
 
               <p className="switch-text">
@@ -603,7 +604,7 @@ export default function Auth() {
                 className="back-btn">← Back</button>
 
               <div className={`otp-icon-box ${emailSent ? 'green' : 'orange'}`}>
-                {emailSent ? '✉️' : '📧'}
+                {emailSent ? <MailCheck size={28} /> : <Mail size={28} />}
               </div>
 
               <h2 className="card-title">Check your email</h2>
@@ -638,12 +639,12 @@ export default function Auth() {
               <button onClick={verifyOtp} disabled={loading || otp.join('').length < 6}
                 className={`submit-btn ${(loading || otp.join('').length < 6) ? 'disabled' : ''}`}
                 style={{ marginBottom: 18 }}>
-                {loading ? '⟳  Verifying...' : '✓  Verify & Enter Arena'}
+                {loading ? <><Loader2 size={16} className="spin-icon" /> Verifying...</> : <><CheckCircle2 size={16} /> Verify & Enter Arena</>}
               </button>
 
               <div style={{ textAlign: 'center' }}>
                 {canResend ? (
-                  <span onClick={resendOtp} className="resend-link">↺ Resend OTP</span>
+                  <span onClick={resendOtp} className="resend-link"><RefreshCw size={14} /> Resend OTP</span>
                 ) : (
                   <span className="resend-timer">
                     Resend in <span style={{ color: '#ff6b35', fontWeight: 700 }}>{timer}s</span>
@@ -967,12 +968,21 @@ export default function Auth() {
           right: 14px;
           top: 50%;
           transform: translateY(-50%);
-          background: none;
+          background: rgba(0,0,0,0.5);
           border: none;
           cursor: pointer;
-          color: rgba(255,255,255,0.4);
+          color: rgba(255,255,255,0.8);
           font-size: 16px;
-          padding: 0;
+          padding: 4px;
+          border-radius: 6px;
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .toggle-pass:hover {
+          background: rgba(0,0,0,0.7);
+          color: #ff6b35;
         }
 
         .forgot-link {
@@ -1011,6 +1021,17 @@ export default function Auth() {
           box-shadow: 0 4px 20px rgba(255,107,53,0.3);
           position: relative;
           overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+        .spin-icon {
+          animation: spinLoader 1s linear infinite;
+        }
+        @keyframes spinLoader {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
         .submit-btn::before {
           content: '';
