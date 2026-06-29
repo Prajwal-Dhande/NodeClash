@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async' 
 import { ThemeToggle, useTheme } from '../context/ThemeContext'
 import API_URL from '../config/api'
-import { Crown, Diamond, Medal, Zap, Target, Dumbbell, Brain, ShieldCheck, Moon, Swords, Rocket, MapPin, GraduationCap, Briefcase, Calendar, Award, Edit2, GitBranch, Globe, Search, Flame, Lock } from 'lucide-react'
+import { Crown, Diamond, Medal, Zap, Target, Dumbbell, Brain, ShieldCheck, Moon, Swords, Rocket, MapPin, GraduationCap, Briefcase, Calendar, Award, Edit2, GitBranch, Globe, Search, Flame, Lock, Activity } from 'lucide-react'
 
 // Load premium fonts
 if (typeof document !== 'undefined') {
@@ -1264,7 +1264,7 @@ export default function Profile() {
           <div className="profile-activity-card" style={{ background: 'var(--panel-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--glass-border)', borderRadius: 16, padding: '28px', overflow: 'hidden' }}>
             <div className="activity-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ fontSize: 20 }}>🟩</span>
+                <span style={{ color: '#22c55e', display: 'flex', alignItems: 'center' }}><Activity size={20} /></span>
                 <span style={{ fontWeight: 900, color: 'var(--text-main)', fontSize: 16, fontFamily: 'Outfit', letterSpacing: 1 }}>
                   ACTIVITY MATRIX
                 </span>

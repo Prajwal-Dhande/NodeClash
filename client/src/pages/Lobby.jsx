@@ -123,7 +123,7 @@ const ProblemModal = ({ user, title, subtitle, borderColor, accentColor, selecte
         <div style={{ flex: 1, overflowY: 'auto', padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: 8 }}>
           {list.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
-              <div style={{ fontSize: 36, marginBottom: 12 }}>🔍</div>
+              <div style={{ fontSize: 36, marginBottom: 12 }}><Search size={36} /></div>
               <div style={{ fontWeight: 600, marginBottom: 6 }}>No problems found</div>
               <div style={{ fontSize: 12 }}>Try changing your search or filters</div>
             </div>
@@ -527,7 +527,7 @@ export default function Lobby() {
         <div style={{ flex: 1 }} className="desktop-only" />
 
         <div style={{ position: 'relative', width: '220px', marginRight: '16px' }} className="desktop-only">
-          <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', color: '#888' }}>🔍</span>
+          <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', color: '#888', display: 'flex' }}><Search size={14} /></span>
           <input
             type="text"
             placeholder="Search player..."
